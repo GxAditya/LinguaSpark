@@ -1,0 +1,89 @@
+import React, { useState } from 'react';
+import { Menu, X, Sparkles } from 'lucide-react';
+
+export default function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navItems = [
+    { name: 'Features', href: '#features' },
+    { name: 'Languages', href: '#languages' },
+    { name: 'Pricing', href: '#pricing' },
+    { name: 'About', href: '#about' }
+  ];
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-white/20">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">
+              LinguaSpark
+            </span>
+          </div>
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200"
+              >
+                {item.name}
+              </a>
+            ))}
+          </nav>
+          
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center gap-4">
+            <button className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+              Sign In
+            </button>
+            <button className="bg-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+              Get Started Free
+            </button>
+          </div>
+          
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <X className="w-6 h-6 text-gray-700" />
+            ) : (
+              <Menu className="w-6 h-6 text-gray-700" />
+            )}
+          </button>
+        </div>
+        
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t border-white/20">
+            <nav className="flex flex-col gap-4">
+              {navItems.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </a>
+              ))}
+              <div className="flex flex-col gap-2 mt-4">
+                <button className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+                  Sign In
+                </button>
+                <button className="bg-orange-500 text-white px-6 py-2 rounded-full font-semibold">
+                  Get Started Free
+                </button>
+              </div>
+            </nav>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}
