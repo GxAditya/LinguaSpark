@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,12 +38,12 @@ export default function Header() {
           
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <button className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+            <Link to="/signin" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
               Sign In
-            </button>
-            <button className="bg-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+            </Link>
+            <Link to="/signup" className="bg-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200">
               Get Started Free
-            </button>
+            </Link>
           </div>
           
           {/* Mobile Menu Button */}
@@ -73,12 +74,12 @@ export default function Header() {
                 </a>
               ))}
               <div className="flex flex-col gap-2 mt-4">
-                <button className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+                <Link to="/signin" className="text-gray-700 hover:text-orange-600 font-medium transition-colors" onClick={() => setIsMenuOpen(false)}>
                   Sign In
-                </button>
-                <button className="bg-orange-500 text-white px-6 py-2 rounded-full font-semibold">
+                </Link>
+                <Link to="/signup" className="bg-orange-500 text-white px-6 py-2 rounded-full font-semibold text-center" onClick={() => setIsMenuOpen(false)}>
                   Get Started Free
-                </button>
+                </Link>
               </div>
             </nav>
           </div>

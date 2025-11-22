@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function CTA() {
   return (
@@ -43,11 +44,11 @@ export default function CTA() {
 
         {/* Interactive CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-          <button className="group bg-orange-500 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 relative overflow-hidden">
+          <Link to="/signup" className="group bg-orange-500 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 relative overflow-hidden justify-center">
             <span className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
             <span className="relative z-10">Get Started Free</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
-          </button>
+          </Link>
 
           <button className="text-gray-700 px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/50 backdrop-blur-sm transition-all duration-200 border-2 border-gray-200 hover:border-orange-300">
             View Pricing
