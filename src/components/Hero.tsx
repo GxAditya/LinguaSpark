@@ -15,23 +15,23 @@ export default function Hero() {
         </div>
         
         <h1 className="text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-gray-900 via-orange-600 to-pink-600 bg-clip-text text-transparent leading-tight">
-          Your Language Learning
-          <span className="block">Just Got Cheeky</span>
+          Master Any Language
+          <span className="block">Faster Than Ever</span>
         </h1>
-        
+
         <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-          Meet LinguaSpark — where AI meets attitude. Learn faster, chat smarter, and actually enjoy the ride. 
-          <span className="text-orange-600 font-medium">No boring flashcards allowed.</span>
+          AI-powered conversations, personalized lessons, and real-world practice.
+          <span className="text-orange-600 font-medium">Go from zero to fluent in record time.</span>
         </p>
-        
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <button className="group bg-orange-500 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2">
-            Start My Language Adventure
+            Start Learning Free
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
-          
+
           <button className="text-gray-700 px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/50 backdrop-blur-sm transition-all duration-200">
-            See It In Action
+            Watch Demo
           </button>
         </div>
         

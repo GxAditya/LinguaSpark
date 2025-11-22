@@ -32,25 +32,25 @@ export default function CTA() {
         </div>
         
         <h2 className="text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-gray-900 via-orange-600 to-pink-600 bg-clip-text text-transparent leading-tight">
-          Your Fluency Journey
-          <span className="block">Starts Right Here</span>
+          Ready to Become
+          <span className="block">Fluent?</span>
         </h2>
-        
+
         <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-          Join the language learning revolution. No boring lessons, no endless repetition — just 
-          <span className="text-orange-600 font-medium"> pure, AI-powered progress.</span>
+          Join thousands of learners achieving fluency faster with AI.
+          <span className="text-orange-600 font-medium">Start your free trial today.</span>
         </p>
-        
+
         {/* Interactive CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
           <button className="group bg-orange-500 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 relative overflow-hidden">
             <span className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-            <span className="relative z-10">Start My Free Trial</span>
+            <span className="relative z-10">Get Started Free</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
           </button>
-          
+
           <button className="text-gray-700 px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/50 backdrop-blur-sm transition-all duration-200 border-2 border-gray-200 hover:border-orange-300">
-            Watch 2-Min Demo
+            View Pricing
           </button>
         </div>
         
@@ -58,15 +58,15 @@ export default function CTA() {
         <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span>✨ No Credit Card Required</span>
+            <span>No Credit Card Required</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-            <span>🚀 7-Day Free Trial</span>
+            <span>7-Day Free Trial</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-            <span>🔥 Cancel Anytime</span>
+            <span>Cancel Anytime</span>
           </div>
         </div>
         
