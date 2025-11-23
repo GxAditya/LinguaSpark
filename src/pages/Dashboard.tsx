@@ -94,9 +94,9 @@ export default function Dashboard() {
                     <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">Trivia</span>
                   </div>
                 </div>
-                <button className="w-full bg-purple-600 text-white py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+                <Link to="/games" className="block w-full bg-purple-600 text-white py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors text-center">
                   Play Now
-                </button>
+                </Link>
               </div>
             </div>
 

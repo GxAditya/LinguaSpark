@@ -1,0 +1,172 @@
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, Check, X } from 'lucide-react';
+import GameLayout from '../components/GameLayout';
+
+export default function SyntaxScrambler() {
+  const [currentRound, setCurrentRound] = useState(0);
+  const [selectedOrder, setSelectedOrder] = useState<number[]>([]);
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [score, setScore] = useState(0);
+
+  const sentences = [
+    {
+      text: 'The quick brown fox jumps over the lazy dog',
+      words: ['The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy', 'dog'],
+      correctOrder: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    {
+      text: 'She speaks three languages fluently',
+      words: ['She', 'speaks', 'three', 'languages', 'fluently'],
+      correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+      text: 'I love learning new languages every day',
+      words: ['I', 'love', 'learning', 'new', 'languages', 'every', 'day'],
+      correctOrder: [0, 1, 2, 3, 4, 5, 6]
+    }
+  ];
+
+  const currentSentence = sentences[currentRound];
+  const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
+
+  useEffect(() => {
+    const indices = Array.from({ length: currentSentence.words.length }, (_, i) => i);
+    setShuffledIndices(indices.sort(() => Math.random() - 0.5));
+  }, [currentRound]);
+
+  const isComplete = currentRound >= sentences.length;
+
+  const handleToggleWord = (index: number) => {
+    if (selectedOrder.includes(index)) {
+      setSelectedOrder(selectedOrder.filter(i => i !== index));
+    } else {
+      setSelectedOrder([...selectedOrder, index]);
+    }
+  };
+
+  const handleSubmit = () => {
+    const isCorrect = JSON.stringify(selectedOrder) === JSON.stringify(currentSentence.correctOrder);
+    setFeedback(isCorrect ? 'correct' : 'incorrect');
+
+    if (isCorrect) {
+      setScore(score + 10);
+    }
+  };
+
+  const handleNext = () => {
+    setSelectedOrder([]);
+    setFeedback(null);
+    setCurrentRound(currentRound + 1);
+  };
+
+  if (isComplete) {
+    return (
+      <GameLayout title="Syntax Scrambler">
+        <div className="flex flex-col items-center justify-center py-16">
+          <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-6">
+            <Check className="w-12 h-12 text-green-600" />
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Game Complete!</h2>
+          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold text-orange-600">{score} / {sentences.length * 10}</span></p>
+          <button
+            onClick={() => {
+              setCurrentRound(0);
+              setSelectedOrder([]);
+              setFeedback(null);
+              setScore(0);
+            }}
+            className="bg-orange-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+          >
+            Play Again
+          </button>
+        </div>
+      </GameLayout>
+    );
+  }
+
+  return (
+    <GameLayout title="Syntax Scrambler" score={score} progress={`${currentRound + 1}/${sentences.length}`}>
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <p className="text-sm text-gray-600 mb-6">Arrange the words in the correct grammatical order:</p>
+
+          <div className="mb-8 p-4 bg-sky-50 rounded-lg border-2 border-sky-200">
+            <p className="text-sm text-gray-600 mb-3 font-medium">Correct sentence:</p>
+            <p className="text-lg font-semibold text-gray-900">{currentSentence.text}</p>
+          </div>
+
+          <div className="mb-8">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Click words to arrange them in order:</label>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {shuffledIndices.map((wordIndex) => (
+                <button
+                  key={wordIndex}
+                  onClick={() => handleToggleWord(wordIndex)}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                    selectedOrder.includes(wordIndex)
+                      ? 'bg-sky-500 text-white'
+                      : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
+                  }`}
+                >
+                  {currentSentence.words[wordIndex]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {selectedOrder.length > 0 && (
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-gray-600 mb-2 font-medium">Your sentence:</p>
+              <p className="text-lg text-gray-900">{selectedOrder.map(i => currentSentence.words[i]).join(' ')}</p>
+            </div>
+          )}
+
+          {feedback && (
+            <div className={`p-4 rounded-lg mb-6 flex items-start gap-3 ${
+              feedback === 'correct'
+                ? 'bg-green-50 border border-green-200'
+                : 'bg-red-50 border border-red-200'
+            }`}>
+              {feedback === 'correct' ? (
+                <>
+                  <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-green-900">Perfect syntax!</p>
+                    <p className="text-sm text-green-800">You earned 10 points!</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <X className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-red-900">Not quite right</p>
+                    <p className="text-sm text-red-800">Try to arrange the words in a grammatically correct order.</p>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          <div className="flex gap-3">
+            {!feedback ? (
+              <button
+                onClick={handleSubmit}
+                disabled={selectedOrder.length !== currentSentence.words.length}
+                className="flex-1 bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Submit
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                className="flex-1 bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
+              >
+                Next <ChevronRight className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </GameLayout>
+  );
+}

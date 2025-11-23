@@ -9,6 +9,17 @@ import Footer from './components/Footer';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
+import Games from './pages/Games';
+import TranscriptionStation from './games/TranscriptionStation';
+import AudioJumble from './games/AudioJumble';
+import ImageInstinct from './games/ImageInstinct';
+import TranslationMatchUp from './games/TranslationMatchUp';
+import SecretWordSolver from './games/SecretWordSolver';
+import WordDropDash from './games/WordDropDash';
+import ConjugationCoach from './games/ConjugationCoach';
+import ContextConnect from './games/ContextConnect';
+import SyntaxScrambler from './games/SyntaxScrambler';
+import TimeWarpTagger from './games/TimeWarpTagger';
 
 function App() {
   return (
@@ -30,6 +41,17 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/games" element={<Games />} />
+        <Route path="/games/transcription-station" element={<TranscriptionStation />} />
+        <Route path="/games/audio-jumble" element={<AudioJumble />} />
+        <Route path="/games/image-instinct" element={<ImageInstinct />} />
+        <Route path="/games/translation-matchup" element={<TranslationMatchUp />} />
+        <Route path="/games/secret-word-solver" element={<SecretWordSolver />} />
+        <Route path="/games/word-drop-dash" element={<WordDropDash />} />
+        <Route path="/games/conjugation-coach" element={<ConjugationCoach />} />
+        <Route path="/games/context-connect" element={<ContextConnect />} />
+        <Route path="/games/syntax-scrambler" element={<SyntaxScrambler />} />
+        <Route path="/games/time-warp-tagger" element={<TimeWarpTagger />} />
       </Routes>
     </Router>
   );
