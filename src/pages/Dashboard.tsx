@@ -40,7 +40,7 @@ export default function Dashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer group">
+              <Link to="/lessons" className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer group block">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-xl font-bold text-gray-900">Continue Learning</h3>
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -54,12 +54,12 @@ export default function Dashboard() {
                     <div className="bg-blue-600 h-2 rounded-full" style={{ width: '65%' }}></div>
                   </div>
                 </div>
-                <button className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                <div className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center">
                   Continue Lesson
-                </button>
-              </div>
+                </div>
+              </Link>
 
-              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer group">
+              <Link to="/practice" className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer group block">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-xl font-bold text-gray-900">Practice Speaking</h3>
                   <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-rose-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -74,10 +74,10 @@ export default function Dashboard() {
                     <span className="px-3 py-1 bg-pink-100 text-pink-700 text-xs rounded-full font-medium">Travel</span>
                   </div>
                 </div>
-                <button className="w-full bg-pink-600 text-white py-2 rounded-lg font-semibold hover:bg-pink-700 transition-colors">
+                <div className="w-full bg-pink-600 text-white py-2 rounded-lg font-semibold hover:bg-pink-700 transition-colors text-center">
                   Start Practice
-                </button>
-              </div>
+                </div>
+              </Link>
 
               <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer group">
                 <div className="flex items-center justify-between mb-6">

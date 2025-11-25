@@ -10,6 +10,8 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 import Games from './pages/Games';
+import Lessons from './pages/Lessons';
+import Practice from './pages/Practice';
 import TranscriptionStation from './games/TranscriptionStation';
 import AudioJumble from './games/AudioJumble';
 import ImageInstinct from './games/ImageInstinct';
@@ -41,6 +43,8 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/lessons" element={<Lessons />} />
+        <Route path="/practice" element={<Practice />} />
         <Route path="/games" element={<Games />} />
         <Route path="/games/transcription-station" element={<TranscriptionStation />} />
         <Route path="/games/audio-jumble" element={<AudioJumble />} />

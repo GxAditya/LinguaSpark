@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X, LogOut } from 'lucide-react';
 
 interface DashboardHeaderProps {
@@ -9,6 +9,30 @@ interface DashboardHeaderProps {
 
 export default function DashboardHeader({ activeTab, onTabChange, userName = 'User' }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const headerHeight = 64;
+
+      if (currentScrollY > headerHeight) {
+        if (currentScrollY > lastScrollY) {
+          setIsVisible(false);
+        } else {
+          setIsVisible(true);
+        }
+      } else {
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard' },
@@ -18,7 +42,11 @@ export default function DashboardHeader({ activeTab, onTabChange, userName = 'Us
   ];
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <header
+      className={`bg-white border-b border-gray-200 shadow-sm transition-all duration-300 ease-in-out transform ${
+        isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <a href="/" className="inline-block">
