@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, User, ArrowRight, Sparkles } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Mail, Lock, Eye, EyeOff, User, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
+import { useAuth } from '../context';
 
 export default function SignUp() {
+  const navigate = useNavigate();
+  const { register } = useAuth();
+  
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,8 +26,36 @@ export default function SignUp() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    // Validate password has a number
+    if (!/\d/.test(formData.password)) {
+      setError('Password must contain at least one number');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError(err.message || 'Failed to create account. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,6 +79,13 @@ export default function SignUp() {
           </p>
         </div>
 
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -61,6 +102,7 @@ export default function SignUp() {
                 className="input-primary pl-12"
                 placeholder="John Doe"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -80,6 +122,7 @@ export default function SignUp() {
                 className="input-primary pl-12"
                 placeholder="you@example.com"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -98,6 +141,7 @@ export default function SignUp() {
                 onChange={handleChange}
                 className="input-primary pl-12 pr-12"
                 placeholder="Create a strong password"
+                disabled={isLoading}
                 required
               />
               <button
@@ -129,6 +173,7 @@ export default function SignUp() {
                 className="input-primary pl-12 pr-12"
                 placeholder="Confirm your password"
                 required
+                disabled={isLoading}
               />
               <button
                 type="button"
@@ -165,10 +210,23 @@ export default function SignUp() {
 
           <button
             type="submit"
-            className="btn-primary-lg w-full group"
+            disabled={isLoading}
+            className="btn-primary-lg w-full group disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Create Account
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            {isLoading ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Creating account...
+              </span>
+            ) : (
+              <>
+                Create Account
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </>
+            )}
           </button>
         </form>
 
