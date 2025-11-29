@@ -5,8 +5,12 @@ export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   avatar?: string;
+  
+  // OAuth fields
+  provider: 'local' | 'google' | 'github';
+  providerId?: string;
   
   // Learning progress
   currentLanguage: string;
@@ -54,11 +58,24 @@ const userSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
+      required: function(this: IUser) {
+        return this.provider === 'local';
+      },
       minlength: [6, 'Password must be at least 6 characters'],
       select: false, // Don't include password in queries by default
     },
     avatar: {
+      type: String,
+      default: '',
+    },
+    
+    // OAuth fields
+    provider: {
+      type: String,
+      enum: ['local', 'google', 'github'],
+      default: 'local',
+    },
+    providerId: {
       type: String,
       default: '',
     },
@@ -111,7 +128,8 @@ const userSchema = new Schema<IUser>(
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+  // Only hash password for local auth and if it's modified
+  if (!this.isModified('password') || this.provider !== 'local' || !this.password) {
     return next();
   }
   
@@ -128,6 +146,7 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
+  if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };
 

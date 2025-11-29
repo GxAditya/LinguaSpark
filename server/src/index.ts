@@ -4,12 +4,18 @@ import config from './config/index.js';
 import connectDB from './config/database.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
+import lessonRoutes from './routes/lesson.routes.js';
+import ttsRoutes from './routes/tts.routes.js';
 import { errorHandler, notFound } from './middleware/error.middleware.js';
+import { seedLessons } from './data/lessons.seed.js';
 
 const app = express();
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB and seed data
+connectDB().then(async () => {
+  // Seed lessons after DB connection
+  await seedLessons();
+});
 
 // Middleware
 app.use(cors({
@@ -31,6 +37,8 @@ app.get('/api/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/lessons', lessonRoutes);
+app.use('/api/tts', ttsRoutes);
 
 // Error handling
 app.use(notFound);

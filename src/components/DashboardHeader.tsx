@@ -1,18 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, LogOut } from 'lucide-react';
+import { useAuth } from '../context';
 
 interface DashboardHeaderProps {
   activeTab?: 'dashboard' | 'lessons' | 'practice' | 'games';
   onTabChange?: (tab: 'dashboard' | 'lessons' | 'practice' | 'games') => void;
   userName?: string;
+  userAvatar?: string;
 }
 
-export default function DashboardHeader({ activeTab, onTabChange, userName = 'User' }: DashboardHeaderProps) {
+export default function DashboardHeader({ activeTab, onTabChange, userName = 'User', userAvatar }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   // Determine active tab from URL if not provided
   const getCurrentTab = () => {
@@ -87,17 +100,29 @@ export default function DashboardHeader({ activeTab, onTabChange, userName = 'Us
 
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-pink-100 flex items-center justify-center">
-                <span className="text-sm font-semibold text-orange-600">
-                  {userName.charAt(0).toUpperCase()}
-                </span>
-              </div>
+              {userAvatar ? (
+                <img 
+                  src={userAvatar} 
+                  alt={userName} 
+                  className="w-10 h-10 rounded-full object-cover border-2 border-orange-100"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-pink-100 flex items-center justify-center">
+                  <span className="text-sm font-semibold text-orange-600">
+                    {userName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
               <span className="text-sm font-medium text-gray-700">{userName}</span>
             </div>
 
-            <Link to="/" className="p-2 hover:bg-orange-50 rounded-xl transition-colors group">
+            <button 
+              onClick={handleLogout}
+              className="p-2 hover:bg-orange-50 rounded-xl transition-colors group"
+              title="Logout"
+            >
               <LogOut className="w-5 h-5 text-gray-600 group-hover:text-orange-600" />
-            </Link>
+            </button>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

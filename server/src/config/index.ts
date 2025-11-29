@@ -14,6 +14,17 @@ interface Config {
   jwtSecret: string;
   jwtExpiresIn: string;
   clientUrl: string;
+  google: {
+    clientId: string;
+    clientSecret: string;
+  };
+  github: {
+    clientId: string;
+    clientSecret: string;
+  };
+  groq: {
+    apiKey: string;
+  };
 }
 
 const config: Config = {
@@ -23,6 +34,17 @@ const config: Config = {
   jwtSecret: process.env.JWT_SECRET || 'default-secret-key',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID || '',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+  },
+  github: {
+    clientId: process.env.GITHUB_CLIENT_ID || '',
+    clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+  },
+  groq: {
+    apiKey: process.env.GROQ_API_KEY || '',
+  },
 };
 
 export default config;

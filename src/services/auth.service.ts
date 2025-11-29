@@ -32,6 +32,11 @@ export interface LoginData {
   password: string;
 }
 
+// OAuth configuration
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID || '';
+const REDIRECT_URI = window.location.origin;
+
 export const authService = {
   // Register a new user
   async register(data: RegisterData): Promise<AuthResponse> {
@@ -79,6 +84,40 @@ export const authService = {
   // Get stored token
   getToken(): string | null {
     return localStorage.getItem('token');
+  },
+
+  // Google OAuth
+  initiateGoogleLogin(): void {
+    const scope = 'email profile';
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}/auth/google/callback&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
+    window.location.href = googleAuthUrl;
+  },
+
+  // Handle Google OAuth callback
+  async handleGoogleCallback(code: string): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>('/auth/google', { code });
+    if (response.data) {
+      localStorage.setItem('token', response.data.token);
+      return response.data;
+    }
+    throw new Error(response.message || 'Google authentication failed');
+  },
+
+  // GitHub OAuth
+  initiateGitHubLogin(): void {
+    const scope = 'user:email';
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${REDIRECT_URI}/auth/github/callback&scope=${scope}`;
+    window.location.href = githubAuthUrl;
+  },
+
+  // Handle GitHub OAuth callback
+  async handleGitHubCallback(code: string): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>('/auth/github', { code });
+    if (response.data) {
+      localStorage.setItem('token', response.data.token);
+      return response.data;
+    }
+    throw new Error(response.message || 'GitHub authentication failed');
   },
 };
 

@@ -9,6 +9,9 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
+  loginWithGoogle: () => void;
+  loginWithGitHub: () => void;
+  handleOAuthCallback: (provider: 'google' | 'github', code: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -58,6 +61,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(updatedUser);
   };
 
+  const loginWithGoogle = () => {
+    authService.initiateGoogleLogin();
+  };
+
+  const loginWithGitHub = () => {
+    authService.initiateGitHubLogin();
+  };
+
+  const handleOAuthCallback = async (provider: 'google' | 'github', code: string) => {
+    setIsLoading(true);
+    try {
+      let response;
+      if (provider === 'google') {
+        response = await authService.handleGoogleCallback(code);
+      } else {
+        response = await authService.handleGitHubCallback(code);
+      }
+      setUser(response.user);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isLoading,
@@ -66,6 +92,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     updateUser,
+    loginWithGoogle,
+    loginWithGitHub,
+    handleOAuthCallback,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

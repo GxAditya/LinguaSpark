@@ -1,11 +1,39 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
 import ProgressCard from '../components/ProgressCard';
 import DailyStreakCard from '../components/DailyStreakCard';
 import DailyGoalCard from '../components/DailyGoalCard';
-import { BookOpen, Zap, Gamepad2, ChevronRight } from 'lucide-react';
+import { BookOpen, Zap, Gamepad2, ChevronRight, Loader2 } from 'lucide-react';
+import { useAuth } from '../context';
 
 export default function Dashboard() {
+  const { user, isLoading, isAuthenticated } = useAuth();
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
+          <p className="text-gray-600 font-medium">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to sign in if not authenticated
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  // Get first name from full name
+  const firstName = user.name.split(' ')[0];
+  
+  // Calculate level progress (assuming 1000 XP per level)
+  const xpPerLevel = 1000;
+  const currentLevel = Math.floor(user.xp / xpPerLevel) + 1;
+  const lessonsCompleted = Math.floor(user.xp / 50); // Estimate based on XP
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 relative overflow-hidden">
       {/* Background glow effects */}
@@ -13,33 +41,33 @@ export default function Dashboard() {
       <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
       <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-to-r from-yellow-200 to-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000"></div>
       
-      <DashboardHeader userName="John Doe" />
+      <DashboardHeader userName={user.name} userAvatar={user.avatar} />
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         {/* Welcome Section */}
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-            Welcome back, <span className="text-gradient-brand">John!</span>
+            Welcome back, <span className="text-gradient-brand">{firstName}!</span>
           </h1>
-          <p className="text-lg text-gray-600">Continue your Spanish learning journey</p>
+          <p className="text-lg text-gray-600">Continue your {user.currentLanguage.charAt(0).toUpperCase() + user.currentLanguage.slice(1)} learning journey</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           <ProgressCard
-            currentLevel={3}
+            currentLevel={currentLevel}
             targetLevel={10}
-            language="Spanish"
-            lessonsCompleted={24}
+            language={user.currentLanguage.charAt(0).toUpperCase() + user.currentLanguage.slice(1)}
+            lessonsCompleted={lessonsCompleted}
           />
           <DailyStreakCard
-            currentStreak={7}
-            longestStreak={14}
-            lastActivityDate="Today"
+            currentStreak={user.streak}
+            longestStreak={user.streak} // Could be a separate field
+            lastActivityDate={user.lastActiveDate ? new Date(user.lastActiveDate).toLocaleDateString() === new Date().toLocaleDateString() ? 'Today' : new Date(user.lastActiveDate).toLocaleDateString() : 'Today'}
           />
           <DailyGoalCard
-            goalMinutes={30}
-            completedMinutes={18}
+            goalMinutes={user.dailyGoal}
+            completedMinutes={Math.floor(user.dailyGoal * 0.6)} // Placeholder - would come from activity tracking
             goalType="Learning Time"
           />
         </div>
