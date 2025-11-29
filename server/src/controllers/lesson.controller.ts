@@ -20,7 +20,6 @@ export const getLessons = async (req: Request, res: Response): Promise<void> => 
       query.level = level;
     }
 
-    // Get lessons
     const lessons = await Lesson.find(query)
       .select('title slug description topic language level duration order')
       .sort({ level: 1, order: 1 });
@@ -38,6 +37,12 @@ export const getLessons = async (req: Request, res: Response): Promise<void> => 
     );
 
     // Combine lessons with progress
+    const levelPriority: Record<string, number> = {
+      beginner: 0,
+      intermediate: 1,
+      advanced: 2,
+    };
+
     const lessonsWithProgress = lessons.map(lesson => {
       const progress = progressMap.get(lesson._id.toString());
       return {
@@ -54,6 +59,10 @@ export const getLessons = async (req: Request, res: Response): Promise<void> => 
         progress: progress?.progress || 0,
         score: progress?.score || 0,
       };
+    }).sort((a, b) => {
+      const levelDiff = (levelPriority[a.level] ?? 0) - (levelPriority[b.level] ?? 0);
+      if (levelDiff !== 0) return levelDiff;
+      return a.order - b.order;
     });
 
     sendSuccess(res, 200, undefined, { lessons: lessonsWithProgress });

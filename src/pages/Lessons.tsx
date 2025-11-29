@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
-import { BookOpen, Volume2, CheckCircle, Clock, Zap, ChevronRight, PlayCircle, ChevronLeft, Loader2, AlertCircle, Pause } from 'lucide-react';
+import { BookOpen, Volume2, CheckCircle, Clock, Zap, ChevronRight, PlayCircle, ChevronLeft, Loader2, AlertCircle, Pause, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context';
 import { lessonService, ttsService, LessonSummary, LessonDetail, LessonProgress } from '../services';
+
+const LANGUAGE_OPTIONS = [
+  { value: 'spanish', label: 'Spanish' },
+  { value: 'french', label: 'French' },
+  { value: 'hindi', label: 'Hindi' },
+];
 
 export default function Lessons() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   const [lessons, setLessons] = useState<LessonSummary[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(user?.currentLanguage || 'spanish');
+  const [isLanguageManuallySelected, setIsLanguageManuallySelected] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<LessonDetail | null>(null);
   const [lessonProgress, setLessonProgress] = useState<LessonProgress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +37,8 @@ export default function Lessons() {
     const fetchLessons = async () => {
       try {
         setIsLoading(true);
-        const data = await lessonService.getLessons(user?.currentLanguage || 'spanish');
+        setError(null);
+        const data = await lessonService.getLessons(selectedLanguage);
         setLessons(data);
       } catch (err: any) {
         setError(err.message || 'Failed to load lessons');
@@ -41,7 +50,13 @@ export default function Lessons() {
     if (isAuthenticated) {
       fetchLessons();
     }
-  }, [isAuthenticated, user?.currentLanguage]);
+  }, [isAuthenticated, selectedLanguage]);
+
+  useEffect(() => {
+    if (user?.currentLanguage && !isLanguageManuallySelected) {
+      setSelectedLanguage(user.currentLanguage);
+    }
+  }, [user?.currentLanguage, isLanguageManuallySelected]);
 
   // Auth loading state
   if (authLoading) {
@@ -99,6 +114,26 @@ export default function Lessons() {
       audioRef.current.pause();
       setIsPlayingAudio(false);
     }
+  };
+
+  const resetLessonState = () => {
+    setSelectedLesson(null);
+    setLessonProgress(null);
+    setActiveContentIndex(0);
+    setActiveExerciseIndex(0);
+    setShowExercises(false);
+    setExerciseAnswer('');
+    setExerciseResult(null);
+    handlePauseAudio();
+  };
+
+  const handleLanguageChange = (value: string) => {
+    if (value === selectedLanguage) {
+      return;
+    }
+    setIsLanguageManuallySelected(true);
+    resetLessonState();
+    setSelectedLanguage(value);
   };
 
   const handleContentComplete = async (contentIndex: number) => {
@@ -172,10 +207,9 @@ export default function Lessons() {
     try {
       await lessonService.completeLesson(selectedLesson.slug);
       // Refresh lessons list
-      const data = await lessonService.getLessons(user?.currentLanguage || 'spanish');
+      const data = await lessonService.getLessons(selectedLanguage);
       setLessons(data);
-      setSelectedLesson(null);
-      setLessonProgress(null);
+      resetLessonState();
     } catch (err: any) {
       console.error('Failed to complete lesson:', err);
     }
@@ -202,6 +236,35 @@ export default function Lessons() {
         return <Clock className="w-4 h-4" />;
     }
   };
+
+  const getLanguageLabel = (code: string) => {
+    const option = LANGUAGE_OPTIONS.find((lang) => lang.value === code);
+    if (option) return option.label;
+    return code ? code.charAt(0).toUpperCase() + code.slice(1) : 'Spanish';
+  };
+
+  const LanguageSelector = ({ id, className = '' }: { id: string; className?: string }) => (
+    <div className={`flex flex-col text-sm text-gray-600 ${className}`}>
+      <label htmlFor={id} className="font-semibold text-gray-800 mb-1">
+        Learning language
+      </label>
+      <div className="relative">
+        <select
+          id={id}
+          value={selectedLanguage}
+          onChange={(event) => handleLanguageChange(event.target.value)}
+          className="appearance-none w-48 rounded-xl border border-gray-200 bg-white py-2 pl-3 pr-8 text-sm font-medium text-gray-700 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-100"
+        >
+          {LANGUAGE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-3 top-2.5 h-4 w-4 text-gray-500" />
+      </div>
+    </div>
+  );
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -247,16 +310,17 @@ export default function Lessons() {
         <DashboardHeader userName={user.name} userAvatar={user.avatar} />
 
         <main className="relative z-10 max-w-4xl mx-auto px-6 py-12">
-          <button
-            onClick={() => {
-              setSelectedLesson(null);
-              setLessonProgress(null);
-              handlePauseAudio();
-            }}
-            className="flex items-center gap-2 text-orange-600 font-semibold mb-8 hover:gap-3 transition-all group"
-          >
-            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back to Lessons
-          </button>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+            <button
+              onClick={resetLessonState}
+              className="flex items-center gap-2 text-orange-600 font-semibold hover:gap-3 transition-all group"
+            >
+              <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back to Lessons
+            </button>
+            <div className="sm:ml-auto">
+              <LanguageSelector id="lesson-language-selector-active" />
+            </div>
+          </div>
 
           {/* Lesson Header */}
           <div className="card p-8 mb-8">
@@ -269,6 +333,9 @@ export default function Lessons() {
                   </span>
                   <span className="text-gray-600 flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4" /> {selectedLesson.duration} minutes
+                  </span>
+                  <span className="text-gray-700 flex items-center gap-2 text-sm bg-gray-100 rounded-full px-3 py-1 font-medium">
+                    {getLanguageLabel(selectedLesson.language)}
                   </span>
                 </div>
               </div>
@@ -572,11 +639,15 @@ export default function Lessons() {
       <DashboardHeader userName={user.name} userAvatar={user.avatar} />
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-            AI-Generated <span className="text-gradient-brand">Lessons</span>
-          </h1>
-          <p className="text-lg text-gray-600">Personalized lessons created by our AI to match your learning pace</p>
+        <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+              AI-Generated <span className="text-gradient-brand">Lessons</span>
+            </h1>
+            <p className="text-lg text-gray-600">Personalized lessons created by our AI to match your learning pace</p>
+            <p className="text-sm text-gray-500 mt-2">Showing content for {getLanguageLabel(selectedLanguage)}</p>
+          </div>
+          <LanguageSelector id="lesson-language-selector" />
         </div>
 
         {isLoading ? (
@@ -596,6 +667,10 @@ export default function Lessons() {
                     {getStatusIcon(lesson.status)} {lesson.status === 'not-started' ? 'Start Now' : lesson.status === 'in-progress' ? 'Continue' : 'Completed'}
                   </span>
                 </div>
+
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                  {getLanguageLabel(lesson.language)}
+                </p>
 
                 <h3 className="text-lg font-bold text-gray-900 mb-2">{lesson.title}</h3>
                 <p className="text-sm text-gray-600 mb-4">{lesson.topic}</p>
