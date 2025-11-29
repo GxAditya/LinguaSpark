@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
-import { Headphones, BookOpen, Grid3X3, Shuffle, Award, Zap, RotateCcw, FileText, BarChart3, Clock } from 'lucide-react';
+import { Headphones, BookOpen, Grid3X3, Shuffle, Award, Zap, RotateCcw, FileText, BarChart3, Clock, ChevronRight } from 'lucide-react';
 
 const games = [
   {
@@ -11,6 +11,7 @@ const games = [
     icon: Headphones,
     color: 'from-blue-500 to-cyan-500',
     bgColor: 'from-blue-100 to-cyan-100',
+    iconColor: 'text-blue-600',
     description: 'Listen to audio and type exactly what you heard'
   },
   {
@@ -20,6 +21,7 @@ const games = [
     icon: Shuffle,
     color: 'from-purple-500 to-pink-500',
     bgColor: 'from-purple-100 to-pink-100',
+    iconColor: 'text-purple-600',
     description: 'Drag and drop words in the correct order'
   },
   {
@@ -29,6 +31,7 @@ const games = [
     icon: Grid3X3,
     color: 'from-green-500 to-emerald-500',
     bgColor: 'from-green-100 to-emerald-100',
+    iconColor: 'text-green-600',
     description: 'Match words with their corresponding images'
   },
   {
@@ -37,7 +40,8 @@ const games = [
     category: 'Vocabulary, Translation',
     icon: BookOpen,
     color: 'from-orange-500 to-red-500',
-    bgColor: 'from-orange-100 to-red-100',
+    bgColor: 'from-orange-100 to-pink-100',
+    iconColor: 'text-orange-600',
     description: 'Flip cards to match words with translations'
   },
   {
@@ -47,6 +51,7 @@ const games = [
     icon: Award,
     color: 'from-indigo-500 to-blue-500',
     bgColor: 'from-indigo-100 to-blue-100',
+    iconColor: 'text-indigo-600',
     description: 'Guess letters to reveal hidden words'
   },
   {
@@ -56,6 +61,7 @@ const games = [
     icon: Zap,
     color: 'from-yellow-500 to-orange-500',
     bgColor: 'from-yellow-100 to-orange-100',
+    iconColor: 'text-yellow-600',
     description: 'Drag falling words before they disappear'
   },
   {
@@ -65,6 +71,7 @@ const games = [
     icon: RotateCcw,
     color: 'from-teal-500 to-green-500',
     bgColor: 'from-teal-100 to-green-100',
+    iconColor: 'text-teal-600',
     description: 'Select the correct verb conjugation'
   },
   {
@@ -74,6 +81,7 @@ const games = [
     icon: FileText,
     color: 'from-rose-500 to-pink-500',
     bgColor: 'from-rose-100 to-pink-100',
+    iconColor: 'text-rose-600',
     description: 'Fill blanks with contextually appropriate words'
   },
   {
@@ -83,6 +91,7 @@ const games = [
     icon: BarChart3,
     color: 'from-sky-500 to-blue-500',
     bgColor: 'from-sky-100 to-blue-100',
+    iconColor: 'text-sky-600',
     description: 'Arrange scrambled words into correct order'
   },
   {
@@ -92,20 +101,26 @@ const games = [
     icon: Clock,
     color: 'from-violet-500 to-purple-500',
     bgColor: 'from-violet-100 to-purple-100',
+    iconColor: 'text-violet-600',
     description: 'Apply correct verb tense based on time reference'
   }
 ];
 
 export default function Games() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'lessons' | 'practice' | 'games'>('games');
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <DashboardHeader activeTab={activeTab} onTabChange={setActiveTab} userName="John Doe" />
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 relative overflow-hidden">
+      {/* Background glow effects */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
+      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-to-r from-yellow-200 to-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000"></div>
+      
+      <DashboardHeader userName="John Doe" />
 
-      <main className="max-w-7xl mx-auto px-6 py-12">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         <div className="mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Language Learning Games</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+            Language Learning <span className="text-gradient-brand">Games</span>
+          </h1>
           <p className="text-lg text-gray-600">Master your skills through fun, interactive games</p>
         </div>
 
@@ -116,18 +131,18 @@ export default function Games() {
               <Link
                 key={game.id}
                 to={`/games/${game.id}`}
-                className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl hover:scale-105 transition-all duration-300 group"
+                className="card-interactive p-6 group"
               >
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${game.bgColor} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <Icon className={`w-8 h-8 bg-gradient-to-br ${game.color} bg-clip-text text-transparent`} />
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${game.bgColor} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                  <Icon className={`w-7 h-7 ${game.iconColor}`} />
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-900 mb-1">{game.name}</h3>
                 <p className="text-sm text-gray-500 mb-3">{game.category}</p>
                 <p className="text-gray-600 text-sm mb-4">{game.description}</p>
 
-                <div className="flex items-center gap-2 text-orange-600 font-medium text-sm group-hover:gap-3 transition-all">
-                  Play Now <span className="text-lg">→</span>
+                <div className="flex items-center gap-2 text-orange-600 font-semibold text-sm group-hover:gap-3 transition-all">
+                  Play Now <ChevronRight className="w-4 h-4" />
                 </div>
               </Link>
             );

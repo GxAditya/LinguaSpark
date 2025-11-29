@@ -26,18 +26,18 @@ export default function WordDropDash() {
     return (
       <GameLayout title="Word Drop Dash">
         <div className="flex flex-col items-center justify-center py-16">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-6">
+          <div className="icon-container-lg mb-6">
             <Check className="w-12 h-12 text-green-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Game Complete!</h2>
-          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold text-orange-600">{score}</span></p>
+          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score}</span></p>
           <button
             onClick={() => {
               setCurrentRound(0);
               setScore(0);
               setRoundComplete(false);
             }}
-            className="bg-orange-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+            className="btn-primary"
           >
             Play Again
           </button>
@@ -54,7 +54,7 @@ export default function WordDropDash() {
   return (
     <GameLayout title="Word Drop Dash" score={score} progress={`${currentRound + 1}/${rounds.length}`}>
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+        <div className="card p-8 mb-8">
           <p className="text-sm text-gray-600 mb-8">Drag falling words to match with the correct target!</p>
 
           <div className="bg-gradient-to-b from-yellow-50 to-orange-50 rounded-xl p-8 mb-8 min-h-64 flex flex-col items-center justify-center border-4 border-dashed border-yellow-300">
@@ -81,7 +81,7 @@ export default function WordDropDash() {
           {!roundComplete ? (
             <button
               onClick={handleScore}
-              className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+              className="btn-primary w-full"
             >
               Complete Round (Demo)
             </button>
@@ -91,7 +91,7 @@ export default function WordDropDash() {
                 setCurrentRound(currentRound + 1);
                 setRoundComplete(false);
               }}
-              className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
+              className="btn-primary w-full flex items-center justify-center gap-2"
             >
               Next <ChevronRight className="w-5 h-5" />
             </button>

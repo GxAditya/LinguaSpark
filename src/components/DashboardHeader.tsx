@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, LogOut } from 'lucide-react';
 
 interface DashboardHeaderProps {
-  activeTab: 'dashboard' | 'lessons' | 'practice' | 'games';
-  onTabChange: (tab: 'dashboard' | 'lessons' | 'practice' | 'games') => void;
+  activeTab?: 'dashboard' | 'lessons' | 'practice' | 'games';
+  onTabChange?: (tab: 'dashboard' | 'lessons' | 'practice' | 'games') => void;
   userName?: string;
 }
 
@@ -11,6 +12,19 @@ export default function DashboardHeader({ activeTab, onTabChange, userName = 'Us
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const location = useLocation();
+
+  // Determine active tab from URL if not provided
+  const getCurrentTab = () => {
+    if (activeTab) return activeTab;
+    const path = location.pathname;
+    if (path.includes('/lessons')) return 'lessons';
+    if (path.includes('/practice')) return 'practice';
+    if (path.includes('/games')) return 'games';
+    return 'dashboard';
+  };
+
+  const currentTab = getCurrentTab();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,59 +49,59 @@ export default function DashboardHeader({ activeTab, onTabChange, userName = 'Us
   }, [lastScrollY]);
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'lessons', label: 'Lessons' },
-    { id: 'practice', label: 'Practice' },
-    { id: 'games', label: 'Games' },
+    { id: 'dashboard', label: 'Dashboard', path: '/dashboard' },
+    { id: 'lessons', label: 'Lessons', path: '/lessons' },
+    { id: 'practice', label: 'Practice', path: '/practice' },
+    { id: 'games', label: 'Games', path: '/games' },
   ];
 
   return (
     <header
-      className={`bg-white border-b border-gray-200 shadow-sm transition-all duration-300 ease-in-out transform ${
+      className={`sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300 ease-in-out transform ${
         isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <a href="/" className="inline-block">
-            <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">
+          <Link to="/" className="inline-block">
+            <span className="text-2xl font-bold text-gradient-brand">
               LinguaSpark
             </span>
-          </a>
+          </Link>
 
           <nav className="hidden md:flex items-center gap-2">
             {navItems.map((item) => (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => onTabChange(item.id as any)}
-                className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  activeTab === item.id
-                    ? 'bg-orange-100 text-orange-600'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                to={item.path}
+                className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 ${
+                  currentTab === item.id
+                    ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-orange-600'
+                    : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50'
                 }`}
               >
                 {item.label}
-              </button>
+              </Link>
             ))}
           </nav>
 
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex items-center gap-3">
-              <img
-                src="https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop"
-                alt={userName}
-                className="w-10 h-10 rounded-full object-cover"
-              />
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-pink-100 flex items-center justify-center">
+                <span className="text-sm font-semibold text-orange-600">
+                  {userName.charAt(0).toUpperCase()}
+                </span>
+              </div>
               <span className="text-sm font-medium text-gray-700">{userName}</span>
             </div>
 
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <LogOut className="w-5 h-5 text-gray-600" />
-            </button>
+            <Link to="/" className="p-2 hover:bg-orange-50 rounded-xl transition-colors group">
+              <LogOut className="w-5 h-5 text-gray-600 group-hover:text-orange-600" />
+            </Link>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="md:hidden p-2 hover:bg-orange-50 rounded-xl transition-colors"
             >
               {mobileMenuOpen ? (
                 <X className="w-6 h-6 text-gray-600" />
@@ -99,22 +113,20 @@ export default function DashboardHeader({ activeTab, onTabChange, userName = 'Us
         </div>
 
         {mobileMenuOpen && (
-          <nav className="md:hidden mt-4 pt-4 border-t border-gray-200 flex flex-col gap-2">
+          <nav className="md:hidden mt-4 pt-4 border-t border-gray-100 flex flex-col gap-2">
             {navItems.map((item) => (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => {
-                  onTabChange(item.id as any);
-                  setMobileMenuOpen(false);
-                }}
-                className={`px-4 py-2 rounded-lg font-medium text-left transition-all duration-200 ${
-                  activeTab === item.id
-                    ? 'bg-orange-100 text-orange-600'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                to={item.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`px-4 py-3 rounded-xl font-medium text-left transition-all duration-200 ${
+                  currentTab === item.id
+                    ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-orange-600'
+                    : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50'
                 }`}
               >
                 {item.label}
-              </button>
+              </Link>
             ))}
           </nav>
         )}

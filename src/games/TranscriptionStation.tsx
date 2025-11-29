@@ -44,11 +44,11 @@ export default function TranscriptionStation() {
     return (
       <GameLayout title="Transcription Station">
         <div className="flex flex-col items-center justify-center py-16">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-6">
+          <div className="icon-container-lg mb-6">
             <Check className="w-12 h-12 text-green-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Game Complete!</h2>
-          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold text-orange-600">{score} / {audioClips.length * 10}</span></p>
+          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score} / {audioClips.length * 10}</span></p>
           <p className="text-gray-600 mb-8">Great job! You've completed all transcriptions.</p>
           <button
             onClick={() => {
@@ -57,7 +57,7 @@ export default function TranscriptionStation() {
               setFeedback(null);
               setScore(0);
             }}
-            className="bg-orange-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+            className="btn-primary"
           >
             Play Again
           </button>
@@ -69,7 +69,7 @@ export default function TranscriptionStation() {
   return (
     <GameLayout title="Transcription Station" score={score} progress={`${currentRound + 1}/${audioClips.length}`}>
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+        <div className="card p-8 mb-8">
           <p className="text-sm text-gray-600 mb-4">Listen to the audio clip and type exactly what you hear.</p>
           <div className="text-sm text-gray-500 mb-4">Hint: {currentClip.hint}</div>
 
@@ -89,13 +89,13 @@ export default function TranscriptionStation() {
               onChange={(e) => setUserInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && !feedback && handleSubmit()}
               placeholder="Type what you hear..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="input-primary"
               disabled={feedback !== null}
             />
           </div>
 
           {feedback && (
-            <div className={`p-4 rounded-lg mb-6 flex items-start gap-3 ${
+            <div className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${
               feedback === 'correct'
                 ? 'bg-green-50 border border-green-200'
                 : 'bg-red-50 border border-red-200'
@@ -125,14 +125,14 @@ export default function TranscriptionStation() {
               <button
                 onClick={handleSubmit}
                 disabled={!userInput.trim()}
-                className="flex-1 bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Submit
               </button>
             ) : (
               <button
                 onClick={handleNext}
-                className="flex-1 bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
+                className="btn-primary flex-1 flex items-center justify-center gap-2"
               >
                 Next <ChevronRight className="w-5 h-5" />
               </button>

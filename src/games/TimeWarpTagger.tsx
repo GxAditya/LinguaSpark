@@ -71,11 +71,11 @@ export default function TimeWarpTagger() {
     return (
       <GameLayout title="Time Warp Tagger">
         <div className="flex flex-col items-center justify-center py-16">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-6">
+          <div className="icon-container-lg mb-6">
             <Check className="w-12 h-12 text-green-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Game Complete!</h2>
-          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold text-orange-600">{score} / {questions.length * 10}</span></p>
+          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score} / {questions.length * 10}</span></p>
           <button
             onClick={() => {
               setCurrentRound(0);
@@ -83,7 +83,7 @@ export default function TimeWarpTagger() {
               setFeedback(null);
               setScore(0);
             }}
-            className="bg-orange-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+            className="btn-primary"
           >
             Play Again
           </button>
@@ -95,7 +95,7 @@ export default function TimeWarpTagger() {
   return (
     <GameLayout title="Time Warp Tagger" score={score} progress={`${currentRound + 1}/${questions.length}`}>
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+        <div className="card p-8 mb-8">
           <p className="text-sm text-gray-600 mb-8">Select the correct verb tense based on the time reference:</p>
 
           <div className="bg-violet-50 rounded-xl p-6 mb-4 border-2 border-violet-200">
@@ -130,7 +130,7 @@ export default function TimeWarpTagger() {
           </div>
 
           {feedback && (
-            <div className={`p-4 rounded-lg mb-6 flex items-start gap-3 ${
+            <div className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${
               feedback === 'correct'
                 ? 'bg-green-50 border border-green-200'
                 : 'bg-red-50 border border-red-200'
@@ -158,7 +158,7 @@ export default function TimeWarpTagger() {
           {feedback && (
             <button
               onClick={handleNext}
-              className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
+              className="btn-primary w-full flex items-center justify-center gap-2"
             >
               Next <ChevronRight className="w-5 h-5" />
             </button>

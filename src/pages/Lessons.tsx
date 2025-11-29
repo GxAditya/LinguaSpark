@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import DashboardHeader from '../components/DashboardHeader';
-import { BookOpen, Volume2, CheckCircle, Clock, Zap, ChevronRight, PlayCircle } from 'lucide-react';
+import { BookOpen, Volume2, CheckCircle, Clock, Zap, ChevronRight, PlayCircle, ChevronLeft } from 'lucide-react';
 
 interface Lesson {
   id: number;
@@ -14,7 +14,6 @@ interface Lesson {
 }
 
 export default function Lessons() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'lessons' | 'practice' | 'games'>('lessons');
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   const lessons: Lesson[] = [
@@ -98,11 +97,11 @@ export default function Lessons() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="w-5 h-5" />;
+        return <CheckCircle className="w-4 h-4" />;
       case 'in-progress':
-        return <Zap className="w-5 h-5" />;
+        return <Zap className="w-4 h-4" />;
       default:
-        return <Clock className="w-5 h-5" />;
+        return <Clock className="w-4 h-4" />;
     }
   };
 
@@ -121,31 +120,37 @@ export default function Lessons() {
 
   if (selectedLesson) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-        <DashboardHeader activeTab={activeTab} onTabChange={setActiveTab} userName="John Doe" />
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 relative overflow-hidden">
+        {/* Background glow effects */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
+        
+        <DashboardHeader userName="John Doe" />
 
-        <main className="max-w-4xl mx-auto px-6 py-12">
+        <main className="relative z-10 max-w-4xl mx-auto px-6 py-12">
           <button
             onClick={() => setSelectedLesson(null)}
-            className="flex items-center gap-2 text-orange-600 font-semibold mb-8 hover:gap-3 transition-all"
+            className="flex items-center gap-2 text-orange-600 font-semibold mb-8 hover:gap-3 transition-all group"
           >
-            <ChevronRight className="w-5 h-5 rotate-180" /> Back to Lessons
+            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back to Lessons
           </button>
 
-          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <div className="card p-8 mb-8">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">{selectedLesson.title}</h1>
-                <div className="flex items-center gap-4">
-                  <span className={`px-4 py-2 rounded-full font-semibold text-sm bg-gradient-to-r ${getLevelColor(selectedLesson.level)}`}>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{selectedLesson.title}</h1>
+                <div className="flex items-center gap-4 flex-wrap">
+                  <span className={`badge text-white bg-gradient-to-r ${getLevelColor(selectedLesson.level)}`}>
                     {selectedLesson.level}
                   </span>
-                  <span className="text-gray-600 flex items-center gap-2">
+                  <span className="text-gray-600 flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4" /> {selectedLesson.duration} minutes
                   </span>
                 </div>
               </div>
-              <PlayCircle className="w-16 h-16 text-orange-600" />
+              <div className="icon-container-orange w-16 h-16">
+                <PlayCircle className="w-8 h-8 text-orange-600" />
+              </div>
             </div>
 
             <p className="text-gray-600 text-lg mb-8">{selectedLesson.description}</p>
@@ -153,65 +158,70 @@ export default function Lessons() {
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Lesson Content</h3>
               <div className="space-y-4">
-                <div className="bg-blue-50 rounded-xl p-6 border-l-4 border-blue-500">
+                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 border-l-4 border-blue-500">
                   <div className="flex items-center gap-3 mb-2">
                     <Volume2 className="w-5 h-5 text-blue-600" />
                     <h4 className="font-semibold text-gray-900">Audio Listening</h4>
                   </div>
-                  <p className="text-gray-600 text-sm">Listen to native speakers demonstrating proper pronunciation and natural conversation flow.</p>
-                  <button className="mt-4 inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                  <p className="text-gray-600 text-sm mb-4">Listen to native speakers demonstrating proper pronunciation and natural conversation flow.</p>
+                  <button className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
                     <Volume2 className="w-4 h-4" /> Play Audio
                   </button>
                 </div>
 
-                <div className="bg-purple-50 rounded-xl p-6 border-l-4 border-purple-500">
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border-l-4 border-purple-500">
                   <div className="flex items-center gap-3 mb-2">
                     <BookOpen className="w-5 h-5 text-purple-600" />
                     <h4 className="font-semibold text-gray-900">Reading Material</h4>
                   </div>
-                  <p className="text-gray-600 text-sm">Read through curated content with vocabulary highlights and explanations to reinforce learning.</p>
-                  <button className="mt-4 inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+                  <p className="text-gray-600 text-sm mb-4">Read through curated content with vocabulary highlights and explanations to reinforce learning.</p>
+                  <button className="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-purple-700 transition-colors">
                     <BookOpen className="w-4 h-4" /> Read Lesson
                   </button>
                 </div>
 
-                <div className="bg-green-50 rounded-xl p-6 border-l-4 border-green-500">
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
                   <div className="flex items-center gap-3 mb-2">
                     <Zap className="w-5 h-5 text-green-600" />
                     <h4 className="font-semibold text-gray-900">Practice Exercises</h4>
                   </div>
-                  <p className="text-gray-600 text-sm">Complete interactive exercises to practice what you've learned and test your understanding.</p>
-                  <button className="mt-4 inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                  <p className="text-gray-600 text-sm mb-4">Complete interactive exercises to practice what you've learned and test your understanding.</p>
+                  <button className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-green-700 transition-colors">
                     <Zap className="w-4 h-4" /> Start Exercises
                   </button>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-6 mb-8">
+            <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-6 mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Progress</h3>
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-gray-700 font-medium">Completion:</span>
-                  <span className="text-2xl font-bold text-orange-600">{selectedLesson.progress}%</span>
+                  <span className="text-2xl font-bold text-gradient-brand">{selectedLesson.progress}%</span>
                 </div>
-                <div className="w-full bg-gray-300 rounded-full h-4 overflow-hidden">
+                <div className="progress-bar h-4">
                   <div
-                    className="bg-gradient-to-r from-orange-500 to-pink-500 h-full rounded-full transition-all"
+                    className="progress-bar-fill"
                     style={{ width: `${selectedLesson.progress}%` }}
                   ></div>
                 </div>
               </div>
               {selectedLesson.status === 'completed' && (
-                <p className="text-green-700 font-semibold">Lesson Completed! Excellent work!</p>
+                <p className="text-green-700 font-semibold flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5" /> Lesson Completed! Excellent work!
+                </p>
               )}
               {selectedLesson.status === 'in-progress' && (
-                <p className="text-blue-700 font-semibold">Continue where you left off to complete this lesson.</p>
+                <p className="text-blue-700 font-semibold flex items-center gap-2">
+                  <Zap className="w-5 h-5" /> Continue where you left off to complete this lesson.
+                </p>
               )}
             </div>
 
-            <button className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-4 rounded-lg font-semibold text-lg hover:shadow-lg transition-shadow">
+            <button className="w-full btn-primary-lg flex items-center justify-center gap-2">
               {selectedLesson.status === 'completed' ? 'Review Lesson' : 'Continue Lesson'}
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </main>
@@ -220,12 +230,19 @@ export default function Lessons() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <DashboardHeader activeTab={activeTab} onTabChange={setActiveTab} userName="John Doe" />
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 relative overflow-hidden">
+      {/* Background glow effects */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
+      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-to-r from-yellow-200 to-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000"></div>
+      
+      <DashboardHeader userName="John Doe" />
 
-      <main className="max-w-7xl mx-auto px-6 py-12">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         <div className="mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">AI-Generated Lessons</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+            AI-Generated <span className="text-gradient-brand">Lessons</span>
+          </h1>
           <p className="text-lg text-gray-600">Personalized lessons created by our AI to match your learning pace</p>
         </div>
 
@@ -234,10 +251,10 @@ export default function Lessons() {
             <button
               key={lesson.id}
               onClick={() => handleLessonClick(lesson)}
-              className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl hover:scale-105 transition-all duration-300 group text-left"
+              className="card-interactive p-6 text-left"
             >
               <div className="flex items-start justify-between mb-4">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-2 ${getStatusColor(lesson.status)}`}>
+                <span className={`badge flex items-center gap-2 ${getStatusColor(lesson.status)}`}>
                   {getStatusIcon(lesson.status)} {lesson.status === 'not-started' ? 'Start Now' : lesson.status === 'in-progress' ? 'Continue' : 'Completed'}
                 </span>
               </div>
@@ -245,8 +262,8 @@ export default function Lessons() {
               <h3 className="text-lg font-bold text-gray-900 mb-2">{lesson.title}</h3>
               <p className="text-sm text-gray-600 mb-4">{lesson.topic}</p>
 
-              <div className="flex items-center gap-2 mb-4">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${getLevelColor(lesson.level)}`}>
+              <div className="flex items-center gap-2 mb-4 flex-wrap">
+                <span className={`badge text-white bg-gradient-to-r ${getLevelColor(lesson.level)}`}>
                   {lesson.level}
                 </span>
                 <span className="text-xs text-gray-600 flex items-center gap-1">
@@ -255,9 +272,9 @@ export default function Lessons() {
               </div>
 
               <div className="mb-4">
-                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div className="progress-bar h-2">
                   <div
-                    className="bg-gradient-to-r from-orange-500 to-pink-500 h-full rounded-full transition-all"
+                    className="progress-bar-fill"
                     style={{ width: `${lesson.progress}%` }}
                   ></div>
                 </div>

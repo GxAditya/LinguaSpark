@@ -53,11 +53,11 @@ export default function SecretWordSolver() {
     return (
       <GameLayout title="Secret Word Solver">
         <div className="flex flex-col items-center justify-center py-16">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-6">
+          <div className="icon-container-lg mb-6">
             <Check className="w-12 h-12 text-green-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Game Complete!</h2>
-          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold text-orange-600">{score} / {words.length * 10}</span></p>
+          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score} / {words.length * 10}</span></p>
           <button
             onClick={() => {
               setCurrentRound(0);
@@ -66,7 +66,7 @@ export default function SecretWordSolver() {
               setFeedback(null);
               setScore(0);
             }}
-            className="bg-orange-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+            className="btn-primary"
           >
             Play Again
           </button>
@@ -78,7 +78,7 @@ export default function SecretWordSolver() {
   return (
     <GameLayout title="Secret Word Solver" score={score} progress={`${currentRound + 1}/${words.length}`}>
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+        <div className="card p-8 mb-8">
           <div className="mb-8">
             <div className="text-center mb-6">
               <div className="text-5xl font-bold tracking-widest text-gray-900 mb-4 font-mono">
@@ -154,7 +154,7 @@ export default function SecretWordSolver() {
           {(isWordComplete || isGameOver) && (
             <button
               onClick={handleNext}
-              className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
+              className="btn-primary w-full flex items-center justify-center gap-2"
             >
               Next <ChevronRight className="w-5 h-5" />
             </button>

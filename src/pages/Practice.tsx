@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import DashboardHeader from '../components/DashboardHeader';
-import { MessageCircle, Mic, Send, ChevronRight, Users, Target, Brain } from 'lucide-react';
+import { MessageCircle, Mic, Send, ChevronRight, ChevronLeft, Users, Target, Brain } from 'lucide-react';
 
 interface Scenario {
   id: number;
@@ -20,7 +20,6 @@ interface Message {
 }
 
 export default function Practice() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'lessons' | 'practice' | 'games'>('practice');
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -150,31 +149,35 @@ export default function Practice() {
 
   if (selectedScenario) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex flex-col">
-        <DashboardHeader activeTab={activeTab} onTabChange={setActiveTab} userName="John Doe" />
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex flex-col relative overflow-hidden">
+        {/* Background glow effects */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
+        
+        <DashboardHeader userName="John Doe" />
 
-        <main className="flex-1 max-w-4xl mx-auto w-full px-6 py-12 flex flex-col">
+        <main className="relative z-10 flex-1 max-w-4xl mx-auto w-full px-6 py-12 flex flex-col">
           <button
             onClick={() => setSelectedScenario(null)}
-            className="flex items-center gap-2 text-orange-600 font-semibold mb-8 hover:gap-3 transition-all"
+            className="flex items-center gap-2 text-orange-600 font-semibold mb-8 hover:gap-3 transition-all group"
           >
-            <ChevronRight className="w-5 h-5 rotate-180" /> Back to Scenarios
+            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back to Scenarios
           </button>
 
-          <div className="flex-1 bg-white rounded-2xl shadow-lg p-8 flex flex-col mb-6">
+          <div className="card flex-1 p-8 flex flex-col mb-6">
             <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-900">{selectedScenario.title}</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{selectedScenario.title}</h2>
               <p className="text-gray-600 mt-2">{selectedScenario.description}</p>
             </div>
 
-            <div className="flex-1 overflow-y-auto mb-6 space-y-4 bg-gray-50 rounded-xl p-4" style={{ maxHeight: '400px' }}>
+            <div className="flex-1 overflow-y-auto mb-6 space-y-4 bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-4" style={{ maxHeight: '400px' }}>
               {messages.map((message) => (
                 <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div
-                    className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
+                    className={`max-w-xs lg:max-w-md px-4 py-3 ${
                       message.type === 'user'
-                        ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-br-none'
-                        : 'bg-gray-200 text-gray-900 rounded-bl-none'
+                        ? 'chat-bubble-user'
+                        : 'chat-bubble-ai'
                     }`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{message.text}</p>
@@ -204,18 +207,18 @@ export default function Practice() {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Type your response in Spanish..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                className="input-primary"
               />
               <button
                 onClick={handleSendMessage}
-                className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-shadow flex items-center gap-2"
+                className="btn-primary-md flex items-center gap-2"
               >
                 <Send className="w-5 h-5" /> Send
               </button>
             </div>
           </div>
 
-          <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+          <div className="alert-info">
             <h4 className="font-semibold text-blue-900 mb-2">Tips for this scenario:</h4>
             <ul className="text-sm text-blue-800 space-y-1">
               <li>• Speak clearly and naturally</li>
@@ -230,12 +233,19 @@ export default function Practice() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <DashboardHeader activeTab={activeTab} onTabChange={setActiveTab} userName="John Doe" />
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 relative overflow-hidden">
+      {/* Background glow effects */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
+      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-to-r from-yellow-200 to-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000"></div>
+      
+      <DashboardHeader userName="John Doe" />
 
-      <main className="max-w-7xl mx-auto px-6 py-12">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         <div className="mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Scenario-Based Practice</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+            Scenario-Based <span className="text-gradient-brand">Practice</span>
+          </h1>
           <p className="text-lg text-gray-600">Have real conversations with our AI partner in various real-world situations</p>
         </div>
 
@@ -244,13 +254,13 @@ export default function Practice() {
             <button
               key={scenario.id}
               onClick={() => handleStartScenario(scenario)}
-              className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl hover:scale-105 transition-all duration-300 group text-left"
+              className="card-interactive p-6 text-left"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-100 to-pink-100 flex items-center justify-center text-orange-600 group-hover:scale-110 transition-transform">
+                <div className="icon-container-orange w-12 h-12 text-orange-600 group-hover:scale-110">
                   {scenario.icon}
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${getDifficultyColor(scenario.difficulty)}`}>
+                <span className={`badge text-white bg-gradient-to-r ${getDifficultyColor(scenario.difficulty)}`}>
                   {scenario.difficulty}
                 </span>
               </div>
@@ -260,7 +270,7 @@ export default function Practice() {
 
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-600">~{scenario.duration} minutes</span>
-                <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-1 rounded-full">{scenario.topic}</span>
+                <span className="badge bg-gray-100 text-gray-600">{scenario.topic}</span>
               </div>
 
               <div className="flex items-center gap-2 text-orange-600 font-semibold text-sm group-hover:gap-3 transition-all mt-4">
@@ -270,40 +280,40 @@ export default function Practice() {
           ))}
         </div>
 
-        <div className="mt-16 bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">How Practice Works</h2>
+        <div className="card p-8 mt-16">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">How Practice Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
-                  <MessageCircle className="h-6 w-6" />
+                <div className="icon-container-orange w-12 h-12">
+                  <MessageCircle className="h-6 w-6 text-orange-600" />
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-medium text-gray-900">1. Choose a Scenario</h3>
-                <p className="mt-2 text-gray-600">Select a real-world conversation scenario that interests you.</p>
+                <h3 className="text-lg font-semibold text-gray-900">1. Choose a Scenario</h3>
+                <p className="mt-2 text-sm text-gray-600">Select a real-world conversation scenario that interests you.</p>
               </div>
             </div>
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-pink-500 text-white">
-                  <Mic className="h-6 w-6" />
+                <div className="icon-container-pink w-12 h-12">
+                  <Mic className="h-6 w-6 text-pink-600" />
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-medium text-gray-900">2. Respond & Practice</h3>
-                <p className="mt-2 text-gray-600">Type or speak your responses. Our AI provides instant feedback.</p>
+                <h3 className="text-lg font-semibold text-gray-900">2. Respond & Practice</h3>
+                <p className="mt-2 text-sm text-gray-600">Type or speak your responses. Our AI provides instant feedback.</p>
               </div>
             </div>
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-purple-500 text-white">
-                  <Target className="h-6 w-6" />
+                <div className="icon-container-purple w-12 h-12">
+                  <Target className="h-6 w-6 text-purple-600" />
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-medium text-gray-900">3. Learn & Improve</h3>
-                <p className="mt-2 text-gray-600">Get corrections and alternative phrases to expand your vocabulary.</p>
+                <h3 className="text-lg font-semibold text-gray-900">3. Learn & Improve</h3>
+                <p className="mt-2 text-sm text-gray-600">Get corrections and alternative phrases to expand your vocabulary.</p>
               </div>
             </div>
           </div>
