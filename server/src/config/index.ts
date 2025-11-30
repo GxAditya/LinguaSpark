@@ -5,7 +5,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.join(__dirname, '../.env') });
+// Go up two directories from src/config to reach server/, where .env is located
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 interface Config {
   port: number;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { gameService, GameType, Difficulty, GameSession } from '../services/game.service';
 
 interface UseGameSessionOptions {
@@ -42,17 +42,24 @@ interface UseGameSessionReturn {
   setShowExitConfirm: (show: boolean) => void;
   confirmExit: () => Promise<void>;
   cancelExit: () => void;
+  
+  // Language info
+  targetLanguage: string;
 }
 
 export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameType): UseGameSessionReturn {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   // Support both string (gameType) and object (options) parameters
   const options: UseGameSessionOptions = typeof optionsOrGameType === 'string'
     ? { gameType: optionsOrGameType }
     : optionsOrGameType;
 
-  const { gameType, difficulty = 'beginner', targetLanguage = 'spanish', topic } = options;
+  // Get language from URL query param, falling back to options or default
+  const urlLanguage = searchParams.get('language');
+  const { gameType, difficulty = 'beginner', targetLanguage: optionsLanguage = 'spanish', topic } = options;
+  const targetLanguage = urlLanguage || optionsLanguage;
 
   const [session, setSession] = useState<GameSession | null>(null);
   const [loading, setLoading] = useState(true);
@@ -254,5 +261,6 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
     setShowExitConfirm,
     confirmExit,
     cancelExit,
+    targetLanguage,
   };
 }

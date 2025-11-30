@@ -609,12 +609,23 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
     ];
 
     let response: string;
-    // Use Pollinations as primary, Groq as fallback (if API key is configured)
-    try {
-      response = await callPollinations(messages);
-    } catch (pollinationsError) {
-      console.error('Pollinations API failed, trying Groq:', pollinationsError);
-      response = await callGroq(messages);
+    // For image-instinct, use Pollinations only (for image generation compatibility)
+    // For all other games, use Groq as primary with Pollinations as fallback
+    if (gameType === 'image-instinct') {
+      try {
+        response = await callPollinations(messages);
+      } catch (pollinationsError) {
+        console.error('Pollinations API failed for image-instinct:', pollinationsError);
+        throw pollinationsError; // Will fall through to fallback content
+      }
+    } else {
+      // Use Groq as primary, Pollinations as fallback for all other games
+      try {
+        response = await callGroq(messages);
+      } catch (groqError) {
+        console.error('Groq API failed, trying Pollinations:', groqError);
+        response = await callPollinations(messages);
+      }
     }
 
     let parsed = parseGameContent(response, gameType);

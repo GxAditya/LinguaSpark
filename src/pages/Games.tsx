@@ -1,7 +1,23 @@
+import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
-import { Headphones, BookOpen, Grid3X3, Shuffle, Award, Zap, RotateCcw, FileText, BarChart3, Clock, ChevronRight, Loader2 } from 'lucide-react';
+import { Headphones, BookOpen, Grid3X3, Shuffle, Award, Zap, RotateCcw, FileText, BarChart3, Clock, ChevronRight, Loader2, Globe, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context';
+
+const languages = [
+  { code: 'spanish', name: 'Spanish', flag: '🇪🇸' },
+  { code: 'french', name: 'French', flag: '🇫🇷' },
+  { code: 'german', name: 'German', flag: '🇩🇪' },
+  { code: 'italian', name: 'Italian', flag: '🇮🇹' },
+  { code: 'portuguese', name: 'Portuguese', flag: '🇵🇹' },
+  { code: 'japanese', name: 'Japanese', flag: '🇯🇵' },
+  { code: 'korean', name: 'Korean', flag: '🇰🇷' },
+  { code: 'chinese', name: 'Chinese', flag: '🇨🇳' },
+  { code: 'arabic', name: 'Arabic', flag: '🇸🇦' },
+  { code: 'hindi', name: 'Hindi', flag: '🇮🇳' },
+  { code: 'russian', name: 'Russian', flag: '🇷🇺' },
+  { code: 'dutch', name: 'Dutch', flag: '🇳🇱' },
+];
 
 const games = [
   {
@@ -108,6 +124,10 @@ const games = [
 
 export default function Games() {
   const { user, isLoading, isAuthenticated } = useAuth();
+  const [selectedLanguage, setSelectedLanguage] = useState('spanish');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const currentLanguage = languages.find(l => l.code === selectedLanguage) || languages[0];
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -134,10 +154,57 @@ export default function Games() {
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-content-primary mb-3">
-            Language Learning <span className="text-content-primary">Games</span>
-          </h1>
-          <p className="text-lg text-content-secondary">Master your skills through fun, interactive games</p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3">
+            <h1 className="text-4xl md:text-5xl font-bold text-content-primary">
+              Language Learning <span className="text-content-primary">Games</span>
+            </h1>
+            
+            {/* Language Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-3 px-4 py-2.5 bg-surface-base border border-border-base rounded-xl shadow-sm hover:shadow-md hover:border-border-strong transition-all duration-200"
+              >
+                <Globe className="w-5 h-5 text-orange-500" />
+                <span className="text-2xl">{currentLanguage.flag}</span>
+                <span className="font-medium text-content-primary">{currentLanguage.name}</span>
+                <ChevronDown className={`w-4 h-4 text-content-secondary transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {isDropdownOpen && (
+                <>
+                  {/* Backdrop to close dropdown */}
+                  <div 
+                    className="fixed inset-0 z-10" 
+                    onClick={() => setIsDropdownOpen(false)}
+                  />
+                  
+                  {/* Dropdown menu */}
+                  <div className="absolute right-0 mt-2 w-56 bg-surface-base border border-border-base rounded-xl shadow-lg z-20 py-2 max-h-80 overflow-y-auto">
+                    {languages.map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          setSelectedLanguage(lang.code);
+                          setIsDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-orange-50 transition-colors ${
+                          selectedLanguage === lang.code ? 'bg-orange-50 text-orange-600' : 'text-content-primary'
+                        }`}
+                      >
+                        <span className="text-xl">{lang.flag}</span>
+                        <span className="font-medium">{lang.name}</span>
+                        {selectedLanguage === lang.code && (
+                          <span className="ml-auto text-orange-500">✓</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+          <p className="text-lg text-content-secondary">Master your skills through fun, interactive games • Learning <span className="font-semibold text-orange-600">{currentLanguage.name}</span></p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -146,7 +213,7 @@ export default function Games() {
             return (
               <Link
                 key={game.id}
-                to={`/games/${game.id}`}
+                to={`/games/${game.id}?language=${selectedLanguage}`}
                 className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm hover:shadow-md hover:border-border-strong transition-all duration-200 group"
               >
                 <div className={`w-14 h-14 rounded-lg border flex items-center justify-center mb-4 group-hover:scale-105 transition-transform ${game.bgColor.replace('to-', 'border-').replace('100', '200').replace('from-', 'bg-').split(' ')[0] + ' ' + game.bgColor.replace('to-', 'border-').replace('100', '200').replace('from-', 'bg-').split(' ')[0].replace('bg-', 'border-')
