@@ -9,6 +9,12 @@ const LANGUAGE_OPTIONS = [
   { value: 'spanish', label: 'Spanish' },
   { value: 'french', label: 'French' },
   { value: 'hindi', label: 'Hindi' },
+  { value: 'mandarin', label: 'Mandarin Chinese' },
+  { value: 'arabic', label: 'Arabic' },
+  { value: 'bengali', label: 'Bengali' },
+  { value: 'portuguese', label: 'Portuguese' },
+  { value: 'russian', label: 'Russian' },
+  { value: 'japanese', label: 'Japanese' },
 ];
 
 export default function Lessons() {

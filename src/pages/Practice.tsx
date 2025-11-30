@@ -24,6 +24,12 @@ const LANGUAGE_OPTIONS: Array<{ value: PracticeLanguage; label: string }> = [
   { value: 'spanish', label: 'Spanish' },
   { value: 'french', label: 'French' },
   { value: 'hindi', label: 'Hindi' },
+  { value: 'mandarin', label: 'Mandarin Chinese' },
+  { value: 'arabic', label: 'Arabic' },
+  { value: 'bengali', label: 'Bengali' },
+  { value: 'portuguese', label: 'Portuguese' },
+  { value: 'russian', label: 'Russian' },
+  { value: 'japanese', label: 'Japanese' },
 ];
 
 const ICON_MAP: Record<'users' | 'target' | 'message' | 'brain', React.ReactNode> = {
@@ -34,7 +40,10 @@ const ICON_MAP: Record<'users' | 'target' | 'message' | 'brain', React.ReactNode
 };
 
 const resolveLanguage = (value?: string): PracticeLanguage => {
-  if (value === 'french' || value === 'hindi') return value;
+  const validLanguages: PracticeLanguage[] = ['spanish', 'french', 'hindi', 'mandarin', 'arabic', 'bengali', 'portuguese', 'russian', 'japanese'];
+  if (value && validLanguages.includes(value as PracticeLanguage)) {
+    return value as PracticeLanguage;
+  }
   return 'spanish';
 };
 

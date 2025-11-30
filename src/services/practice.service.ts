@@ -1,6 +1,6 @@
 import { api } from './api';
 
-export type PracticeLanguage = 'spanish' | 'french' | 'hindi';
+export type PracticeLanguage = 'spanish' | 'french' | 'hindi' | 'mandarin' | 'arabic' | 'bengali' | 'portuguese' | 'russian' | 'japanese';
 export type PracticeProvider = 'groq' | 'pollinations';
 export type PracticeSessionStatus = 'active' | 'completed' | 'abandoned';
 

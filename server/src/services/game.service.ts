@@ -30,7 +30,7 @@ interface ChatMessage {
 }
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'llama3-70b-8192';
+const GROQ_MODEL = 'llama-3.1-8b-instant';
 // Pollinations OpenAI-compatible endpoint: https://text.pollinations.ai/openai
 const POLLINATIONS_CHAT_URL = 'https://text.pollinations.ai/openai';
 // Pollinations Image Generation: https://image.pollinations.ai/prompt/{prompt}
