@@ -1,23 +1,47 @@
 import React, { useState } from 'react';
 import { ChevronRight, Volume2, Check, X } from 'lucide-react';
 import GameLayout from '../components/GameLayout';
+import { useGameSession } from '../hooks/useGameSession';
+import { GameLoading, GameError } from '../components/GameStates';
+import ExitConfirmModal from '../components/ExitConfirmModal';
+
+interface AudioClip {
+  id: number;
+  text: string;
+  hint: string;
+}
+
+interface TranscriptionStationContent {
+  audioClips: AudioClip[];
+}
 
 export default function TranscriptionStation() {
+  const {
+    session,
+    loading,
+    error,
+    showExitConfirm,
+    setShowExitConfirm,
+    submitAnswer,
+    completeGame,
+    confirmExit,
+    cancelExit,
+    startNewGame
+  } = useGameSession('transcription-station');
+
   const [currentRound, setCurrentRound] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [score, setScore] = useState(0);
 
-  const audioClips = [
-    { id: 1, text: 'The quick brown fox jumps over the lazy dog', hint: 'Common phrase' },
-    { id: 2, text: 'I love learning new languages every day', hint: 'About learning' },
-    { id: 3, text: 'Where is the nearest train station', hint: 'Travel question' },
-    { id: 4, text: 'Can you help me find my keys', hint: 'Lost item' },
-    { id: 5, text: 'She speaks three languages fluently', hint: 'About languages' }
-  ];
-
+  const content = session?.content as TranscriptionStationContent | undefined;
+  const audioClips = content?.audioClips || [];
   const currentClip = audioClips[currentRound];
   const isComplete = currentRound >= audioClips.length;
+
+  if (loading) return <GameLoading gameName="Transcription Station" />;
+  if (error) return <GameError error={error} onRetry={startNewGame} />;
+  if (!session || !content) return <GameLoading gameName="Transcription Station" />;
 
   const handlePlayAudio = () => {
     const utterance = new SpeechSynthesisUtterance(currentClip.text);
@@ -25,18 +49,29 @@ export default function TranscriptionStation() {
     window.speechSynthesis.speak(utterance);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const isCorrect = userInput.toLowerCase().trim() === currentClip.text.toLowerCase().trim();
     setFeedback(isCorrect ? 'correct' : 'incorrect');
 
+    const points = isCorrect ? 10 : 0;
     if (isCorrect) {
-      setScore(score + 10);
+      setScore(score + points);
     }
+
+    await submitAnswer({
+      clipId: currentClip.id,
+      userInput,
+      correct: isCorrect,
+      points
+    });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setUserInput('');
     setFeedback(null);
+    if (currentRound + 1 >= audioClips.length) {
+      await completeGame();
+    }
     setCurrentRound(currentRound + 1);
   };
 
@@ -51,12 +86,7 @@ export default function TranscriptionStation() {
           <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score} / {audioClips.length * 10}</span></p>
           <p className="text-gray-600 mb-8">Great job! You've completed all transcriptions.</p>
           <button
-            onClick={() => {
-              setCurrentRound(0);
-              setUserInput('');
-              setFeedback(null);
-              setScore(0);
-            }}
+            onClick={startNewGame}
             className="btn-primary"
           >
             Play Again
@@ -68,6 +98,11 @@ export default function TranscriptionStation() {
 
   return (
     <GameLayout title="Transcription Station" score={score} progress={`${currentRound + 1}/${audioClips.length}`}>
+      <ExitConfirmModal
+        isOpen={showExitConfirm}
+        onConfirm={confirmExit}
+        onCancel={cancelExit}
+      />
       <div className="max-w-2xl mx-auto">
         <div className="card p-8 mb-8">
           <p className="text-sm text-gray-600 mb-4">Listen to the audio clip and type exactly what you hear.</p>

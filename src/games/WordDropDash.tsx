@@ -1,26 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Check } from 'lucide-react';
 import GameLayout from '../components/GameLayout';
+import { useGameSession } from '../hooks/useGameSession';
+import { GameLoading, GameError } from '../components/GameStates';
+import ExitConfirmModal from '../components/ExitConfirmModal';
+
+interface Round {
+  words: string[];
+  targets: string[];
+  timeLimit: number;
+}
+
+interface WordDropDashContent {
+  rounds: Round[];
+}
 
 export default function WordDropDash() {
+  const {
+    session,
+    loading,
+    error,
+    showExitConfirm,
+    setShowExitConfirm,
+    submitAnswer,
+    completeGame,
+    confirmExit,
+    cancelExit,
+    startNewGame
+  } = useGameSession('word-drop-dash');
+
   const [currentRound, setCurrentRound] = useState(0);
   const [score, setScore] = useState(0);
   const [roundComplete, setRoundComplete] = useState(false);
 
-  const rounds = [
-    {
-      words: ['Cat', 'Dog', 'Bird'],
-      targets: ['🐱', '🐕', '🐦'],
-      timeLimit: 30
-    },
-    {
-      words: ['Red', 'Blue', 'Green'],
-      targets: ['🔴', '🔵', '🟢'],
-      timeLimit: 25
-    }
-  ];
-
+  const content = session?.content as WordDropDashContent | undefined;
+  const rounds = content?.rounds || [];
   const isComplete = currentRound >= rounds.length;
+
+  if (loading) return <GameLoading gameName="Word Drop Dash" />;
+  if (error) return <GameError error={error} onRetry={startNewGame} />;
+  if (!session || !content) return <GameLoading gameName="Word Drop Dash" />;
 
   if (isComplete) {
     return (
@@ -32,11 +51,7 @@ export default function WordDropDash() {
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Game Complete!</h2>
           <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score}</span></p>
           <button
-            onClick={() => {
-              setCurrentRound(0);
-              setScore(0);
-              setRoundComplete(false);
-            }}
+            onClick={startNewGame}
             className="btn-primary"
           >
             Play Again
@@ -46,13 +61,33 @@ export default function WordDropDash() {
     );
   }
 
-  const handleScore = () => {
-    setScore(score + 10);
+  const handleScore = async () => {
+    const points = 10;
+    setScore(score + points);
     setRoundComplete(true);
+
+    await submitAnswer({
+      roundIndex: currentRound,
+      correct: true,
+      points
+    });
+  };
+
+  const handleNext = async () => {
+    if (currentRound + 1 >= rounds.length) {
+      await completeGame();
+    }
+    setCurrentRound(currentRound + 1);
+    setRoundComplete(false);
   };
 
   return (
     <GameLayout title="Word Drop Dash" score={score} progress={`${currentRound + 1}/${rounds.length}`}>
+      <ExitConfirmModal
+        isOpen={showExitConfirm}
+        onConfirm={confirmExit}
+        onCancel={cancelExit}
+      />
       <div className="max-w-2xl mx-auto">
         <div className="card p-8 mb-8">
           <p className="text-sm text-gray-600 mb-8">Drag falling words to match with the correct target!</p>
@@ -87,10 +122,7 @@ export default function WordDropDash() {
             </button>
           ) : (
             <button
-              onClick={() => {
-                setCurrentRound(currentRound + 1);
-                setRoundComplete(false);
-              }}
+              onClick={handleNext}
               className="btn-primary w-full flex items-center justify-center gap-2"
             >
               Next <ChevronRight className="w-5 h-5" />

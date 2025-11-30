@@ -9,3 +9,9 @@ export type { IUserLessonProgress, IContentProgress, IExerciseProgress } from '.
 
 export { default as PracticeSession } from './PracticeSession.model.js';
 export type { IPracticeSession, IPracticeMessage } from './PracticeSession.model.js';
+
+export { GameSession } from './GameSession.model.js';
+export type { IGameSession, GameType, GameStatus, GameContent } from './GameSession.model.js';
+
+export { RateLimit } from './RateLimit.model.js';
+export type { IRateLimitEntry } from './RateLimit.model.js';

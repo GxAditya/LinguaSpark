@@ -1,4 +1,18 @@
-import { body, ValidationChain } from 'express-validator';
+import { body, ValidationChain, validationResult } from 'express-validator';
+import { Request, Response, NextFunction } from 'express';
+import { sendError } from '../utils/response.utils.js';
+
+/**
+ * Middleware to handle validation errors from express-validator
+ */
+export const handleValidation = (req: Request, res: Response, next: NextFunction): void => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    sendError(res, 400, 'Validation failed', errors.array());
+    return;
+  }
+  next();
+};
 
 export const registerValidation: ValidationChain[] = [
   body('name')

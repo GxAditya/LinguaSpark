@@ -7,6 +7,7 @@ import userRoutes from './routes/user.routes.js';
 import lessonRoutes from './routes/lesson.routes.js';
 import ttsRoutes from './routes/tts.routes.js';
 import practiceRoutes from './routes/practice.routes.js';
+import gameRoutes from './routes/game.routes.js';
 import { errorHandler, notFound } from './middleware/error.middleware.js';
 import { seedLessons } from './data/lessons.seed.js';
 
@@ -41,6 +42,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/tts', ttsRoutes);
 app.use('/api/practice', practiceRoutes);
+app.use('/api/games', gameRoutes);
 
 // Error handling
 app.use(notFound);

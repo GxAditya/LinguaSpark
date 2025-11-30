@@ -1,41 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ChevronRight, Volume2, Check, X } from 'lucide-react';
 import GameLayout from '../components/GameLayout';
+import { useGameSession } from '../hooks/useGameSession';
+import { GameLoading, GameError } from '../components/GameStates';
+import ExitConfirmModal from '../components/ExitConfirmModal';
+
+interface Sentence {
+  id: number;
+  text: string;
+  words: string[];
+  correctOrder: number[];
+}
+
+interface AudioJumbleContent {
+  sentences: Sentence[];
+}
 
 export default function AudioJumble() {
+  const {
+    session,
+    loading,
+    error,
+    showExitConfirm,
+    setShowExitConfirm,
+    submitAnswer,
+    completeGame,
+    confirmExit,
+    cancelExit,
+    startNewGame
+  } = useGameSession('audio-jumble');
+
   const [currentRound, setCurrentRound] = useState(0);
   const [selectedOrder, setSelectedOrder] = useState<number[]>([]);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [score, setScore] = useState(0);
 
-  const sentences = [
-    {
-      id: 1,
-      text: 'The cat sits on the mat',
-      words: ['The', 'cat', 'sits', 'on', 'the', 'mat'],
-      correctOrder: [0, 1, 2, 3, 4, 5]
-    },
-    {
-      id: 2,
-      text: 'I enjoy reading books every day',
-      words: ['I', 'enjoy', 'reading', 'books', 'every', 'day'],
-      correctOrder: [0, 1, 2, 3, 4, 5]
-    },
-    {
-      id: 3,
-      text: 'She walks to school in the morning',
-      words: ['She', 'walks', 'to', 'school', 'in', 'the', 'morning'],
-      correctOrder: [0, 1, 2, 3, 4, 5, 6]
-    }
-  ];
-
+  const content = session?.content as AudioJumbleContent | undefined;
+  const sentences = content?.sentences || [];
   const currentSentence = sentences[currentRound];
-  const [shuffledIndices] = useState(() => {
+
+  const shuffledIndices = useMemo(() => {
+    if (!currentSentence) return [];
     const indices = Array.from({ length: currentSentence.words.length }, (_, i) => i);
     return indices.sort(() => Math.random() - 0.5);
-  });
+  }, [currentSentence]);
 
   const isComplete = currentRound >= sentences.length;
+
+  if (loading) return <GameLoading gameName="Audio Jumble" />;
+  if (error) return <GameError error={error} onRetry={startNewGame} />;
+  if (!session || !content) return <GameLoading gameName="Audio Jumble" />;
 
   const handlePlayWord = (index: number) => {
     const utterance = new SpeechSynthesisUtterance(currentSentence.words[index]);
@@ -51,18 +65,29 @@ export default function AudioJumble() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const isCorrect = JSON.stringify(selectedOrder) === JSON.stringify(currentSentence.correctOrder);
     setFeedback(isCorrect ? 'correct' : 'incorrect');
 
+    const points = isCorrect ? 10 : 0;
     if (isCorrect) {
-      setScore(score + 10);
+      setScore(score + points);
     }
+
+    await submitAnswer({
+      sentenceId: currentSentence.id,
+      selectedOrder,
+      correct: isCorrect,
+      points
+    });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setSelectedOrder([]);
     setFeedback(null);
+    if (currentRound + 1 >= sentences.length) {
+      await completeGame();
+    }
     setCurrentRound(currentRound + 1);
   };
 
@@ -76,12 +101,7 @@ export default function AudioJumble() {
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Game Complete!</h2>
           <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score} / {sentences.length * 10}</span></p>
           <button
-            onClick={() => {
-              setCurrentRound(0);
-              setSelectedOrder([]);
-              setFeedback(null);
-              setScore(0);
-            }}
+            onClick={startNewGame}
             className="btn-primary"
           >
             Play Again
@@ -93,6 +113,11 @@ export default function AudioJumble() {
 
   return (
     <GameLayout title="Audio Jumble" score={score} progress={`${currentRound + 1}/${sentences.length}`}>
+      <ExitConfirmModal
+        isOpen={showExitConfirm}
+        onConfirm={confirmExit}
+        onCancel={cancelExit}
+      />
       <div className="max-w-2xl mx-auto">
         <div className="card p-8 mb-8">
           <p className="text-sm text-gray-600 mb-6">Arrange the words in the correct order. Click each word to hear it.</p>

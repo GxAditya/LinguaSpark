@@ -24,3 +24,13 @@ export type {
   PracticeProvider,
   PracticeSessionStatus,
 } from './practice.service';
+export { gameService } from './game.service';
+export type {
+  GameType,
+  Difficulty,
+  GameSession,
+  GameHistoryItem,
+  GameStats,
+  RateLimitStatus,
+  StartGameOptions,
+} from './game.service';
