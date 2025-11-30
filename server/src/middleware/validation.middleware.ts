@@ -71,3 +71,23 @@ export const changePasswordValidation: ValidationChain[] = [
     .matches(/\d/)
     .withMessage('New password must contain at least one number'),
 ];
+
+export const startPracticeSessionValidation: ValidationChain[] = [
+  body('scenarioId')
+    .trim()
+    .notEmpty()
+    .withMessage('Scenario ID is required'),
+  body('provider')
+    .optional()
+    .isIn(['groq', 'pollinations'])
+    .withMessage('Provider must be either "groq" or "pollinations"'),
+];
+
+export const practiceMessageValidation: ValidationChain[] = [
+  body('message')
+    .isString()
+    .withMessage('Message must be a string')
+    .trim()
+    .isLength({ min: 1, max: 1000 })
+    .withMessage('Message must be between 1 and 1000 characters'),
+];
