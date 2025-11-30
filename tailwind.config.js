@@ -31,13 +31,15 @@ export default {
           'secondary-fg': '#18181b',
         },
         brand: {
-          primary: '#ea580c',
+          primary: '#ea580c',        // Orange - main brand color
           'primary-hover': '#c2410c',
           'primary-light': '#fff7ed',
           'primary-border': '#ffedd5',
-          secondary: '#4f46e5',
-          'secondary-light': '#eef2ff',
-          'secondary-border': '#e0e7ff',
+          secondary: '#18181b',      // Black/dark - secondary brand color
+          'secondary-light': '#fafafa',
+          'secondary-border': '#e4e4e7',
+          accent: '#f97316',         // Lighter orange for accents
+          'accent-light': '#fed7aa',
         },
         // Keep utility scales for specific needs
         zinc: {
@@ -66,21 +68,21 @@ export default {
         },
       },
       backgroundImage: {
-        // Page backgrounds
-        'gradient-page': 'linear-gradient(to bottom right, rgb(255, 247, 237), rgb(253, 242, 248), rgb(250, 245, 255))',
-        'gradient-hero': 'linear-gradient(to bottom right, rgb(255, 247, 237), rgb(253, 242, 248), rgb(250, 245, 255))',
-        // Button gradients
-        'gradient-primary': 'linear-gradient(to right, #f97316, #ec4899)',
-        'gradient-primary-hover': 'linear-gradient(to right, #ea580c, #db2777)',
-        'gradient-text': 'linear-gradient(to right, #1f2937, #f97316, #ec4899)',
-        // Card accents
-        'gradient-card-orange': 'linear-gradient(to bottom right, #ffedd5, #fce7f3)',
-        'gradient-card-pink': 'linear-gradient(to bottom right, #fce7f3, #fdf2f8)',
-        'gradient-card-purple': 'linear-gradient(to bottom right, #f3e8ff, #faf5ff)',
+        // Page backgrounds - orange/amber based
+        'gradient-page': 'linear-gradient(to bottom right, rgb(255, 247, 237), rgb(254, 243, 199), rgb(255, 251, 235))',
+        'gradient-hero': 'linear-gradient(to bottom right, rgb(255, 247, 237), rgb(254, 243, 199), rgb(255, 251, 235))',
+        // Button gradients - orange based
+        'gradient-primary': 'linear-gradient(to right, #f97316, #ea580c)',
+        'gradient-primary-hover': 'linear-gradient(to right, #ea580c, #c2410c)',
+        'gradient-text': 'linear-gradient(to right, #1f2937, #f97316, #ea580c)',
+        // Card accents - orange/amber based
+        'gradient-card-orange': 'linear-gradient(to bottom right, #ffedd5, #fef3c7)',
+        'gradient-card-amber': 'linear-gradient(to bottom right, #fef3c7, #fffbeb)',
+        'gradient-card-warm': 'linear-gradient(to bottom right, #fff7ed, #fef3c7)',
         'gradient-card-blue': 'linear-gradient(to bottom right, #dbeafe, #e0f2fe)',
         'gradient-card-green': 'linear-gradient(to bottom right, #dcfce7, #d1fae5)',
-        // CTA gradient
-        'gradient-cta': 'linear-gradient(to bottom right, #f97316, #ec4899, #a855f7)',
+        // CTA gradient - orange based
+        'gradient-cta': 'linear-gradient(to bottom right, #f97316, #ea580c, #c2410c)',
       },
       boxShadow: {
         'card': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
@@ -88,8 +90,7 @@ export default {
         'button': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
         'button-hover': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
         'glow-orange': '0 0 40px rgb(249 115 22 / 0.3)',
-        'glow-pink': '0 0 40px rgb(236 72 153 / 0.3)',
-        'glow-purple': '0 0 40px rgb(168 85 247 / 0.3)',
+        'glow-amber': '0 0 40px rgb(245 158 11 / 0.3)',
       },
       borderRadius: {
         '2xl': '0.75rem', // Reduced from 1rem

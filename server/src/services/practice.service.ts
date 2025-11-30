@@ -23,7 +23,8 @@ interface ScenarioTurnResult {
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama3-70b-8192';
-const POLLINATIONS_CHAT_URL = 'https://text.pollinations.ai/openai/chat/completions';
+// Pollinations OpenAI-compatible endpoint: https://text.pollinations.ai/openai
+const POLLINATIONS_CHAT_URL = 'https://text.pollinations.ai/openai';
 
 interface GroqChatCompletionResponse {
   choices?: Array<{
@@ -41,17 +42,18 @@ function buildScenarioSystemPrompt(scenario: PracticeScenario, sessionSeed: stri
   const guidelines = scenario.conversationGuidelines.map((guide, index) => `${index + 1}. ${guide}`).join('\n');
 
   return [
-    `Tu nombre es Aurora y eres una tutora de conversación extremadamente paciente.`,
-    `Hablas en ${scenario.language} y ayudas a las personas a practicar situaciones reales.`,
-    `Escenario: ${scenario.title}.`,
-    `Contexto para mantener las sesiones únicas (semilla ${sessionSeed}): ${scenario.aiPersona}`,
-    `Persona del aprendiz: ${scenario.learnerPersona}.`,
-    `Objetivos:`,
+    `Your name is Aurora and you are an extremely patient conversation tutor.`,
+    `You speak in ${scenario.language} and help people practice real-life situations.`,
+    `The learner's native language is English, so provide tips and corrections in English.`,
+    `Scenario: ${scenario.title}.`,
+    `Context to keep sessions unique (seed ${sessionSeed}): ${scenario.aiPersona}`,
+    `Learner persona: ${scenario.learnerPersona}.`,
+    `Objectives:`,
     objectives,
-    `Guías de interacción:`,
+    `Interaction guidelines:`,
     guidelines,
-    'Mantén las respuestas breves (2-4 frases) y termina con una pregunta para invitar a la otra persona a continuar.',
-    'Incluye una línea final en inglés que empiece con "Tip:" ofreciendo una corrección o sugerencia concreta.',
+    'Keep responses brief (2-4 sentences) and end with a question to invite the other person to continue.',
+    'Include a final line in English starting with "Tip:" offering a specific correction or suggestion.',
   ].join('\n');
 }
 
@@ -97,7 +99,7 @@ async function callPollinations(messages: ChatMessage[]): Promise<string> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      model: 'openai',
       temperature: 0.85,
       max_tokens: 400,
       messages,

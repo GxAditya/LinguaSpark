@@ -10,10 +10,10 @@ export function GameLoading({ gameName, message }: GameLoadingProps) {
   const displayMessage = message || (gameName ? `Loading ${gameName}...` : 'Generating your game...');
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 flex items-center justify-center">
       <div className="text-center">
         <div className="relative mb-6">
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center">
+          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
             <Loader2 className="w-10 h-10 text-white animate-spin" />
           </div>
           <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full animate-pulse" />
@@ -44,7 +44,7 @@ export function GameError({ error, onRetry, showBackButton = true }: GameErrorPr
   const isRateLimited = error.toLowerCase().includes('rate limit');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 flex items-center justify-center">
       <div className="text-center max-w-md mx-auto px-6">
         <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center">
           <AlertCircle className="w-10 h-10 text-red-500" />
@@ -66,7 +66,7 @@ export function GameError({ error, onRetry, showBackButton = true }: GameErrorPr
           {onRetry && !isRateLimited && (
             <button
               onClick={onRetry}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl font-semibold hover:from-orange-600 hover:to-pink-600 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-semibold hover:from-orange-600 hover:to-amber-600 transition-all"
             >
               <RefreshCw className="w-5 h-5" />
               Try Again

@@ -244,24 +244,26 @@ export default function Lessons() {
   };
 
   const LanguageSelector = ({ id, className = '' }: { id: string; className?: string }) => (
-    <div className={`flex flex-col text-sm text-content-secondary ${className}`}>
-      <label htmlFor={id} className="font-semibold text-content-primary mb-1">
+    <div className={`flex flex-col text-sm ${className}`}>
+      <label htmlFor={id} className="font-semibold text-content-primary mb-2">
         Learning language
       </label>
-      <div className="relative">
+      <div className="relative group">
         <select
           id={id}
           value={selectedLanguage}
           onChange={(event) => handleLanguageChange(event.target.value)}
-          className="appearance-none w-48 rounded-lg border border-border-base bg-surface-base py-2 pl-3 pr-8 text-sm font-medium text-content-secondary shadow-sm focus:border-content-primary focus:outline-none focus:ring-1 focus:ring-content-primary"
+          className="appearance-none w-52 rounded-xl border-2 border-orange-100 bg-white py-3 pl-4 pr-10 text-sm font-semibold text-content-primary shadow-sm cursor-pointer transition-all duration-200 hover:border-orange-300 hover:shadow-md focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200"
         >
           {LANGUAGE_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option key={option.value} value={option.value} className="py-2">
               {option.label}
             </option>
           ))}
         </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-2.5 h-4 w-4 text-content-tertiary" />
+        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+          <ChevronDown className="h-4 w-4 text-orange-600" />
+        </div>
       </div>
     </div>
   );

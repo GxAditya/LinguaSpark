@@ -51,9 +51,10 @@ export const ttsService = {
   },
 
   // Simple URL generation for client-side (no API call needed)
+  // Correct Pollinations TTS URL format: https://text.pollinations.ai/{prompt}?model=openai-audio&voice={voice}
   getDirectTTSUrl(text: string, voice: string = 'alloy'): string {
     const encodedText = encodeURIComponent(text.substring(0, 500));
-    return `https://text.pollinations.ai/audio?text=${encodedText}&voice=${voice}`;
+    return `https://text.pollinations.ai/${encodedText}?model=openai-audio&voice=${voice}`;
   },
 
   // Play audio helper

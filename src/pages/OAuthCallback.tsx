@@ -53,7 +53,7 @@ export default function OAuthCallback() {
   }, [provider, searchParams, handleOAuthCallback, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full mx-4 text-center">
         {status === 'loading' && (
           <>

@@ -9,9 +9,9 @@ const games = [
     name: 'Transcription Station',
     category: 'Listening Comprehension, Spelling',
     icon: Headphones,
-    color: 'from-blue-500 to-cyan-500',
-    bgColor: 'from-blue-100 to-cyan-100',
-    iconColor: 'text-blue-600',
+    color: 'from-orange-500 to-orange-600',
+    bgColor: 'from-orange-50 to-orange-100',
+    iconColor: 'text-orange-600',
     description: 'Listen to audio and type exactly what you heard'
   },
   {
@@ -19,9 +19,9 @@ const games = [
     name: 'Audio Jumble',
     category: 'Listening, Grammar, Word Order',
     icon: Shuffle,
-    color: 'from-purple-500 to-pink-500',
-    bgColor: 'from-purple-100 to-pink-100',
-    iconColor: 'text-purple-600',
+    color: 'from-orange-600 to-orange-700',
+    bgColor: 'from-orange-50 to-orange-100',
+    iconColor: 'text-orange-700',
     description: 'Drag and drop words in the correct order'
   },
   {
@@ -29,9 +29,9 @@ const games = [
     name: 'Image Instinct',
     category: 'Vocabulary, Recognition',
     icon: Grid3X3,
-    color: 'from-green-500 to-emerald-500',
-    bgColor: 'from-green-100 to-emerald-100',
-    iconColor: 'text-green-600',
+    color: 'from-orange-500 to-amber-500',
+    bgColor: 'from-orange-50 to-amber-50',
+    iconColor: 'text-orange-600',
     description: 'Match words with their corresponding images'
   },
   {
@@ -39,9 +39,9 @@ const games = [
     name: 'Translation Match-Up',
     category: 'Vocabulary, Translation',
     icon: BookOpen,
-    color: 'from-orange-500 to-red-500',
-    bgColor: 'from-orange-100 to-pink-100',
-    iconColor: 'text-orange-600',
+    color: 'from-amber-500 to-orange-500',
+    bgColor: 'from-amber-50 to-orange-50',
+    iconColor: 'text-amber-600',
     description: 'Flip cards to match words with translations'
   },
   {
@@ -49,9 +49,9 @@ const games = [
     name: 'Secret Word Solver',
     category: 'Vocabulary, Spelling',
     icon: Award,
-    color: 'from-indigo-500 to-blue-500',
-    bgColor: 'from-indigo-100 to-blue-100',
-    iconColor: 'text-indigo-600',
+    color: 'from-orange-600 to-amber-600',
+    bgColor: 'from-orange-50 to-amber-50',
+    iconColor: 'text-orange-600',
     description: 'Guess letters to reveal hidden words'
   },
   {
@@ -59,9 +59,9 @@ const games = [
     name: 'Word Drop Dash',
     category: 'Vocabulary, Quick Recognition',
     icon: Zap,
-    color: 'from-yellow-500 to-orange-500',
-    bgColor: 'from-yellow-100 to-orange-100',
-    iconColor: 'text-yellow-600',
+    color: 'from-amber-500 to-yellow-500',
+    bgColor: 'from-amber-50 to-yellow-50',
+    iconColor: 'text-amber-600',
     description: 'Drag falling words before they disappear'
   },
   {
@@ -69,9 +69,9 @@ const games = [
     name: 'Conjugation Coach',
     category: 'Grammar, Conjugation',
     icon: RotateCcw,
-    color: 'from-teal-500 to-green-500',
-    bgColor: 'from-teal-100 to-green-100',
-    iconColor: 'text-teal-600',
+    color: 'from-orange-500 to-orange-600',
+    bgColor: 'from-orange-50 to-orange-100',
+    iconColor: 'text-orange-600',
     description: 'Select the correct verb conjugation'
   },
   {
@@ -79,9 +79,9 @@ const games = [
     name: 'Context Connect',
     category: 'Reading Comprehension, Vocabulary',
     icon: FileText,
-    color: 'from-rose-500 to-pink-500',
-    bgColor: 'from-rose-100 to-pink-100',
-    iconColor: 'text-rose-600',
+    color: 'from-amber-600 to-orange-600',
+    bgColor: 'from-amber-50 to-orange-50',
+    iconColor: 'text-amber-600',
     description: 'Fill blanks with contextually appropriate words'
   },
   {
@@ -89,9 +89,9 @@ const games = [
     name: 'Syntax Scrambler',
     category: 'Grammar, Syntax',
     icon: BarChart3,
-    color: 'from-sky-500 to-blue-500',
-    bgColor: 'from-sky-100 to-blue-100',
-    iconColor: 'text-sky-600',
+    color: 'from-orange-600 to-orange-700',
+    bgColor: 'from-orange-50 to-orange-100',
+    iconColor: 'text-orange-700',
     description: 'Arrange scrambled words into correct order'
   },
   {
@@ -99,9 +99,9 @@ const games = [
     name: 'Time Warp Tagger',
     category: 'Verb Tenses, Time Adverbs',
     icon: Clock,
-    color: 'from-violet-500 to-purple-500',
-    bgColor: 'from-violet-100 to-purple-100',
-    iconColor: 'text-violet-600',
+    color: 'from-amber-500 to-orange-500',
+    bgColor: 'from-amber-50 to-orange-50',
+    iconColor: 'text-amber-600',
     description: 'Apply correct verb tense based on time reference'
   }
 ];
@@ -112,7 +112,7 @@ export default function Games() {
   // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
           <p className="text-gray-600 font-medium">Loading games...</p>

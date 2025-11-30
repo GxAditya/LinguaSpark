@@ -12,7 +12,7 @@ export default function Dashboard() {
   // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
           <p className="text-gray-600 font-medium">Loading your dashboard...</p>
@@ -90,33 +90,33 @@ export default function Dashboard() {
             </div>
           </Link>
 
-          <Link to="/practice" className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm hover:shadow-md hover:border-brand-secondary-border transition-all duration-200 group block">
+          <Link to="/practice" className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm hover:shadow-md hover:border-orange-200 transition-all duration-200 group block">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-brand-secondary-light border border-brand-secondary-border rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                <MessageCircle className="w-6 h-6 text-brand-secondary" />
+              <div className="w-12 h-12 bg-orange-50 border border-orange-100 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                <MessageCircle className="w-6 h-6 text-orange-600" />
               </div>
-              <ArrowRight className="w-5 h-5 text-content-tertiary group-hover:text-brand-secondary transition-colors" />
+              <ArrowRight className="w-5 h-5 text-content-tertiary group-hover:text-orange-600 transition-colors" />
             </div>
             <h3 className="text-lg font-semibold text-content-primary mb-2">Practice Speaking</h3>
             <div className="flex items-center gap-2 mb-4">
-              <span className="bg-brand-secondary-light text-brand-secondary px-2 py-1 rounded-md text-xs font-medium border border-brand-secondary-border">Café Ordering</span>
+              <span className="bg-orange-50 text-orange-700 px-2 py-1 rounded-md text-xs font-medium border border-orange-100">Café Ordering</span>
               <span className="text-xs text-content-secondary">+2 others</span>
             </div>
             <p className="text-sm text-content-secondary">Roleplay real-world scenarios with AI.</p>
           </Link>
 
-          <Link to="/games" className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm hover:shadow-md hover:border-zinc-300 transition-all duration-200 group block">
+          <Link to="/games" className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm hover:shadow-md hover:border-orange-200 transition-all duration-200 group block">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-surface-subtle border border-border-base rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Gamepad2 className="w-6 h-6 text-content-primary" />
+              <div className="w-12 h-12 bg-orange-50 border border-orange-100 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Gamepad2 className="w-6 h-6 text-orange-600" />
               </div>
-              <ArrowRight className="w-5 h-5 text-content-tertiary group-hover:text-content-primary transition-colors" />
+              <ArrowRight className="w-5 h-5 text-content-tertiary group-hover:text-orange-600 transition-colors" />
             </div>
             <h3 className="text-lg font-semibold text-content-primary mb-2">Play Games</h3>
             <p className="text-sm text-content-secondary mb-4">Learn vocabulary through fun mini-games.</p>
             <div className="flex -space-x-2">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="w-6 h-6 rounded-full bg-surface-subtle border border-surface-base flex items-center justify-center text-[10px] text-content-secondary">
+                <div key={i} className="w-6 h-6 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-[10px] text-orange-600">
                   {i}
                 </div>
               ))}

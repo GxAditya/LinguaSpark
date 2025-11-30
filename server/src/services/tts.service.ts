@@ -17,13 +17,12 @@ interface TTSResult {
 }
 
 // Pollinations TTS - Free, no API key required
-// Uses their text-to-speech API
+// Uses their text-to-speech API: GET https://text.pollinations.ai/{prompt}?model=openai-audio&voice={voice}
 async function pollinationsTTS(text: string, voice: string = 'alloy'): Promise<TTSResult> {
   try {
-    // Pollinations provides a simple TTS endpoint
-    // The audio is generated and returned as a URL
+    // Pollinations TTS endpoint format: GET https://text.pollinations.ai/{prompt}?model=openai-audio&voice={voice}
     const encodedText = encodeURIComponent(text);
-    const audioUrl = `https://text.pollinations.ai/audio?text=${encodedText}&voice=${voice}`;
+    const audioUrl = `https://text.pollinations.ai/${encodedText}?model=openai-audio&voice=${voice}`;
 
     // Verify the URL works by making a HEAD request
     const response = await fetch(audioUrl, { method: 'HEAD' });
@@ -45,20 +44,14 @@ async function pollinationsTTS(text: string, voice: string = 'alloy'): Promise<T
   }
 }
 
-// Alternative Pollinations approach using their OpenAI-compatible endpoint
+// Alternative Pollinations approach - fetch audio directly and return as base64
 async function pollinationsOpenAITTS(text: string, voice: string = 'alloy'): Promise<TTSResult> {
   try {
-    const response = await fetch('https://text.pollinations.ai/openai/audio/speech', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'tts-1',
-        input: text,
-        voice: voice, // alloy, echo, fable, onyx, nova, shimmer
-      }),
-    });
+    // Pollinations TTS endpoint: GET https://text.pollinations.ai/{prompt}?model=openai-audio&voice={voice}
+    const encodedText = encodeURIComponent(text);
+    const url = `https://text.pollinations.ai/${encodedText}?model=openai-audio&voice=${voice}`;
+    
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error(`Pollinations TTS error: ${response.status}`);
@@ -148,7 +141,8 @@ export async function generateTTS(options: TTSOptions): Promise<TTSResult> {
 // Generate TTS URL for client-side playback (simpler approach)
 export function getTTSUrl(text: string, voice: string = 'alloy'): string {
   const encodedText = encodeURIComponent(text.substring(0, 500)); // Limit length
-  return `https://text.pollinations.ai/audio?text=${encodedText}&voice=${voice}`;
+  // Correct Pollinations TTS URL format
+  return `https://text.pollinations.ai/${encodedText}?model=openai-audio&voice=${voice}`;
 }
 
 // Available voices

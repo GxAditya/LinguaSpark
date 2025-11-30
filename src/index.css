@@ -29,10 +29,10 @@
    ==========================================
    
    Color Palette:
-   - Primary: Orange (#f97316)
-   - Accent: Pink (#ec4899)
-   - Tertiary: Purple (#a855f7)
-   - Background: Soft gradient (orange-50 → pink-50 → purple-50)
+   - Primary: Orange (#f97316, #ea580c)
+   - Secondary: Black/Dark (#18181b)
+   - Accent: Amber (#f59e0b)
+   - Background: White with orange tints
    
    Component Patterns:
    - Cards: White, rounded-2xl/3xl, shadow-lg
@@ -49,11 +49,11 @@
   }
 
   .glow-orb-orange {
-    @apply bg-gradient-to-r from-orange-200 to-pink-200;
+    @apply bg-gradient-to-r from-orange-200 to-amber-200;
   }
 
   .glow-orb-purple {
-    @apply bg-gradient-to-r from-purple-200 to-blue-200;
+    @apply bg-gradient-to-r from-orange-300 to-amber-300;
   }
 
   .glow-orb-yellow {

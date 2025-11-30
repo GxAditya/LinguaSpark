@@ -48,8 +48,10 @@ export interface IImageInstinctContent extends IBaseGameContent {
   rounds: Array<{
     word: string;
     translation: string;
-    correctImage: string;
-    options: string[];
+    correctImage: string;      // Can be emoji or image URL
+    options: string[];         // Can be emojis or image URLs
+    isImageUrl?: boolean;      // True if options are Pollinations image URLs
+    fallbackEmojis?: string[]; // Emoji fallbacks if image loading fails
   }>;
 }
 

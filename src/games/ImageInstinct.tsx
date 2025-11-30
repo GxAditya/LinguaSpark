@@ -11,6 +11,57 @@ interface ImageRound {
   translation: string;
   correctImage: string;
   options: string[];
+  isImageUrl?: boolean;
+  fallbackEmojis?: string[];
+}
+
+// Component for displaying either an image or emoji with fallback support
+function ImageOption({ 
+  src, 
+  fallbackEmoji, 
+  isImageUrl, 
+  alt 
+}: { 
+  src: string; 
+  fallbackEmoji?: string; 
+  isImageUrl?: boolean; 
+  alt: string;
+}) {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(isImageUrl);
+
+  // Reset states when src changes
+  useEffect(() => {
+    if (isImageUrl) {
+      setImageError(false);
+      setImageLoading(true);
+    }
+  }, [src, isImageUrl]);
+
+  // If it's not an image URL or if image failed to load, show emoji
+  if (!isImageUrl || imageError) {
+    return <span className="text-6xl">{fallbackEmoji || src}</span>;
+  }
+
+  return (
+    <div className="relative w-full h-full flex items-center justify-center">
+      {imageLoading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        className={`max-w-full max-h-full object-contain rounded-lg transition-opacity ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+        onLoad={() => setImageLoading(false)}
+        onError={() => {
+          setImageError(true);
+          setImageLoading(false);
+        }}
+      />
+    </div>
+  );
 }
 
 export default function ImageInstinct() {
@@ -141,7 +192,7 @@ export default function ImageInstinct() {
                   key={index}
                   onClick={() => handleSelectImage(index)}
                   disabled={feedback !== null}
-                  className={`aspect-square rounded-2xl text-6xl flex items-center justify-center transition-all ${selectedImage === index
+                  className={`aspect-square rounded-2xl flex items-center justify-center transition-all p-2 ${selectedImage === index
                     ? feedback === 'correct'
                       ? 'bg-green-100 scale-110 ring-4 ring-green-500'
                       : 'bg-red-100 scale-105 ring-4 ring-red-500'
@@ -150,7 +201,12 @@ export default function ImageInstinct() {
                       : 'bg-gray-100 hover:bg-gray-200'
                     } ${feedback !== null ? 'cursor-default' : 'cursor-pointer hover:scale-105'}`}
                 >
-                  {image}
+                  <ImageOption
+                    src={image}
+                    fallbackEmoji={currentRoundData.fallbackEmojis?.[index]}
+                    isImageUrl={currentRoundData.isImageUrl}
+                    alt={`Option ${index + 1}`}
+                  />
                 </button>
               ))}
             </div>
@@ -175,8 +231,13 @@ export default function ImageInstinct() {
                     <X className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-semibold text-red-900">Not quite right</p>
-                      <p className="text-sm text-red-800">
-                        The correct image is: {currentRoundData.correctImage}
+                      <p className="text-sm text-red-800 flex items-center gap-2">
+                        The correct answer was: 
+                        {currentRoundData.isImageUrl && currentRoundData.fallbackEmojis ? (
+                          <span className="text-xl">{currentRoundData.fallbackEmojis[correctIndex]}</span>
+                        ) : (
+                          <span className="text-xl">{currentRoundData.correctImage}</span>
+                        )}
                       </p>
                     </div>
                   </>

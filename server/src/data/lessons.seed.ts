@@ -2265,7 +2265,1906 @@ Finance: Sinon, il faudra prévoir un budget supplémentaire.`,
   },
 ];
 
-const allLessons = [...spanishLessons, ...hindiLessons, ...frenchLessons];
+// MANDARIN CHINESE LESSONS
+const mandarinLessons = [
+  // BEGINNER LESSONS
+  {
+    title: 'Basic Greetings & Introductions',
+    slug: 'mandarin-basic-greetings-introductions',
+    description: 'Learn how to greet people in Mandarin Chinese and introduce yourself. This lesson covers common phrases like "你好", "早上好", and "很高兴认识你".',
+    topic: 'Speaking & Listening',
+    language: 'mandarin',
+    level: 'beginner',
+    duration: 12,
+    order: 1,
+    objectives: [
+      'Greet people at different times of day',
+      'Introduce yourself and ask others\' names',
+      'Use polite expressions in conversation',
+      'Understand basic Mandarin tones',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Mandarin Greetings',
+        content: 'Mandarin Chinese uses four main tones, which are essential for proper pronunciation. Greetings are relatively simple but require attention to tones. In this lesson, you\'ll learn the most common ways to greet people and introduce yourself.',
+        audioText: 'Mandarin Chinese uses four main tones. Greetings are relatively simple but require attention to tones.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Essential Greetings',
+        content: 'Learn these fundamental greeting phrases:',
+        audioText: '你好。早上好。下午好。晚上好。',
+        vocabulary: [
+          {
+            word: '你好',
+            translation: 'Hello',
+            pronunciation: 'nǐ hǎo',
+            example: '你好！你叫什么名字？',
+            exampleTranslation: 'Hello! What is your name?',
+          },
+          {
+            word: '早上好',
+            translation: 'Good morning',
+            pronunciation: 'zǎo shang hǎo',
+            example: '早上好，王先生。',
+            exampleTranslation: 'Good morning, Mr. Wang.',
+          },
+          {
+            word: '下午好',
+            translation: 'Good afternoon',
+            pronunciation: 'xià wǔ hǎo',
+            example: '下午好，你今天怎么样？',
+            exampleTranslation: 'Good afternoon, how are you today?',
+          },
+          {
+            word: '晚上好',
+            translation: 'Good evening',
+            pronunciation: 'wǎn shang hǎo',
+            example: '晚上好，晚安。',
+            exampleTranslation: 'Good evening, good night.',
+          },
+          {
+            word: '很高兴认识你',
+            translation: 'Nice to meet you',
+            pronunciation: 'hěn gāo xìng rèn shi nǐ',
+            example: '很高兴认识你，我叫李明。',
+            exampleTranslation: 'Nice to meet you, my name is Li Ming.',
+          },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'Meeting Someone New',
+        content: `小王：你好！
+小李：你好！你叫什么名字？
+小王：我叫小王。你呢？
+小李：我叫小李。很高兴认识你。
+小王：很高兴认识你。你是哪里人？
+小李：我是北京人。你呢？
+小王：我是上海人。`,
+        audioText: '你好！你好！你叫什么名字？我叫小王。你呢？我叫小李。很高兴认识你。很高兴认识你。你是哪里人？我是北京人。你呢？我是上海人。',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you say "Good morning" in Mandarin?',
+        options: ['晚上好', '早上好', '下午好', '你好'],
+        correctAnswer: '早上好',
+        explanation: '"早上好" (zǎo shang hǎo) is used in the morning.',
+      },
+      {
+        type: 'multiple-choice',
+        question: 'What does "很高兴认识你" mean?',
+        options: ['Goodbye', 'Thank you', 'Nice to meet you', 'How are you?'],
+        correctAnswer: 'Nice to meet you',
+        explanation: '"很高兴认识你" literally means "very happy to know you" and is used when meeting someone.',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: 我 _____ 小王。(My name is Xiao Wang)',
+        correctAnswer: '叫',
+        explanation: '"叫" (jiào) means "to be called" and is used to introduce your name.',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Hello, how are you?"',
+        correctAnswer: '你好，你好吗',
+        explanation: '"你好吗" (nǐ hǎo ma) is the common way to ask "how are you?"',
+      },
+    ],
+    isActive: true,
+  },
+  {
+    title: 'Numbers 1-100',
+    slug: 'mandarin-numbers-1-100',
+    description: 'Master Mandarin numbers from 1 to 100. Learn to count, tell prices, and give your phone number in Mandarin.',
+    topic: 'Vocabulary',
+    language: 'mandarin',
+    level: 'beginner',
+    duration: 15,
+    order: 2,
+    objectives: [
+      'Count from 1 to 100 in Mandarin',
+      'Use numbers in practical contexts like prices',
+      'Give and understand phone numbers',
+      'Understand the logical pattern of Mandarin numbers',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Mandarin Numbers',
+        content: 'Mandarin numbers are very logical and easy to learn. Once you know 1-10, you can easily form all numbers up to 99. For example, 11 is "ten-one" (十一), 21 is "two-ten-one" (二十一).',
+        audioText: 'Mandarin numbers are very logical. Once you know one to ten, you can easily form all numbers up to ninety-nine.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Numbers 1-10',
+        content: 'Learn the basic numbers:',
+        audioText: '一、二、三、四、五、六、七、八、九、十。',
+        vocabulary: [
+          { word: '一', translation: 'One (1)', pronunciation: 'yī', example: '一个苹果', exampleTranslation: 'One apple' },
+          { word: '二', translation: 'Two (2)', pronunciation: 'èr', example: '两个人', exampleTranslation: 'Two people' },
+          { word: '三', translation: 'Three (3)', pronunciation: 'sān', example: '三本书', exampleTranslation: 'Three books' },
+          { word: '四', translation: 'Four (4)', pronunciation: 'sì', example: '四块钱', exampleTranslation: 'Four yuan' },
+          { word: '五', translation: 'Five (5)', pronunciation: 'wǔ', example: '五分钟', exampleTranslation: 'Five minutes' },
+          { word: '六', translation: 'Six (6)', pronunciation: 'liù', example: '六点钟', exampleTranslation: 'Six o\'clock' },
+          { word: '七', translation: 'Seven (7)', pronunciation: 'qī', example: '七天', exampleTranslation: 'Seven days' },
+          { word: '八', translation: 'Eight (8)', pronunciation: 'bā', example: '八月', exampleTranslation: 'August' },
+          { word: '九', translation: 'Nine (9)', pronunciation: 'jiǔ', example: '九十', exampleTranslation: 'Ninety' },
+          { word: '十', translation: 'Ten (10)', pronunciation: 'shí', example: '十块钱', exampleTranslation: 'Ten yuan' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Forming Larger Numbers',
+        content: `Number patterns in Mandarin:
+11-19: 十 + digit (十一 = 11, 十五 = 15)
+20-90: digit + 十 (二十 = 20, 五十 = 50)
+21-99: digit + 十 + digit (二十一 = 21, 九十九 = 99)
+100: 一百 (yī bǎi)`,
+        audioText: 'Eleven is 十一, twenty is 二十, twenty-one is 二十一, one hundred is 一百.',
+        grammarPoints: [
+          '十 (shí) means ten and is the base for teens',
+          'Numbers follow a logical decimal pattern',
+          '两 (liǎng) is often used instead of 二 before measure words',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'What is "15" in Mandarin?',
+        options: ['五十', '十五', '一五', '五一'],
+        correctAnswer: '十五',
+        explanation: '"十五" (shí wǔ) means fifteen (ten + five).',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: 二十_____ = 25',
+        correctAnswer: '五',
+        explanation: '二十五 means twenty-five (twenty + five).',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Forty-two"',
+        correctAnswer: '四十二',
+        explanation: '"四十二" is four-ten-two, which equals 42.',
+      },
+      {
+        type: 'multiple-choice',
+        question: 'How do you say "88" in Mandarin?',
+        options: ['八八', '八十八', '十八八', '八百八'],
+        correctAnswer: '八十八',
+        explanation: '"八十八" (bā shí bā) = eighty-eight.',
+      },
+    ],
+    isActive: true,
+  },
+  // INTERMEDIATE LESSON
+  {
+    title: 'Ordering Food at a Restaurant',
+    slug: 'mandarin-ordering-food',
+    description: 'Learn essential phrases for ordering food, asking about ingredients, and making special requests at Chinese restaurants.',
+    topic: 'Practical Situations',
+    language: 'mandarin',
+    level: 'intermediate',
+    duration: 18,
+    order: 3,
+    objectives: [
+      'Order food and drinks confidently',
+      'Ask about ingredients and cooking methods',
+      'Make special dietary requests',
+      'Handle payment and tipping customs',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Restaurant Vocabulary',
+        content: 'Essential words for dining:',
+        audioText: '菜单、服务员、点菜、结账、好吃。',
+        vocabulary: [
+          { word: '菜单', translation: 'Menu', pronunciation: 'cài dān', example: '请给我菜单。', exampleTranslation: 'Please give me the menu.' },
+          { word: '服务员', translation: 'Waiter/Waitress', pronunciation: 'fú wù yuán', example: '服务员！', exampleTranslation: 'Waiter!' },
+          { word: '点菜', translation: 'To order food', pronunciation: 'diǎn cài', example: '我们要点菜。', exampleTranslation: 'We want to order.' },
+          { word: '结账', translation: 'To pay the bill', pronunciation: 'jié zhàng', example: '请结账。', exampleTranslation: 'The bill, please.' },
+          { word: '好吃', translation: 'Delicious', pronunciation: 'hǎo chī', example: '这个菜很好吃！', exampleTranslation: 'This dish is delicious!' },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'At the Restaurant',
+        content: `服务员：欢迎光临！请问几位？
+顾客：两位。
+服务员：请这边坐。这是菜单。
+顾客：谢谢。我们想点一个宫保鸡丁和一碗米饭。
+服务员：好的。要喝什么？
+顾客：两杯茶，谢谢。
+服务员：好的，请稍等。`,
+        audioText: '欢迎光临！请问几位？两位。请这边坐。这是菜单。谢谢。我们想点一个宫保鸡丁和一碗米饭。好的。要喝什么？两杯茶，谢谢。',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you ask for the bill in Mandarin?',
+        options: ['请结账', '请点菜', '请给我菜单', '请稍等'],
+        correctAnswer: '请结账',
+        explanation: '"请结账" (qǐng jié zhàng) means "please bring the bill".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "This dish is delicious!"',
+        correctAnswer: '这个菜很好吃',
+        explanation: '"这个菜很好吃" uses "好吃" (hǎo chī) meaning delicious.',
+      },
+    ],
+    isActive: true,
+  },
+  // ADVANCED LESSON
+  {
+    title: 'Business Communication',
+    slug: 'mandarin-business-communication',
+    description: 'Master professional Mandarin for business meetings, negotiations, and formal correspondence.',
+    topic: 'Professional',
+    language: 'mandarin',
+    level: 'advanced',
+    duration: 25,
+    order: 4,
+    objectives: [
+      'Conduct business introductions formally',
+      'Participate in meetings and negotiations',
+      'Use appropriate honorifics and formal language',
+      'Write professional emails in Mandarin',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Business Vocabulary',
+        content: 'Essential business terms:',
+        audioText: '公司、会议、合作、项目、合同。',
+        vocabulary: [
+          { word: '公司', translation: 'Company', pronunciation: 'gōng sī', example: '我们公司在上海。', exampleTranslation: 'Our company is in Shanghai.' },
+          { word: '会议', translation: 'Meeting', pronunciation: 'huì yì', example: '我们下午有个会议。', exampleTranslation: 'We have a meeting this afternoon.' },
+          { word: '合作', translation: 'Cooperation', pronunciation: 'hé zuò', example: '期待与您合作。', exampleTranslation: 'Looking forward to working with you.' },
+          { word: '项目', translation: 'Project', pronunciation: 'xiàng mù', example: '这个项目很重要。', exampleTranslation: 'This project is very important.' },
+          { word: '合同', translation: 'Contract', pronunciation: 'hé tong', example: '请签这份合同。', exampleTranslation: 'Please sign this contract.' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Formal Language Patterns',
+        content: `Formal expressions for business:
+请问... (May I ask...)
+贵公司 (Your esteemed company)
+敝公司 (Our humble company)
+请多关照 (Please take care of me)`,
+        audioText: '请问贵公司的名称是什么？敝公司想与您合作。请多关照。',
+        grammarPoints: [
+          'Use 请 (qǐng) to make polite requests',
+          '贵 (guì) is an honorific prefix meaning "esteemed"',
+          '敝 (bì) is a humble prefix for self-reference',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'Which is the formal way to refer to someone else\'s company?',
+        options: ['我公司', '贵公司', '敝公司', '你公司'],
+        correctAnswer: '贵公司',
+        explanation: '"贵公司" (guì gōng sī) is the respectful term for "your company".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Looking forward to working with you."',
+        correctAnswer: '期待与您合作',
+        explanation: '"期待与您合作" uses formal language appropriate for business.',
+      },
+    ],
+    isActive: true,
+  },
+];
+
+// ARABIC LESSONS
+const arabicLessons = [
+  // BEGINNER LESSONS
+  {
+    title: 'Basic Greetings & Introductions',
+    slug: 'arabic-basic-greetings-introductions',
+    description: 'Learn how to greet people in Arabic and introduce yourself. This lesson covers common phrases like "مرحبا", "صباح الخير", and "تشرفنا".',
+    topic: 'Speaking & Listening',
+    language: 'arabic',
+    level: 'beginner',
+    duration: 12,
+    order: 1,
+    objectives: [
+      'Greet people at different times of day',
+      'Introduce yourself and ask others\' names',
+      'Use polite expressions in conversation',
+      'Understand basic Arabic script',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Arabic Greetings',
+        content: 'Arabic is written from right to left and has a beautiful script. Greetings are very important in Arab culture and often include references to God. In this lesson, you\'ll learn the most common ways to greet people and introduce yourself.',
+        audioText: 'Arabic is written from right to left. Greetings are very important in Arab culture.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Essential Greetings',
+        content: 'Learn these fundamental greeting phrases:',
+        audioText: 'مرحبا. السلام عليكم. صباح الخير. مساء الخير.',
+        vocabulary: [
+          {
+            word: 'مرحبا',
+            translation: 'Hello',
+            pronunciation: 'marhaba',
+            example: 'مرحبا! كيف حالك؟',
+            exampleTranslation: 'Hello! How are you?',
+          },
+          {
+            word: 'السلام عليكم',
+            translation: 'Peace be upon you (formal hello)',
+            pronunciation: 'as-salamu alaykum',
+            example: 'السلام عليكم ورحمة الله',
+            exampleTranslation: 'Peace be upon you and God\'s mercy.',
+          },
+          {
+            word: 'صباح الخير',
+            translation: 'Good morning',
+            pronunciation: 'sabah al-khayr',
+            example: 'صباح الخير، كيف حالك اليوم؟',
+            exampleTranslation: 'Good morning, how are you today?',
+          },
+          {
+            word: 'مساء الخير',
+            translation: 'Good evening',
+            pronunciation: 'masa\' al-khayr',
+            example: 'مساء الخير، أهلا وسهلا',
+            exampleTranslation: 'Good evening, welcome.',
+          },
+          {
+            word: 'تشرفنا',
+            translation: 'Nice to meet you',
+            pronunciation: 'tasharrafna',
+            example: 'تشرفنا، اسمي أحمد',
+            exampleTranslation: 'Nice to meet you, my name is Ahmed.',
+          },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'Meeting Someone New',
+        content: `أحمد: السلام عليكم!
+فاطمة: وعليكم السلام! كيف حالك؟
+أحمد: بخير، الحمد لله. وأنتِ؟
+فاطمة: بخير، شكرا. ما اسمك؟
+أحمد: اسمي أحمد. وأنتِ؟
+فاطمة: اسمي فاطمة. تشرفنا.
+أحمد: تشرفنا. من أين أنتِ؟
+فاطمة: أنا من مصر.`,
+        audioText: 'السلام عليكم! وعليكم السلام! كيف حالك؟ بخير الحمد لله. وأنتِ؟ بخير شكرا. ما اسمك؟ اسمي أحمد. وأنتِ؟ اسمي فاطمة. تشرفنا.',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you say "Good morning" in Arabic?',
+        options: ['مساء الخير', 'صباح الخير', 'مرحبا', 'السلام عليكم'],
+        correctAnswer: 'صباح الخير',
+        explanation: '"صباح الخير" (sabah al-khayr) means "morning of goodness".',
+      },
+      {
+        type: 'multiple-choice',
+        question: 'What is the proper response to "السلام عليكم"?',
+        options: ['مرحبا', 'شكرا', 'وعليكم السلام', 'تشرفنا'],
+        correctAnswer: 'وعليكم السلام',
+        explanation: '"وعليكم السلام" means "and upon you peace" - the traditional response.',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: اسمي _____. (My name is Ahmed)',
+        correctAnswer: 'أحمد',
+        explanation: 'The structure is "اسمي" (my name is) + name.',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Nice to meet you"',
+        correctAnswer: 'تشرفنا',
+        explanation: '"تشرفنا" literally means "we are honored".',
+      },
+    ],
+    isActive: true,
+  },
+  {
+    title: 'Numbers 1-100',
+    slug: 'arabic-numbers-1-100',
+    description: 'Master Arabic numbers from 1 to 100. Learn to count, tell prices, and give your phone number in Arabic.',
+    topic: 'Vocabulary',
+    language: 'arabic',
+    level: 'beginner',
+    duration: 15,
+    order: 2,
+    objectives: [
+      'Count from 1 to 100 in Arabic',
+      'Use numbers in practical contexts like prices',
+      'Give and understand phone numbers',
+      'Recognize Arabic numerals (٠١٢٣٤٥٦٧٨٩)',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Arabic Numbers',
+        content: 'Arabic has its own numeral system (٠١٢٣٤٥٦٧٨٩), but Western numerals are also commonly used. The spoken numbers are essential for shopping, telling time, and everyday life.',
+        audioText: 'Arabic has its own numeral system. The spoken numbers are essential for everyday life.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Numbers 1-10',
+        content: 'Learn the basic numbers:',
+        audioText: 'واحد، اثنان، ثلاثة، أربعة، خمسة، ستة، سبعة، ثمانية، تسعة، عشرة.',
+        vocabulary: [
+          { word: 'واحد', translation: 'One (1)', pronunciation: 'wahid', example: 'كتاب واحد', exampleTranslation: 'One book' },
+          { word: 'اثنان', translation: 'Two (2)', pronunciation: 'ithnan', example: 'شخصان', exampleTranslation: 'Two people' },
+          { word: 'ثلاثة', translation: 'Three (3)', pronunciation: 'thalatha', example: 'ثلاثة أيام', exampleTranslation: 'Three days' },
+          { word: 'أربعة', translation: 'Four (4)', pronunciation: 'arba\'a', example: 'أربعة دراهم', exampleTranslation: 'Four dirhams' },
+          { word: 'خمسة', translation: 'Five (5)', pronunciation: 'khamsa', example: 'خمس دقائق', exampleTranslation: 'Five minutes' },
+          { word: 'ستة', translation: 'Six (6)', pronunciation: 'sitta', example: 'الساعة ستة', exampleTranslation: 'Six o\'clock' },
+          { word: 'سبعة', translation: 'Seven (7)', pronunciation: 'sab\'a', example: 'سبعة أيام', exampleTranslation: 'Seven days' },
+          { word: 'ثمانية', translation: 'Eight (8)', pronunciation: 'thamaniya', example: 'ثمانية أشهر', exampleTranslation: 'Eight months' },
+          { word: 'تسعة', translation: 'Nine (9)', pronunciation: 'tis\'a', example: 'تسعون', exampleTranslation: 'Ninety' },
+          { word: 'عشرة', translation: 'Ten (10)', pronunciation: '\'ashara', example: 'عشرة دراهم', exampleTranslation: 'Ten dirhams' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Forming Larger Numbers',
+        content: `Number patterns in Arabic:
+11-19: Special forms (أحد عشر = 11, اثنا عشر = 12)
+20-90: عشرون، ثلاثون، أربعون... (20, 30, 40...)
+21-99: ones + و + tens (واحد وعشرون = 21)
+100: مئة (mi'a)`,
+        audioText: 'أحد عشر، عشرون، واحد وعشرون، مئة',
+        grammarPoints: [
+          'Numbers 11-19 have special combined forms',
+          'Tens use the suffix ون (-oon)',
+          'Compound numbers use و (and) between parts',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'What is "15" in Arabic?',
+        options: ['خمسة عشر', 'عشرة وخمسة', 'خمسون', 'خمسة'],
+        correctAnswer: 'خمسة عشر',
+        explanation: '"خمسة عشر" (khamsat \'ashar) is fifteen.',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: واحد و_____ = 21 (one and twenty)',
+        correctAnswer: 'عشرون',
+        explanation: 'واحد وعشرون means twenty-one (one and twenty).',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Fifty"',
+        correctAnswer: 'خمسون',
+        explanation: '"خمسون" (khamsoon) is fifty.',
+      },
+    ],
+    isActive: true,
+  },
+  // INTERMEDIATE LESSON
+  {
+    title: 'Ordering Food at a Restaurant',
+    slug: 'arabic-ordering-food',
+    description: 'Learn essential phrases for ordering food, asking about ingredients, and making special requests at Arabic restaurants.',
+    topic: 'Practical Situations',
+    language: 'arabic',
+    level: 'intermediate',
+    duration: 18,
+    order: 3,
+    objectives: [
+      'Order food and drinks confidently',
+      'Ask about ingredients and cooking methods',
+      'Make special dietary requests (halal)',
+      'Handle payment customs',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Restaurant Vocabulary',
+        content: 'Essential words for dining:',
+        audioText: 'قائمة الطعام، نادل، طلب، الحساب، لذيذ.',
+        vocabulary: [
+          { word: 'قائمة الطعام', translation: 'Menu', pronunciation: 'qa\'imat al-ta\'am', example: 'أريد قائمة الطعام من فضلك.', exampleTranslation: 'I want the menu, please.' },
+          { word: 'نادل', translation: 'Waiter', pronunciation: 'nadil', example: '!يا نادل', exampleTranslation: 'Waiter!' },
+          { word: 'أريد أن أطلب', translation: 'I want to order', pronunciation: 'ureed an atlub', example: 'أريد أن أطلب الطعام.', exampleTranslation: 'I want to order food.' },
+          { word: 'الحساب', translation: 'The bill', pronunciation: 'al-hisab', example: 'الحساب من فضلك.', exampleTranslation: 'The bill, please.' },
+          { word: 'لذيذ', translation: 'Delicious', pronunciation: 'ladheedh', example: 'هذا الطعام لذيذ جدا!', exampleTranslation: 'This food is very delicious!' },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'At the Restaurant',
+        content: `نادل: أهلا وسهلا! كم شخص؟
+زبون: شخصان.
+نادل: تفضلوا، هذه قائمة الطعام.
+زبون: شكرا. أريد كباب ورز.
+نادل: وللشرب؟
+زبون: عصير برتقال، من فضلك.
+نادل: حاضر، لحظة.`,
+        audioText: 'أهلا وسهلا! كم شخص؟ شخصان. تفضلوا، هذه قائمة الطعام. شكرا. أريد كباب ورز. وللشرب؟ عصير برتقال من فضلك.',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you ask for the bill in Arabic?',
+        options: ['الحساب من فضلك', 'قائمة الطعام', 'أريد أن أطلب', 'شكرا'],
+        correctAnswer: 'الحساب من فضلك',
+        explanation: '"الحساب من فضلك" means "the bill, please".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "This food is delicious!"',
+        correctAnswer: 'هذا الطعام لذيذ',
+        explanation: '"لذيذ" (ladheedh) means delicious.',
+      },
+    ],
+    isActive: true,
+  },
+  // ADVANCED LESSON
+  {
+    title: 'Business Communication',
+    slug: 'arabic-business-communication',
+    description: 'Master professional Arabic for business meetings, negotiations, and formal correspondence.',
+    topic: 'Professional',
+    language: 'arabic',
+    level: 'advanced',
+    duration: 25,
+    order: 4,
+    objectives: [
+      'Conduct business introductions formally',
+      'Participate in meetings and negotiations',
+      'Use appropriate formal language',
+      'Write professional emails in Arabic',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Business Vocabulary',
+        content: 'Essential business terms:',
+        audioText: 'شركة، اجتماع، تعاون، مشروع، عقد.',
+        vocabulary: [
+          { word: 'شركة', translation: 'Company', pronunciation: 'sharika', example: 'شركتنا في دبي.', exampleTranslation: 'Our company is in Dubai.' },
+          { word: 'اجتماع', translation: 'Meeting', pronunciation: 'ijtima\'', example: 'لدينا اجتماع غدا.', exampleTranslation: 'We have a meeting tomorrow.' },
+          { word: 'تعاون', translation: 'Cooperation', pronunciation: 'ta\'awun', example: 'نتطلع إلى التعاون معكم.', exampleTranslation: 'We look forward to cooperating with you.' },
+          { word: 'مشروع', translation: 'Project', pronunciation: 'mashru\'', example: 'هذا المشروع مهم جدا.', exampleTranslation: 'This project is very important.' },
+          { word: 'عقد', translation: 'Contract', pronunciation: '\'aqd', example: 'يرجى توقيع العقد.', exampleTranslation: 'Please sign the contract.' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Formal Language Patterns',
+        content: `Formal expressions for business:
+سعادة/معالي (Honorific titles)
+يسعدني أن... (I am pleased to...)
+نتطلع إلى... (We look forward to...)
+مع فائق الاحترام (With highest respect)`,
+        audioText: 'يسعدني أن أقدم شركتنا. نتطلع إلى التعاون معكم.',
+        grammarPoints: [
+          'Use formal titles like سعادة (sa\'ada) for officials',
+          'Start emails with "تحية طيبة" (warm greetings)',
+          'End with "مع فائق الاحترام" (with highest respect)',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you say "We look forward to cooperating" in formal Arabic?',
+        options: ['أريد التعاون', 'نتطلع إلى التعاون', 'التعاون جيد', 'سوف نتعاون'],
+        correctAnswer: 'نتطلع إلى التعاون',
+        explanation: '"نتطلع إلى التعاون" is the formal expression for "we look forward to cooperation".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Please sign the contract."',
+        correctAnswer: 'يرجى توقيع العقد',
+        explanation: '"يرجى" (yurja) is the formal "please" used in written Arabic.',
+      },
+    ],
+    isActive: true,
+  },
+];
+
+// BENGALI LESSONS
+const bengaliLessons = [
+  // BEGINNER LESSONS
+  {
+    title: 'Basic Greetings & Introductions',
+    slug: 'bengali-basic-greetings-introductions',
+    description: 'Learn how to greet people in Bengali and introduce yourself. This lesson covers common phrases like "নমস্কার", "শুভ সকাল", and "আপনার সাথে পরিচিত হয়ে খুশি হলাম".',
+    topic: 'Speaking & Listening',
+    language: 'bengali',
+    level: 'beginner',
+    duration: 12,
+    order: 1,
+    objectives: [
+      'Greet people at different times of day',
+      'Introduce yourself and ask others\' names',
+      'Use polite expressions in conversation',
+      'Understand basic Bengali script',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Bengali Greetings',
+        content: 'Bengali (Bangla) is spoken by over 230 million people in Bangladesh and West Bengal, India. It has a beautiful script and rich literary tradition. Greetings vary based on formality and the relationship between speakers.',
+        audioText: 'Bengali is spoken by over 230 million people. Greetings vary based on formality.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Essential Greetings',
+        content: 'Learn these fundamental greeting phrases:',
+        audioText: 'নমস্কার। শুভ সকাল। শুভ বিকাল। শুভ সন্ধ্যা।',
+        vocabulary: [
+          {
+            word: 'নমস্কার',
+            translation: 'Hello (formal)',
+            pronunciation: 'nomoshkar',
+            example: 'নমস্কার! কেমন আছেন?',
+            exampleTranslation: 'Hello! How are you?',
+          },
+          {
+            word: 'শুভ সকাল',
+            translation: 'Good morning',
+            pronunciation: 'shubho shokal',
+            example: 'শুভ সকাল, দাদা।',
+            exampleTranslation: 'Good morning, brother.',
+          },
+          {
+            word: 'শুভ বিকাল',
+            translation: 'Good afternoon',
+            pronunciation: 'shubho bikal',
+            example: 'শুভ বিকাল, আপনি কেমন আছেন?',
+            exampleTranslation: 'Good afternoon, how are you?',
+          },
+          {
+            word: 'শুভ সন্ধ্যা',
+            translation: 'Good evening',
+            pronunciation: 'shubho shondhya',
+            example: 'শুভ সন্ধ্যা, আসুন।',
+            exampleTranslation: 'Good evening, please come.',
+          },
+          {
+            word: 'আপনার সাথে পরিচিত হয়ে খুশি হলাম',
+            translation: 'Nice to meet you',
+            pronunciation: 'apnar shathe porichito hoye khushi holam',
+            example: 'আমার নাম রাহুল। আপনার সাথে পরিচিত হয়ে খুশি হলাম।',
+            exampleTranslation: 'My name is Rahul. Nice to meet you.',
+          },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'Meeting Someone New',
+        content: `রাহুল: নমস্কার!
+প্রিয়া: নমস্কার! কেমন আছেন?
+রাহুল: ভালো আছি, ধন্যবাদ। আপনি?
+প্রিয়া: আমিও ভালো আছি। আপনার নাম কী?
+রাহুল: আমার নাম রাহুল। আপনার নাম কী?
+প্রিয়া: আমার নাম প্রিয়া। আপনার সাথে পরিচিত হয়ে খুশি হলাম।
+রাহুল: আমিও খুশি হলাম।`,
+        audioText: 'নমস্কার! নমস্কার! কেমন আছেন? ভালো আছি, ধন্যবাদ। আপনি? আমিও ভালো আছি। আপনার নাম কী? আমার নাম রাহুল।',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you say "Good morning" in Bengali?',
+        options: ['শুভ সন্ধ্যা', 'শুভ সকাল', 'শুভ বিকাল', 'নমস্কার'],
+        correctAnswer: 'শুভ সকাল',
+        explanation: '"শুভ সকাল" (shubho shokal) means "auspicious morning".',
+      },
+      {
+        type: 'multiple-choice',
+        question: 'What does "কেমন আছেন" mean?',
+        options: ['Goodbye', 'Thank you', 'How are you?', 'Nice to meet you'],
+        correctAnswer: 'How are you?',
+        explanation: '"কেমন আছেন" (kemon achhen) is the formal way to ask "how are you?"',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: আমার নাম _____। (My name is Priya)',
+        correctAnswer: 'প্রিয়া',
+        explanation: 'The structure is "আমার নাম" (my name is) + name.',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "I am fine, thank you"',
+        correctAnswer: 'ভালো আছি, ধন্যবাদ',
+        explanation: '"ভালো আছি" means "I am fine" and "ধন্যবাদ" means "thank you".',
+      },
+    ],
+    isActive: true,
+  },
+  {
+    title: 'Numbers 1-100',
+    slug: 'bengali-numbers-1-100',
+    description: 'Master Bengali numbers from 1 to 100. Learn to count, tell prices, and give your phone number in Bengali.',
+    topic: 'Vocabulary',
+    language: 'bengali',
+    level: 'beginner',
+    duration: 15,
+    order: 2,
+    objectives: [
+      'Count from 1 to 100 in Bengali',
+      'Use numbers in practical contexts like prices',
+      'Give and understand phone numbers',
+      'Recognize Bengali numerals (০১২৩৪৫৬৭৮৯)',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Bengali Numbers',
+        content: 'Bengali has its own numeral system (০১২৩৪৫৬৭৮৯). Learning numbers is essential for shopping, telling time, and everyday conversations in Bengali-speaking regions.',
+        audioText: 'Bengali has its own numeral system. Learning numbers is essential for everyday conversations.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Numbers 1-10',
+        content: 'Learn the basic numbers:',
+        audioText: 'এক, দুই, তিন, চার, পাঁচ, ছয়, সাত, আট, নয়, দশ।',
+        vocabulary: [
+          { word: 'এক', translation: 'One (1)', pronunciation: 'ek', example: 'একটা বই', exampleTranslation: 'One book' },
+          { word: 'দুই', translation: 'Two (2)', pronunciation: 'dui', example: 'দুই জন', exampleTranslation: 'Two people' },
+          { word: 'তিন', translation: 'Three (3)', pronunciation: 'tin', example: 'তিন দিন', exampleTranslation: 'Three days' },
+          { word: 'চার', translation: 'Four (4)', pronunciation: 'char', example: 'চার টাকা', exampleTranslation: 'Four rupees' },
+          { word: 'পাঁচ', translation: 'Five (5)', pronunciation: 'panch', example: 'পাঁচ মিনিট', exampleTranslation: 'Five minutes' },
+          { word: 'ছয়', translation: 'Six (6)', pronunciation: 'chhoy', example: 'ছয়টা বাজে', exampleTranslation: 'Six o\'clock' },
+          { word: 'সাত', translation: 'Seven (7)', pronunciation: 'shat', example: 'সাত দিন', exampleTranslation: 'Seven days' },
+          { word: 'আট', translation: 'Eight (8)', pronunciation: 'at', example: 'আট মাস', exampleTranslation: 'Eight months' },
+          { word: 'নয়', translation: 'Nine (9)', pronunciation: 'noy', example: 'নব্বই', exampleTranslation: 'Ninety' },
+          { word: 'দশ', translation: 'Ten (10)', pronunciation: 'dosh', example: 'দশ টাকা', exampleTranslation: 'Ten rupees' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Forming Larger Numbers',
+        content: `Number patterns in Bengali:
+11-19: Special forms (এগারো = 11, বারো = 12, তেরো = 13...)
+20-90: কুড়ি (20), তিরিশ (30), চল্লিশ (40)...
+21-99: ones + tens (একুশ = 21, বাইশ = 22)
+100: একশো (eksho)`,
+        audioText: 'এগারো, কুড়ি, একুশ, একশো।',
+        grammarPoints: [
+          'Numbers 11-99 often have unique forms',
+          'Twenty is কুড়ি, not দুই-দশ',
+          'Compound numbers blend together smoothly',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'What is "15" in Bengali?',
+        options: ['পাঁচ-দশ', 'পনেরো', 'দশ-পাঁচ', 'পাঁচটা'],
+        correctAnswer: 'পনেরো',
+        explanation: '"পনেরো" (ponero) is the unique word for fifteen.',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: _____টা বাজে (It\'s five o\'clock)',
+        correctAnswer: 'পাঁচ',
+        explanation: 'পাঁচটা বাজে means "it\'s five o\'clock".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Twenty-one"',
+        correctAnswer: 'একুশ',
+        explanation: '"একুশ" (ekush) is the Bengali word for twenty-one.',
+      },
+    ],
+    isActive: true,
+  },
+  // INTERMEDIATE LESSON
+  {
+    title: 'Ordering Food at a Restaurant',
+    slug: 'bengali-ordering-food',
+    description: 'Learn essential phrases for ordering food at Bengali restaurants, asking about dishes, and making requests.',
+    topic: 'Practical Situations',
+    language: 'bengali',
+    level: 'intermediate',
+    duration: 18,
+    order: 3,
+    objectives: [
+      'Order food and drinks confidently',
+      'Ask about ingredients and spice levels',
+      'Make special dietary requests',
+      'Handle payment and tipping',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Restaurant Vocabulary',
+        content: 'Essential words for dining:',
+        audioText: 'মেনু, ওয়েটার, অর্ডার, বিল, সুস্বাদু।',
+        vocabulary: [
+          { word: 'মেনু', translation: 'Menu', pronunciation: 'menu', example: 'মেনু দেখাবেন?', exampleTranslation: 'Can you show the menu?' },
+          { word: 'ওয়েটার', translation: 'Waiter', pronunciation: 'waiter', example: 'ওয়েটার!', exampleTranslation: 'Waiter!' },
+          { word: 'অর্ডার করা', translation: 'To order', pronunciation: 'order kora', example: 'আমি অর্ডার করতে চাই।', exampleTranslation: 'I want to order.' },
+          { word: 'বিল', translation: 'Bill', pronunciation: 'bill', example: 'বিল দিন।', exampleTranslation: 'Give me the bill.' },
+          { word: 'সুস্বাদু', translation: 'Delicious', pronunciation: 'sushadu', example: 'এই খাবারটা খুব সুস্বাদু!', exampleTranslation: 'This food is very delicious!' },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'At the Restaurant',
+        content: `ওয়েটার: নমস্কার! কতজন?
+অতিথি: দুইজন।
+ওয়েটার: এদিকে বসুন। এই মেনু।
+অতিথি: ধন্যবাদ। একটা মাছের ঝোল আর ভাত দিন।
+ওয়েটার: পানীয়?
+অতিথি: দুই কাপ চা, প্লিজ।
+ওয়েটার: আচ্ছা, একটু অপেক্ষা করুন।`,
+        audioText: 'নমস্কার! কতজন? দুইজন। এদিকে বসুন। এই মেনু। ধন্যবাদ। একটা মাছের ঝোল আর ভাত দিন।',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you ask for the bill in Bengali?',
+        options: ['বিল দিন', 'মেনু দিন', 'অর্ডার করুন', 'ধন্যবাদ'],
+        correctAnswer: 'বিল দিন',
+        explanation: '"বিল দিন" means "give me the bill".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "This food is delicious!"',
+        correctAnswer: 'এই খাবারটা সুস্বাদু',
+        explanation: '"সুস্বাদু" (sushadu) means delicious in Bengali.',
+      },
+    ],
+    isActive: true,
+  },
+  // ADVANCED LESSON
+  {
+    title: 'Business Communication',
+    slug: 'bengali-business-communication',
+    description: 'Master professional Bengali for business meetings, negotiations, and formal correspondence.',
+    topic: 'Professional',
+    language: 'bengali',
+    level: 'advanced',
+    duration: 25,
+    order: 4,
+    objectives: [
+      'Conduct business introductions formally',
+      'Participate in meetings',
+      'Use appropriate formal language (সাধু ভাষা)',
+      'Write professional emails in Bengali',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Business Vocabulary',
+        content: 'Essential business terms:',
+        audioText: 'কোম্পানি, মিটিং, সহযোগিতা, প্রকল্প, চুক্তি।',
+        vocabulary: [
+          { word: 'কোম্পানি', translation: 'Company', pronunciation: 'company', example: 'আমাদের কোম্পানি কলকাতায়।', exampleTranslation: 'Our company is in Kolkata.' },
+          { word: 'মিটিং', translation: 'Meeting', pronunciation: 'meeting', example: 'আজ বিকেলে মিটিং আছে।', exampleTranslation: 'There is a meeting this afternoon.' },
+          { word: 'সহযোগিতা', translation: 'Cooperation', pronunciation: 'sohojogita', example: 'আপনার সহযোগিতার জন্য ধন্যবাদ।', exampleTranslation: 'Thank you for your cooperation.' },
+          { word: 'প্রকল্প', translation: 'Project', pronunciation: 'prokolpo', example: 'এই প্রকল্পটি গুরুত্বপূর্ণ।', exampleTranslation: 'This project is important.' },
+          { word: 'চুক্তি', translation: 'Contract', pronunciation: 'chukti', example: 'চুক্তিতে সই করুন।', exampleTranslation: 'Please sign the contract.' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Formal Language Patterns',
+        content: `Formal expressions for business:
+মহাশয়/মহাশয়া (Sir/Madam)
+আপনাকে জানাতে চাই... (I would like to inform you...)
+সহযোগিতার জন্য অনুরোধ করছি (Requesting your cooperation)
+বিনীত নিবেদন (Humble submission)`,
+        audioText: 'মহাশয়, আপনাকে জানাতে চাই যে প্রকল্পটি সম্পন্ন হয়েছে।',
+        grammarPoints: [
+          'Use মহাশয় (mohashoy) for formal address to men',
+          'আপনি (apni) is always used in formal settings',
+          'End letters with "বিনীত" (humble) + your name',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'What is the formal way to address a man in Bengali business?',
+        options: ['তুমি', 'মহাশয়', 'দাদা', 'ভাই'],
+        correctAnswer: 'মহাশয়',
+        explanation: '"মহাশয়" (mohashoy) is the formal/respectful term like "Sir".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Thank you for your cooperation."',
+        correctAnswer: 'আপনার সহযোগিতার জন্য ধন্যবাদ',
+        explanation: 'This is a common formal expression in Bengali business.',
+      },
+    ],
+    isActive: true,
+  },
+];
+
+// PORTUGUESE LESSONS
+const portugueseLessons = [
+  // BEGINNER LESSONS
+  {
+    title: 'Basic Greetings & Introductions',
+    slug: 'portuguese-basic-greetings-introductions',
+    description: 'Learn how to greet people in Portuguese and introduce yourself. This lesson covers common phrases like "Olá", "Bom dia", and "Prazer em conhecê-lo".',
+    topic: 'Speaking & Listening',
+    language: 'portuguese',
+    level: 'beginner',
+    duration: 12,
+    order: 1,
+    objectives: [
+      'Greet people at different times of day',
+      'Introduce yourself and ask others\' names',
+      'Use polite expressions in conversation',
+      'Understand basic Portuguese pronunciation',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Portuguese Greetings',
+        content: 'Portuguese is spoken by over 250 million people in Portugal, Brazil, and other countries. Brazilian and European Portuguese have some differences in pronunciation and vocabulary. In this lesson, you\'ll learn the most common ways to greet people.',
+        audioText: 'Portuguese is spoken by over 250 million people. Brazilian and European Portuguese have some differences.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Essential Greetings',
+        content: 'Learn these fundamental greeting phrases:',
+        audioText: 'Olá. Bom dia. Boa tarde. Boa noite.',
+        vocabulary: [
+          {
+            word: 'Olá',
+            translation: 'Hello',
+            pronunciation: 'oh-LAH',
+            example: 'Olá! Como você está?',
+            exampleTranslation: 'Hello! How are you?',
+          },
+          {
+            word: 'Bom dia',
+            translation: 'Good morning',
+            pronunciation: 'bom JEE-ah',
+            example: 'Bom dia, senhor Silva.',
+            exampleTranslation: 'Good morning, Mr. Silva.',
+          },
+          {
+            word: 'Boa tarde',
+            translation: 'Good afternoon',
+            pronunciation: 'BOH-ah TAR-jee',
+            example: 'Boa tarde, como vai?',
+            exampleTranslation: 'Good afternoon, how are you?',
+          },
+          {
+            word: 'Boa noite',
+            translation: 'Good evening / Good night',
+            pronunciation: 'BOH-ah NOY-chee',
+            example: 'Boa noite, até amanhã.',
+            exampleTranslation: 'Good night, see you tomorrow.',
+          },
+          {
+            word: 'Prazer em conhecê-lo',
+            translation: 'Nice to meet you',
+            pronunciation: 'prah-ZEHR em koh-nyeh-SEH-loh',
+            example: 'Prazer em conhecê-lo, meu nome é Carlos.',
+            exampleTranslation: 'Nice to meet you, my name is Carlos.',
+          },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'Meeting Someone New',
+        content: `Maria: Olá! Bom dia.
+João: Bom dia! Como você se chama?
+Maria: Eu me chamo Maria. E você?
+João: Eu me chamo João. Prazer em conhecê-la.
+Maria: Igualmente. De onde você é?
+João: Eu sou do Brasil. E você?
+Maria: Eu sou de Portugal. É um prazer.`,
+        audioText: 'Olá! Bom dia. Bom dia! Como você se chama? Eu me chamo Maria. E você? Eu me chamo João. Prazer em conhecê-la.',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you say "Good morning" in Portuguese?',
+        options: ['Boa noite', 'Bom dia', 'Boa tarde', 'Olá'],
+        correctAnswer: 'Bom dia',
+        explanation: '"Bom dia" is used in the morning until around noon.',
+      },
+      {
+        type: 'multiple-choice',
+        question: 'What does "Prazer em conhecê-lo" mean?',
+        options: ['Goodbye', 'Thank you', 'Nice to meet you', 'How are you?'],
+        correctAnswer: 'Nice to meet you',
+        explanation: '"Prazer" means pleasure, so it\'s like saying "pleasure to meet you".',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: Eu me _____ Maria. (My name is Maria)',
+        correctAnswer: 'chamo',
+        explanation: '"chamar" means "to call", so "Eu me chamo" means "I call myself".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Hello, how are you?"',
+        correctAnswer: 'Olá, como você está',
+        explanation: '"Como você está?" is the common way to ask "how are you?" in Brazilian Portuguese.',
+      },
+    ],
+    isActive: true,
+  },
+  {
+    title: 'Numbers 1-100',
+    slug: 'portuguese-numbers-1-100',
+    description: 'Master Portuguese numbers from 1 to 100. Learn to count, tell prices, and give your phone number in Portuguese.',
+    topic: 'Vocabulary',
+    language: 'portuguese',
+    level: 'beginner',
+    duration: 15,
+    order: 2,
+    objectives: [
+      'Count from 1 to 100 in Portuguese',
+      'Use numbers in practical contexts like prices',
+      'Give and understand phone numbers',
+      'Understand number patterns in Portuguese',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Portuguese Numbers',
+        content: 'Portuguese numbers follow patterns similar to Spanish. Once you learn 1-20, the rest become easier as they follow a logical pattern of tens plus units.',
+        audioText: 'Portuguese numbers follow patterns similar to Spanish. Once you learn one to twenty, the rest become easier.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Numbers 1-10',
+        content: 'Learn the basic numbers:',
+        audioText: 'Um, dois, três, quatro, cinco, seis, sete, oito, nove, dez.',
+        vocabulary: [
+          { word: 'Um/Uma', translation: 'One (1)', pronunciation: 'oom/OO-mah', example: 'Um livro', exampleTranslation: 'One book' },
+          { word: 'Dois/Duas', translation: 'Two (2)', pronunciation: 'doysh/DOO-ahsh', example: 'Duas pessoas', exampleTranslation: 'Two people' },
+          { word: 'Três', translation: 'Three (3)', pronunciation: 'trehsh', example: 'Três dias', exampleTranslation: 'Three days' },
+          { word: 'Quatro', translation: 'Four (4)', pronunciation: 'KWAH-troo', example: 'Quatro reais', exampleTranslation: 'Four reais' },
+          { word: 'Cinco', translation: 'Five (5)', pronunciation: 'SEEN-koo', example: 'Cinco minutos', exampleTranslation: 'Five minutes' },
+          { word: 'Seis', translation: 'Six (6)', pronunciation: 'saysh', example: 'Seis horas', exampleTranslation: 'Six o\'clock' },
+          { word: 'Sete', translation: 'Seven (7)', pronunciation: 'SEH-chee', example: 'Sete dias', exampleTranslation: 'Seven days' },
+          { word: 'Oito', translation: 'Eight (8)', pronunciation: 'OY-too', example: 'Oito meses', exampleTranslation: 'Eight months' },
+          { word: 'Nove', translation: 'Nine (9)', pronunciation: 'NOH-vee', example: 'Noventa', exampleTranslation: 'Ninety' },
+          { word: 'Dez', translation: 'Ten (10)', pronunciation: 'dehsh', example: 'Dez reais', exampleTranslation: 'Ten reais' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Forming Larger Numbers',
+        content: `Number patterns in Portuguese:
+11-15: Onze (11), doze (12), treze (13), catorze (14), quinze (15)
+16-19: Special forms (dezesseis = 16, dezessete = 17)
+20-90: Vinte (20), trinta (30), quarenta (40)...
+21-99: tens + e + ones (vinte e um = 21)
+100: Cem / Cento`,
+        audioText: 'Onze, doze, treze, vinte, vinte e um, cem.',
+        grammarPoints: [
+          'Numbers 11-15 have unique forms',
+          'Use "e" (and) to connect tens and ones',
+          '"Cem" is 100 alone; "cento" is used in compounds (cento e um = 101)',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'What is "15" in Portuguese?',
+        options: ['Cinquenta', 'Quinze', 'Cinco', 'Cinquenta e cinco'],
+        correctAnswer: 'Quinze',
+        explanation: '"Quinze" is fifteen in Portuguese.',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: Vinte e _____ = 25',
+        correctAnswer: 'cinco',
+        explanation: 'Vinte e cinco means twenty-five (twenty and five).',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Forty-two"',
+        correctAnswer: 'Quarenta e dois',
+        explanation: '"Quarenta e dois" = forty and two.',
+      },
+    ],
+    isActive: true,
+  },
+  // INTERMEDIATE LESSON
+  {
+    title: 'Ordering Food at a Restaurant',
+    slug: 'portuguese-ordering-food',
+    description: 'Learn essential phrases for ordering food at Brazilian and Portuguese restaurants.',
+    topic: 'Practical Situations',
+    language: 'portuguese',
+    level: 'intermediate',
+    duration: 18,
+    order: 3,
+    objectives: [
+      'Order food and drinks confidently',
+      'Ask about ingredients and cooking methods',
+      'Make special dietary requests',
+      'Handle payment and tipping customs',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Restaurant Vocabulary',
+        content: 'Essential words for dining:',
+        audioText: 'Cardápio, garçom, pedir, conta, delicioso.',
+        vocabulary: [
+          { word: 'Cardápio', translation: 'Menu', pronunciation: 'kar-DAH-pyoo', example: 'O cardápio, por favor.', exampleTranslation: 'The menu, please.' },
+          { word: 'Garçom', translation: 'Waiter', pronunciation: 'gar-SOM', example: 'Garçom!', exampleTranslation: 'Waiter!' },
+          { word: 'Pedir', translation: 'To order', pronunciation: 'peh-JEER', example: 'Eu quero pedir.', exampleTranslation: 'I want to order.' },
+          { word: 'A conta', translation: 'The bill', pronunciation: 'ah KON-tah', example: 'A conta, por favor.', exampleTranslation: 'The bill, please.' },
+          { word: 'Delicioso', translation: 'Delicious', pronunciation: 'deh-lee-SYOH-zoo', example: 'Esta comida está deliciosa!', exampleTranslation: 'This food is delicious!' },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'At the Restaurant',
+        content: `Garçom: Boa noite! Quantas pessoas?
+Cliente: Duas pessoas.
+Garçom: Por aqui, por favor. Aqui está o cardápio.
+Cliente: Obrigado. Eu gostaria de uma feijoada e uma caipirinha.
+Garçom: E para beber?
+Cliente: Água com gás, por favor.
+Garçom: Perfeito, um momento.`,
+        audioText: 'Boa noite! Quantas pessoas? Duas pessoas. Por aqui, por favor. Aqui está o cardápio. Obrigado. Eu gostaria de uma feijoada.',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you ask for the bill in Portuguese?',
+        options: ['A conta, por favor', 'O cardápio', 'Eu quero pedir', 'Obrigado'],
+        correctAnswer: 'A conta, por favor',
+        explanation: '"A conta, por favor" means "the bill, please".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "This food is delicious!"',
+        correctAnswer: 'Esta comida está deliciosa',
+        explanation: '"Deliciosa" is the feminine form matching "comida".',
+      },
+    ],
+    isActive: true,
+  },
+  // ADVANCED LESSON
+  {
+    title: 'Business Communication',
+    slug: 'portuguese-business-communication',
+    description: 'Master professional Portuguese for business meetings, negotiations, and formal correspondence.',
+    topic: 'Professional',
+    language: 'portuguese',
+    level: 'advanced',
+    duration: 25,
+    order: 4,
+    objectives: [
+      'Conduct business introductions formally',
+      'Participate in meetings and negotiations',
+      'Use appropriate formal language',
+      'Write professional emails in Portuguese',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Business Vocabulary',
+        content: 'Essential business terms:',
+        audioText: 'Empresa, reunião, parceria, projeto, contrato.',
+        vocabulary: [
+          { word: 'Empresa', translation: 'Company', pronunciation: 'em-PREH-zah', example: 'Nossa empresa fica em São Paulo.', exampleTranslation: 'Our company is in São Paulo.' },
+          { word: 'Reunião', translation: 'Meeting', pronunciation: 'heh-oo-nyAUM', example: 'Temos uma reunião amanhã.', exampleTranslation: 'We have a meeting tomorrow.' },
+          { word: 'Parceria', translation: 'Partnership', pronunciation: 'par-seh-REE-ah', example: 'Queremos fazer uma parceria.', exampleTranslation: 'We want to form a partnership.' },
+          { word: 'Projeto', translation: 'Project', pronunciation: 'proh-JEH-too', example: 'Este projeto é muito importante.', exampleTranslation: 'This project is very important.' },
+          { word: 'Contrato', translation: 'Contract', pronunciation: 'kon-TRAH-too', example: 'Por favor, assine o contrato.', exampleTranslation: 'Please sign the contract.' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Formal Language Patterns',
+        content: `Formal expressions for business:
+Prezado(a) Senhor(a) (Dear Sir/Madam)
+Tenho o prazer de... (I have the pleasure to...)
+Aguardo sua resposta (I await your response)
+Atenciosamente (Sincerely)`,
+        audioText: 'Prezado Senhor, tenho o prazer de apresentar nossa empresa. Aguardo sua resposta. Atenciosamente.',
+        grammarPoints: [
+          'Use "Senhor/Senhora" for formal address',
+          'Start emails with "Prezado(a)"',
+          'End with "Atenciosamente" or "Cordialmente"',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you start a formal email in Portuguese?',
+        options: ['Oi', 'Prezado Senhor', 'E aí', 'Olá amigo'],
+        correctAnswer: 'Prezado Senhor',
+        explanation: '"Prezado Senhor" is the formal way to address someone in business correspondence.',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "I await your response."',
+        correctAnswer: 'Aguardo sua resposta',
+        explanation: 'This is a common formal closing phrase in Portuguese business emails.',
+      },
+    ],
+    isActive: true,
+  },
+];
+
+// RUSSIAN LESSONS
+const russianLessons = [
+  // BEGINNER LESSONS
+  {
+    title: 'Basic Greetings & Introductions',
+    slug: 'russian-basic-greetings-introductions',
+    description: 'Learn how to greet people in Russian and introduce yourself. This lesson covers common phrases like "Привет", "Доброе утро", and "Очень приятно".',
+    topic: 'Speaking & Listening',
+    language: 'russian',
+    level: 'beginner',
+    duration: 12,
+    order: 1,
+    objectives: [
+      'Greet people at different times of day',
+      'Introduce yourself and ask others\' names',
+      'Use polite expressions in conversation',
+      'Understand basic Cyrillic alphabet',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Russian Greetings',
+        content: 'Russian uses the Cyrillic alphabet, which has 33 letters. Russians distinguish between formal (вы) and informal (ты) forms of address. Greetings vary based on time of day and relationship.',
+        audioText: 'Russian uses the Cyrillic alphabet. Russians distinguish between formal and informal forms of address.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Essential Greetings',
+        content: 'Learn these fundamental greeting phrases:',
+        audioText: 'Привет. Доброе утро. Добрый день. Добрый вечер.',
+        vocabulary: [
+          {
+            word: 'Привет',
+            translation: 'Hi (informal)',
+            pronunciation: 'pree-VYET',
+            example: 'Привет! Как дела?',
+            exampleTranslation: 'Hi! How are you?',
+          },
+          {
+            word: 'Здравствуйте',
+            translation: 'Hello (formal)',
+            pronunciation: 'ZDRAHST-vooy-tyeh',
+            example: 'Здравствуйте, господин Иванов.',
+            exampleTranslation: 'Hello, Mr. Ivanov.',
+          },
+          {
+            word: 'Доброе утро',
+            translation: 'Good morning',
+            pronunciation: 'DOH-brah-yeh OO-trah',
+            example: 'Доброе утро! Как вы себя чувствуете?',
+            exampleTranslation: 'Good morning! How are you feeling?',
+          },
+          {
+            word: 'Добрый вечер',
+            translation: 'Good evening',
+            pronunciation: 'DOH-bree VYE-cher',
+            example: 'Добрый вечер, добро пожаловать.',
+            exampleTranslation: 'Good evening, welcome.',
+          },
+          {
+            word: 'Очень приятно',
+            translation: 'Nice to meet you',
+            pronunciation: 'OH-chen pree-YAT-nah',
+            example: 'Очень приятно, меня зовут Анна.',
+            exampleTranslation: 'Nice to meet you, my name is Anna.',
+          },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'Meeting Someone New',
+        content: `Анна: Привет!
+Борис: Привет! Как тебя зовут?
+Анна: Меня зовут Анна. А тебя?
+Борис: Меня зовут Борис. Очень приятно.
+Анна: Очень приятно. Откуда ты?
+Борис: Я из Москвы. А ты?
+Анна: Я из Санкт-Петербурга.`,
+        audioText: 'Привет! Привет! Как тебя зовут? Меня зовут Анна. А тебя? Меня зовут Борис. Очень приятно.',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you say "Good morning" in Russian?',
+        options: ['Добрый вечер', 'Доброе утро', 'Добрый день', 'Привет'],
+        correctAnswer: 'Доброе утро',
+        explanation: '"Доброе утро" (dobroye utro) means "good morning".',
+      },
+      {
+        type: 'multiple-choice',
+        question: 'What is the formal way to say "Hello" in Russian?',
+        options: ['Привет', 'Здравствуйте', 'Пока', 'Как дела'],
+        correctAnswer: 'Здравствуйте',
+        explanation: '"Здравствуйте" is the formal/polite greeting.',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: Меня _____ Анна. (My name is Anna)',
+        correctAnswer: 'зовут',
+        explanation: '"Меня зовут" literally means "they call me" and is used for "my name is".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Nice to meet you"',
+        correctAnswer: 'Очень приятно',
+        explanation: '"Очень приятно" literally means "very pleasant".',
+      },
+    ],
+    isActive: true,
+  },
+  {
+    title: 'Numbers 1-100',
+    slug: 'russian-numbers-1-100',
+    description: 'Master Russian numbers from 1 to 100. Learn to count, tell prices, and give your phone number in Russian.',
+    topic: 'Vocabulary',
+    language: 'russian',
+    level: 'beginner',
+    duration: 15,
+    order: 2,
+    objectives: [
+      'Count from 1 to 100 in Russian',
+      'Use numbers in practical contexts like prices',
+      'Give and understand phone numbers',
+      'Understand number patterns in Russian',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Russian Numbers',
+        content: 'Russian numbers have different forms depending on the case and the nouns they modify. The basic forms are used for counting and telling time.',
+        audioText: 'Russian numbers have different forms depending on the case. The basic forms are used for counting.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Numbers 1-10',
+        content: 'Learn the basic numbers:',
+        audioText: 'Один, два, три, четыре, пять, шесть, семь, восемь, девять, десять.',
+        vocabulary: [
+          { word: 'Один', translation: 'One (1)', pronunciation: 'ah-DEEN', example: 'Одна книга', exampleTranslation: 'One book' },
+          { word: 'Два', translation: 'Two (2)', pronunciation: 'dvah', example: 'Два человека', exampleTranslation: 'Two people' },
+          { word: 'Три', translation: 'Three (3)', pronunciation: 'tree', example: 'Три дня', exampleTranslation: 'Three days' },
+          { word: 'Четыре', translation: 'Four (4)', pronunciation: 'cheh-TIH-ryeh', example: 'Четыре рубля', exampleTranslation: 'Four rubles' },
+          { word: 'Пять', translation: 'Five (5)', pronunciation: 'pyaht', example: 'Пять минут', exampleTranslation: 'Five minutes' },
+          { word: 'Шесть', translation: 'Six (6)', pronunciation: 'shehst', example: 'Шесть часов', exampleTranslation: 'Six o\'clock' },
+          { word: 'Семь', translation: 'Seven (7)', pronunciation: 'syehm', example: 'Семь дней', exampleTranslation: 'Seven days' },
+          { word: 'Восемь', translation: 'Eight (8)', pronunciation: 'VOH-syehm', example: 'Восемь месяцев', exampleTranslation: 'Eight months' },
+          { word: 'Девять', translation: 'Nine (9)', pronunciation: 'DYEH-vyaht', example: 'Девяносто', exampleTranslation: 'Ninety' },
+          { word: 'Десять', translation: 'Ten (10)', pronunciation: 'DYEH-syaht', example: 'Десять рублей', exampleTranslation: 'Ten rubles' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Forming Larger Numbers',
+        content: `Number patterns in Russian:
+11-19: Special forms (одиннадцать = 11, двенадцать = 12)
+20-90: Двадцать (20), тридцать (30), сорок (40)...
+21-99: tens + ones (двадцать один = 21)
+100: Сто`,
+        audioText: 'Одиннадцать, двадцать, двадцать один, сто.',
+        grammarPoints: [
+          'Numbers 11-19 end in "-надцать"',
+          'Tens mostly end in "-дцать"',
+          '40 (сорок) and 90 (девяносто) are irregular',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'What is "15" in Russian?',
+        options: ['Пятьдесят', 'Пятнадцать', 'Пять', 'Пятьсот'],
+        correctAnswer: 'Пятнадцать',
+        explanation: '"Пятнадцать" (pyatnadtsat) is fifteen.',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: Двадцать _____ = 25',
+        correctAnswer: 'пять',
+        explanation: 'Двадцать пять means twenty-five.',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Forty"',
+        correctAnswer: 'Сорок',
+        explanation: '"Сорок" is an irregular form for forty.',
+      },
+    ],
+    isActive: true,
+  },
+  // INTERMEDIATE LESSON
+  {
+    title: 'Ordering Food at a Restaurant',
+    slug: 'russian-ordering-food',
+    description: 'Learn essential phrases for ordering food at Russian restaurants.',
+    topic: 'Practical Situations',
+    language: 'russian',
+    level: 'intermediate',
+    duration: 18,
+    order: 3,
+    objectives: [
+      'Order food and drinks confidently',
+      'Ask about ingredients and cooking methods',
+      'Make special dietary requests',
+      'Handle payment customs',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Restaurant Vocabulary',
+        content: 'Essential words for dining:',
+        audioText: 'Меню, официант, заказать, счёт, вкусно.',
+        vocabulary: [
+          { word: 'Меню', translation: 'Menu', pronunciation: 'meh-NYOO', example: 'Дайте меню, пожалуйста.', exampleTranslation: 'Give me the menu, please.' },
+          { word: 'Официант', translation: 'Waiter', pronunciation: 'ah-fee-tsee-AHNT', example: 'Официант!', exampleTranslation: 'Waiter!' },
+          { word: 'Заказать', translation: 'To order', pronunciation: 'zah-kah-ZAHT', example: 'Я хочу заказать.', exampleTranslation: 'I want to order.' },
+          { word: 'Счёт', translation: 'Bill', pronunciation: 'shyot', example: 'Счёт, пожалуйста.', exampleTranslation: 'The bill, please.' },
+          { word: 'Вкусно', translation: 'Delicious', pronunciation: 'VKOOS-nah', example: 'Это очень вкусно!', exampleTranslation: 'This is very delicious!' },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'At the Restaurant',
+        content: `Официант: Добрый вечер! Сколько человек?
+Гость: Два человека.
+Официант: Проходите сюда. Вот меню.
+Гость: Спасибо. Я хочу борщ и пельмени.
+Официант: А пить?
+Гость: Чай с лимоном, пожалуйста.
+Официант: Хорошо, минутку.`,
+        audioText: 'Добрый вечер! Сколько человек? Два человека. Проходите сюда. Вот меню. Спасибо. Я хочу борщ и пельмени.',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you ask for the bill in Russian?',
+        options: ['Счёт, пожалуйста', 'Меню, пожалуйста', 'Я хочу заказать', 'Спасибо'],
+        correctAnswer: 'Счёт, пожалуйста',
+        explanation: '"Счёт, пожалуйста" means "the bill, please".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "This is very delicious!"',
+        correctAnswer: 'Это очень вкусно',
+        explanation: '"Вкусно" means delicious/tasty in Russian.',
+      },
+    ],
+    isActive: true,
+  },
+  // ADVANCED LESSON
+  {
+    title: 'Business Communication',
+    slug: 'russian-business-communication',
+    description: 'Master professional Russian for business meetings, negotiations, and formal correspondence.',
+    topic: 'Professional',
+    language: 'russian',
+    level: 'advanced',
+    duration: 25,
+    order: 4,
+    objectives: [
+      'Conduct business introductions formally',
+      'Participate in meetings and negotiations',
+      'Use appropriate formal language',
+      'Write professional emails in Russian',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Business Vocabulary',
+        content: 'Essential business terms:',
+        audioText: 'Компания, встреча, сотрудничество, проект, контракт.',
+        vocabulary: [
+          { word: 'Компания', translation: 'Company', pronunciation: 'kahm-PAH-nee-yah', example: 'Наша компания в Москве.', exampleTranslation: 'Our company is in Moscow.' },
+          { word: 'Встреча', translation: 'Meeting', pronunciation: 'FSTRYE-chah', example: 'У нас встреча завтра.', exampleTranslation: 'We have a meeting tomorrow.' },
+          { word: 'Сотрудничество', translation: 'Cooperation', pronunciation: 'sah-TROOD-nee-chest-vah', example: 'Мы надеемся на сотрудничество.', exampleTranslation: 'We hope for cooperation.' },
+          { word: 'Проект', translation: 'Project', pronunciation: 'prah-YEKT', example: 'Этот проект очень важный.', exampleTranslation: 'This project is very important.' },
+          { word: 'Контракт', translation: 'Contract', pronunciation: 'kahn-TRAHKT', example: 'Подпишите контракт, пожалуйста.', exampleTranslation: 'Please sign the contract.' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Formal Language Patterns',
+        content: `Formal expressions for business:
+Уважаемый/Уважаемая (Dear Sir/Madam)
+Позвольте представить... (Allow me to introduce...)
+Надеемся на дальнейшее сотрудничество (We hope for further cooperation)
+С уважением (With respect/Sincerely)`,
+        audioText: 'Уважаемый господин Иванов. Позвольте представить нашу компанию. С уважением.',
+        grammarPoints: [
+          'Use "Уважаемый" for formal address',
+          'Always use "вы" (formal you) in business',
+          'End letters with "С уважением" (with respect)',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you formally address someone in a Russian business letter?',
+        options: ['Привет', 'Уважаемый', 'Дорогой друг', 'Эй'],
+        correctAnswer: 'Уважаемый',
+        explanation: '"Уважаемый" (respected) is the formal way to address someone in business.',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "We hope for cooperation."',
+        correctAnswer: 'Мы надеемся на сотрудничество',
+        explanation: 'This is a common formal expression in Russian business.',
+      },
+    ],
+    isActive: true,
+  },
+];
+
+// JAPANESE LESSONS
+const japaneseLessons = [
+  // BEGINNER LESSONS
+  {
+    title: 'Basic Greetings & Introductions',
+    slug: 'japanese-basic-greetings-introductions',
+    description: 'Learn how to greet people in Japanese and introduce yourself. This lesson covers common phrases like "こんにちは", "おはようございます", and "はじめまして".',
+    topic: 'Speaking & Listening',
+    language: 'japanese',
+    level: 'beginner',
+    duration: 12,
+    order: 1,
+    objectives: [
+      'Greet people at different times of day',
+      'Introduce yourself and ask others\' names',
+      'Use polite expressions in conversation',
+      'Understand basic Japanese writing systems',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Japanese Greetings',
+        content: 'Japanese uses three writing systems: Hiragana, Katakana, and Kanji. Politeness levels are very important in Japanese. Greetings change based on time of day and formality.',
+        audioText: 'Japanese uses three writing systems. Politeness levels are very important.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Essential Greetings',
+        content: 'Learn these fundamental greeting phrases:',
+        audioText: 'こんにちは。おはようございます。こんばんは。おやすみなさい。',
+        vocabulary: [
+          {
+            word: 'こんにちは',
+            translation: 'Hello / Good afternoon',
+            pronunciation: 'kon-ni-chi-wa',
+            example: 'こんにちは！お元気ですか？',
+            exampleTranslation: 'Hello! How are you?',
+          },
+          {
+            word: 'おはようございます',
+            translation: 'Good morning (polite)',
+            pronunciation: 'o-ha-yō go-zai-mas',
+            example: 'おはようございます、田中さん。',
+            exampleTranslation: 'Good morning, Mr./Ms. Tanaka.',
+          },
+          {
+            word: 'こんばんは',
+            translation: 'Good evening',
+            pronunciation: 'kon-ban-wa',
+            example: 'こんばんは、いらっしゃいませ。',
+            exampleTranslation: 'Good evening, welcome.',
+          },
+          {
+            word: 'おやすみなさい',
+            translation: 'Good night',
+            pronunciation: 'o-ya-su-mi na-sai',
+            example: 'おやすみなさい、また明日。',
+            exampleTranslation: 'Good night, see you tomorrow.',
+          },
+          {
+            word: 'はじめまして',
+            translation: 'Nice to meet you (first time)',
+            pronunciation: 'ha-ji-me-ma-shi-te',
+            example: 'はじめまして、田中です。',
+            exampleTranslation: 'Nice to meet you, I\'m Tanaka.',
+          },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'Meeting Someone New',
+        content: `田中：こんにちは！
+山田：こんにちは！お名前は？
+田中：田中です。あなたは？
+山田：山田です。はじめまして。
+田中：はじめまして。どこから来ましたか？
+山田：東京から来ました。田中さんは？
+田中：大阪から来ました。よろしくお願いします。`,
+        audioText: 'こんにちは！こんにちは！お名前は？田中です。あなたは？山田です。はじめまして。',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you say "Good morning" politely in Japanese?',
+        options: ['こんばんは', 'おはようございます', 'こんにちは', 'おやすみなさい'],
+        correctAnswer: 'おはようございます',
+        explanation: '"おはようございます" (ohayō gozaimasu) is the polite form of good morning.',
+      },
+      {
+        type: 'multiple-choice',
+        question: 'What does "はじめまして" mean?',
+        options: ['Goodbye', 'Thank you', 'Nice to meet you', 'How are you?'],
+        correctAnswer: 'Nice to meet you',
+        explanation: '"はじめまして" is used when meeting someone for the first time.',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: 田中_____。(I am Tanaka)',
+        correctAnswer: 'です',
+        explanation: '"です" (desu) is the polite form of "is/am/are".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Good evening"',
+        correctAnswer: 'こんばんは',
+        explanation: '"こんばんは" (konbanwa) is used from evening onwards.',
+      },
+    ],
+    isActive: true,
+  },
+  {
+    title: 'Numbers 1-100',
+    slug: 'japanese-numbers-1-100',
+    description: 'Master Japanese numbers from 1 to 100. Learn to count, tell prices, and give your phone number in Japanese.',
+    topic: 'Vocabulary',
+    language: 'japanese',
+    level: 'beginner',
+    duration: 15,
+    order: 2,
+    objectives: [
+      'Count from 1 to 100 in Japanese',
+      'Use numbers in practical contexts like prices',
+      'Give and understand phone numbers',
+      'Understand the Japanese counting system',
+    ],
+    contents: [
+      {
+        type: 'text',
+        title: 'Introduction to Japanese Numbers',
+        content: 'Japanese has two number systems: native Japanese (hitotsu, futatsu...) and Sino-Japanese (ichi, ni, san...). The Sino-Japanese system is more commonly used for counting.',
+        audioText: 'Japanese has two number systems. The Sino-Japanese system is more commonly used for counting.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Numbers 1-10',
+        content: 'Learn the basic numbers:',
+        audioText: '一、二、三、四、五、六、七、八、九、十。',
+        vocabulary: [
+          { word: '一 (いち)', translation: 'One (1)', pronunciation: 'ichi', example: '一つ', exampleTranslation: 'One (thing)' },
+          { word: '二 (に)', translation: 'Two (2)', pronunciation: 'ni', example: '二人', exampleTranslation: 'Two people' },
+          { word: '三 (さん)', translation: 'Three (3)', pronunciation: 'san', example: '三日', exampleTranslation: 'Three days' },
+          { word: '四 (よん/し)', translation: 'Four (4)', pronunciation: 'yon/shi', example: '四百円', exampleTranslation: 'Four hundred yen' },
+          { word: '五 (ご)', translation: 'Five (5)', pronunciation: 'go', example: '五分', exampleTranslation: 'Five minutes' },
+          { word: '六 (ろく)', translation: 'Six (6)', pronunciation: 'roku', example: '六時', exampleTranslation: 'Six o\'clock' },
+          { word: '七 (なな/しち)', translation: 'Seven (7)', pronunciation: 'nana/shichi', example: '七日', exampleTranslation: 'Seven days' },
+          { word: '八 (はち)', translation: 'Eight (8)', pronunciation: 'hachi', example: '八月', exampleTranslation: 'August' },
+          { word: '九 (きゅう/く)', translation: 'Nine (9)', pronunciation: 'kyū/ku', example: '九十', exampleTranslation: 'Ninety' },
+          { word: '十 (じゅう)', translation: 'Ten (10)', pronunciation: 'jū', example: '十円', exampleTranslation: 'Ten yen' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Forming Larger Numbers',
+        content: `Number patterns in Japanese:
+11-19: 十 + digit (十一 = 11, 十五 = 15)
+20-90: digit + 十 (二十 = 20, 五十 = 50)
+21-99: digit + 十 + digit (二十一 = 21)
+100: 百 (hyaku)`,
+        audioText: '十一、二十、二十一、百。',
+        grammarPoints: [
+          'Japanese numbers are very logical like Chinese',
+          '4 and 7 have alternate readings (yon/shi, nana/shichi)',
+          'Some combinations cause sound changes (e.g., 三百 = sanbyaku)',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'What is "15" in Japanese?',
+        options: ['五十', '十五', '一五', '五一'],
+        correctAnswer: '十五',
+        explanation: '"十五" (jūgo) means fifteen (ten + five).',
+      },
+      {
+        type: 'fill-blank',
+        question: 'Complete: 二十_____ = 25',
+        correctAnswer: '五',
+        explanation: '二十五 (nijūgo) means twenty-five.',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Forty"',
+        correctAnswer: '四十',
+        explanation: '"四十" (yonjū) = four-ten = forty.',
+      },
+    ],
+    isActive: true,
+  },
+  // INTERMEDIATE LESSON
+  {
+    title: 'Ordering Food at a Restaurant',
+    slug: 'japanese-ordering-food',
+    description: 'Learn essential phrases for ordering food at Japanese restaurants and izakayas.',
+    topic: 'Practical Situations',
+    language: 'japanese',
+    level: 'intermediate',
+    duration: 18,
+    order: 3,
+    objectives: [
+      'Order food and drinks confidently',
+      'Ask about ingredients and allergies',
+      'Make special requests politely',
+      'Handle payment and tipping customs',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Restaurant Vocabulary',
+        content: 'Essential words for dining:',
+        audioText: 'メニュー、すみません、注文、お会計、おいしい。',
+        vocabulary: [
+          { word: 'メニュー', translation: 'Menu', pronunciation: 'menyū', example: 'メニューをください。', exampleTranslation: 'Please give me the menu.' },
+          { word: 'すみません', translation: 'Excuse me', pronunciation: 'sumimasen', example: 'すみません！', exampleTranslation: 'Excuse me!' },
+          { word: '注文する', translation: 'To order', pronunciation: 'chūmon suru', example: '注文してもいいですか？', exampleTranslation: 'May I order?' },
+          { word: 'お会計', translation: 'Bill/Check', pronunciation: 'o-kaikei', example: 'お会計お願いします。', exampleTranslation: 'Check, please.' },
+          { word: 'おいしい', translation: 'Delicious', pronunciation: 'oishii', example: 'この料理はおいしいです！', exampleTranslation: 'This dish is delicious!' },
+        ],
+      },
+      {
+        type: 'dialogue',
+        title: 'At the Restaurant',
+        content: `店員：いらっしゃいませ！何名様ですか？
+客：二人です。
+店員：こちらへどうぞ。メニューです。
+客：ありがとうございます。寿司と味噌汁をお願いします。
+店員：お飲み物は？
+客：緑茶を二つください。
+店員：かしこまりました。少々お待ちください。`,
+        audioText: 'いらっしゃいませ！何名様ですか？二人です。こちらへどうぞ。メニューです。ありがとうございます。寿司と味噌汁をお願いします。',
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'How do you ask for the bill in Japanese?',
+        options: ['お会計お願いします', 'メニューください', '注文します', 'ありがとう'],
+        correctAnswer: 'お会計お願いします',
+        explanation: '"お会計お願いします" (o-kaikei onegaishimasu) means "bill, please".',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "This is delicious!"',
+        correctAnswer: 'おいしいです',
+        explanation: '"おいしい" (oishii) means delicious. Adding "です" makes it polite.',
+      },
+    ],
+    isActive: true,
+  },
+  // ADVANCED LESSON
+  {
+    title: 'Business Communication',
+    slug: 'japanese-business-communication',
+    description: 'Master professional Japanese (敬語 keigo) for business meetings, negotiations, and formal correspondence.',
+    topic: 'Professional',
+    language: 'japanese',
+    level: 'advanced',
+    duration: 25,
+    order: 4,
+    objectives: [
+      'Use proper keigo (honorific language)',
+      'Conduct business introductions',
+      'Participate in meetings',
+      'Write professional emails in Japanese',
+    ],
+    contents: [
+      {
+        type: 'vocabulary',
+        title: 'Business Vocabulary',
+        content: 'Essential business terms:',
+        audioText: '会社、会議、協力、プロジェクト、契約。',
+        vocabulary: [
+          { word: '会社', translation: 'Company', pronunciation: 'kaisha', example: '弊社は東京にあります。', exampleTranslation: 'Our company is in Tokyo.' },
+          { word: '会議', translation: 'Meeting', pronunciation: 'kaigi', example: '明日会議があります。', exampleTranslation: 'There is a meeting tomorrow.' },
+          { word: 'ご協力', translation: 'Cooperation (polite)', pronunciation: 'go-kyōryoku', example: 'ご協力お願いいたします。', exampleTranslation: 'We request your cooperation.' },
+          { word: 'プロジェクト', translation: 'Project', pronunciation: 'purojekuto', example: 'このプロジェクトは重要です。', exampleTranslation: 'This project is important.' },
+          { word: '契約', translation: 'Contract', pronunciation: 'keiyaku', example: 'ご契約をお願いいたします。', exampleTranslation: 'Please sign the contract.' },
+        ],
+      },
+      {
+        type: 'grammar',
+        title: 'Keigo (Honorific Language)',
+        content: `Business keigo expressions:
+お忙しいところ恐れ入りますが... (I\'m sorry to bother you when you\'re busy...)
+ご検討いただければ幸いです (I would be grateful if you could consider...)
+何卒よろしくお願いいたします (Thank you very much in advance)
+敬具 (Sincerely - letter closing)`,
+        audioText: 'お忙しいところ恐れ入りますが、ご検討いただければ幸いです。何卒よろしくお願いいたします。',
+        grammarPoints: [
+          'Use 弊社 (heisha) for "our company" and 御社 (onsha) for "your company"',
+          'Add お/ご before nouns for respect',
+          'Use いたします instead of します for humility',
+        ],
+      },
+    ],
+    exercises: [
+      {
+        type: 'multiple-choice',
+        question: 'What is the humble way to say "our company" in Japanese business?',
+        options: ['私の会社', '弊社', '御社', 'うちの会社'],
+        correctAnswer: '弊社',
+        explanation: '"弊社" (heisha) is the humble term for "our company" in business.',
+      },
+      {
+        type: 'translation',
+        question: 'Translate: "Thank you very much in advance."',
+        correctAnswer: '何卒よろしくお願いいたします',
+        explanation: 'This is the standard formal closing phrase in Japanese business.',
+      },
+    ],
+    isActive: true,
+  },
+];
+
+const allLessons = [...spanishLessons, ...hindiLessons, ...frenchLessons, ...mandarinLessons, ...arabicLessons, ...bengaliLessons, ...portugueseLessons, ...russianLessons, ...japaneseLessons];
 
 export const seedLessons = async (): Promise<void> => {
   try {
