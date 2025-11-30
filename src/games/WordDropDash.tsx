@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ChevronRight, Check } from 'lucide-react';
 import GameLayout from '../components/GameLayout';
 import { useGameSession } from '../hooks/useGameSession';
@@ -21,7 +21,6 @@ export default function WordDropDash() {
     loading,
     error,
     showExitConfirm,
-    setShowExitConfirm,
     submitAnswer,
     completeGame,
     confirmExit,
@@ -130,6 +129,6 @@ export default function WordDropDash() {
           )}
         </div>
       </div>
-    </GameLayout>
+    </GameLayout >
   );
 }

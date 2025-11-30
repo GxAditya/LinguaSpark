@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ChevronRight, Check, X, RefreshCw, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import GameLayout from '../components/GameLayout';
@@ -18,7 +18,7 @@ export default function SyntaxScrambler() {
     currentRound,
     totalRounds,
     score,
-    isLoading,
+    loading,
     error,
     isComplete,
     showExitConfirm,
@@ -36,7 +36,8 @@ export default function SyntaxScrambler() {
   const [selectedOrder, setSelectedOrder] = useState<number[]>([]);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
-  const sentences: SentenceData[] = content?.sentences || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sentences: SentenceData[] = (content as any)?.sentences || [];
   const currentSentence = sentences[currentRound];
 
   // Shuffle indices for display
@@ -44,7 +45,7 @@ export default function SyntaxScrambler() {
     if (!currentSentence?.scrambled) return [];
     const indices = Array.from({ length: currentSentence.scrambled.length }, (_, i) => i);
     return indices.sort(() => Math.random() - 0.5);
-  }, [currentRound, currentSentence]);
+  }, [currentSentence]);
 
   // Reset local state when round changes
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function SyntaxScrambler() {
     setFeedback(null);
   }, [currentRound]);
 
-  if (isLoading) {
+  if (loading) {
     return <GameLoading message="Generating scrambled sentences..." />;
   }
 
@@ -62,7 +63,7 @@ export default function SyntaxScrambler() {
 
   const handleToggleWord = (index: number) => {
     if (feedback) return;
-    
+
     if (selectedOrder.includes(index)) {
       setSelectedOrder(selectedOrder.filter((i) => i !== index));
     } else {
@@ -76,7 +77,7 @@ export default function SyntaxScrambler() {
 
   const handleSubmit = () => {
     if (!currentSentence) return;
-    
+
     const userSentence = selectedOrder.map((i) => currentSentence.scrambled[i]).join(' ');
     const isCorrect = userSentence.toLowerCase() === currentSentence.correct.toLowerCase();
     setFeedback(isCorrect ? 'correct' : 'incorrect');
@@ -171,11 +172,10 @@ export default function SyntaxScrambler() {
                     key={wordIndex}
                     onClick={() => handleToggleWord(wordIndex)}
                     disabled={feedback !== null}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                      selectedOrder.includes(wordIndex)
-                        ? 'bg-sky-500 text-white'
-                        : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
-                    } ${feedback !== null ? 'cursor-default' : 'cursor-pointer'}`}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${selectedOrder.includes(wordIndex)
+                      ? 'bg-sky-500 text-white'
+                      : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
+                      } ${feedback !== null ? 'cursor-default' : 'cursor-pointer'}`}
                   >
                     {currentSentence.scrambled[wordIndex]}
                     {selectedOrder.includes(wordIndex) && (
@@ -199,11 +199,10 @@ export default function SyntaxScrambler() {
 
             {feedback && (
               <div
-                className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${
-                  feedback === 'correct'
-                    ? 'bg-green-50 border border-green-200'
-                    : 'bg-red-50 border border-red-200'
-                }`}
+                className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${feedback === 'correct'
+                  ? 'bg-green-50 border border-green-200'
+                  : 'bg-red-50 border border-red-200'
+                  }`}
               >
                 {feedback === 'correct' ? (
                   <>

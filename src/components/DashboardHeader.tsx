@@ -10,7 +10,7 @@ interface DashboardHeaderProps {
   userAvatar?: string;
 }
 
-export default function DashboardHeader({ activeTab, onTabChange, userName = 'User', userAvatar }: DashboardHeaderProps) {
+export default function DashboardHeader({ activeTab, userName = 'User', userAvatar }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -70,14 +70,13 @@ export default function DashboardHeader({ activeTab, onTabChange, userName = 'Us
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300 ease-in-out transform ${
-        isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
-      }`}
+      className={`sticky top-0 z-50 bg-surface-base/90 backdrop-blur-md border-b border-border-base transition-all duration-300 ease-in-out transform ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="inline-block">
-            <span className="text-2xl font-bold text-gradient-brand">
+            <span className="text-2xl font-bold text-content-primary tracking-tight">
               LinguaSpark
             </span>
           </Link>
@@ -87,11 +86,10 @@ export default function DashboardHeader({ activeTab, onTabChange, userName = 'Us
               <Link
                 key={item.id}
                 to={item.path}
-                className={`px-6 py-2 rounded-xl font-medium transition-all duration-200 ${
-                  currentTab === item.id
-                    ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-orange-600'
-                    : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50'
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 border border-transparent ${currentTab === item.id
+                  ? 'bg-action-primary text-action-primary-fg'
+                  : 'text-content-secondary hover:text-content-primary hover:bg-surface-subtle hover:border-border-base'
+                  }`}
               >
                 {item.label}
               </Link>
@@ -99,29 +97,31 @@ export default function DashboardHeader({ activeTab, onTabChange, userName = 'Us
           </nav>
 
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-3">
+            <div className="flex items-center gap-3 pl-4 border-l border-border-base">
+              <div className="text-right hidden md:block">
+                <p className="text-sm font-semibold text-content-primary">{userName}</p>
+                <p className="text-xs text-content-secondary">Free Plan</p>
+              </div>
               {userAvatar ? (
-                <img 
-                  src={userAvatar} 
-                  alt={userName} 
-                  className="w-10 h-10 rounded-full object-cover border-2 border-orange-100"
+                <img
+                  src={userAvatar}
+                  alt={userName}
+                  className="w-10 h-10 rounded-lg object-cover border border-border-base"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-pink-100 flex items-center justify-center">
-                  <span className="text-sm font-semibold text-orange-600">
+                <div className="w-10 h-10 rounded-lg bg-surface-subtle border border-border-base flex items-center justify-center">
+                  <span className="text-sm font-semibold text-content-secondary">
                     {userName.charAt(0).toUpperCase()}
                   </span>
                 </div>
               )}
-              <span className="text-sm font-medium text-gray-700">{userName}</span>
             </div>
-
-            <button 
+            <button
               onClick={handleLogout}
-              className="p-2 hover:bg-orange-50 rounded-xl transition-colors group"
-              title="Logout"
+              className="p-2 text-content-tertiary hover:text-content-primary hover:bg-surface-subtle rounded-lg transition-all"
+              title="Sign Out"
             >
-              <LogOut className="w-5 h-5 text-gray-600 group-hover:text-orange-600" />
+              <LogOut className="w-5 h-5" />
             </button>
 
             <button
@@ -144,11 +144,10 @@ export default function DashboardHeader({ activeTab, onTabChange, userName = 'Us
                 key={item.id}
                 to={item.path}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-4 py-3 rounded-xl font-medium text-left transition-all duration-200 ${
-                  currentTab === item.id
-                    ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-orange-600'
-                    : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50'
-                }`}
+                className={`px-4 py-3 rounded-xl font-medium text-left transition-all duration-200 ${currentTab === item.id
+                  ? 'bg-gradient-to-r from-orange-100 to-pink-100 text-orange-600'
+                  : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50'
+                  }`}
               >
                 {item.label}
               </Link>

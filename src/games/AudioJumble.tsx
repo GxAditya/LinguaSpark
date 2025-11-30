@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { ChevronRight, Volume2, Check, X } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Check, X, ChevronRight } from 'lucide-react';
 import GameLayout from '../components/GameLayout';
 import { useGameSession } from '../hooks/useGameSession';
 import { GameLoading, GameError } from '../components/GameStates';
@@ -22,7 +22,6 @@ export default function AudioJumble() {
     loading,
     error,
     showExitConfirm,
-    setShowExitConfirm,
     submitAnswer,
     completeGame,
     confirmExit,
@@ -138,11 +137,10 @@ export default function AudioJumble() {
                     e.preventDefault();
                     handlePlayWord(wordIndex);
                   }}
-                  className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                    selectedOrder.includes(wordIndex)
-                      ? 'bg-purple-500 text-white'
-                      : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                  }`}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all ${selectedOrder.includes(wordIndex)
+                    ? 'bg-purple-500 text-white'
+                    : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                    }`}
                 >
                   {currentSentence.words[wordIndex]} <span className="text-xs ml-1 opacity-75">(tap audio)</span>
                 </button>
@@ -159,11 +157,10 @@ export default function AudioJumble() {
           )}
 
           {feedback && (
-            <div className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${
-              feedback === 'correct'
-                ? 'bg-green-50 border border-green-200'
-                : 'bg-red-50 border border-red-200'
-            }`}>
+            <div className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${feedback === 'correct'
+              ? 'bg-green-50 border border-green-200'
+              : 'bg-red-50 border border-red-200'
+              }`}>
               {feedback === 'correct' ? (
                 <>
                   <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
@@ -204,6 +201,6 @@ export default function AudioJumble() {
           </div>
         </div>
       </div>
-    </GameLayout>
+    </GameLayout >
   );
 }

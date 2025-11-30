@@ -24,10 +24,10 @@ async function pollinationsTTS(text: string, voice: string = 'alloy'): Promise<T
     // The audio is generated and returned as a URL
     const encodedText = encodeURIComponent(text);
     const audioUrl = `https://text.pollinations.ai/audio?text=${encodedText}&voice=${voice}`;
-    
+
     // Verify the URL works by making a HEAD request
     const response = await fetch(audioUrl, { method: 'HEAD' });
-    
+
     if (!response.ok) {
       throw new Error('Pollinations TTS unavailable');
     }
@@ -87,7 +87,7 @@ async function pollinationsOpenAITTS(text: string, voice: string = 'alloy'): Pro
 async function groqTTS(text: string, _voice: string = 'default'): Promise<TTSResult> {
   try {
     const groqApiKey = config.groq?.apiKey;
-    
+
     if (!groqApiKey) {
       throw new Error('Groq API key not configured');
     }
@@ -126,7 +126,7 @@ export async function generateTTS(options: TTSOptions): Promise<TTSResult> {
       case 'groq':
         return await groqTTS(truncatedText, voice);
       case 'pollinations':
-      default:
+      default: {
         // Try the OpenAI-compatible endpoint first
         const result = await pollinationsOpenAITTS(truncatedText, voice);
         if (result.error) {
@@ -134,6 +134,7 @@ export async function generateTTS(options: TTSOptions): Promise<TTSResult> {
           return await pollinationsTTS(truncatedText, voice);
         }
         return result;
+      }
     }
   } catch (error) {
     console.error('TTS generation error:', error);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, Check, X, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import GameLayout from '../components/GameLayout';
@@ -22,7 +22,7 @@ export default function ConjugationCoach() {
     currentRound,
     totalRounds,
     score,
-    isLoading,
+    loading,
     error,
     isComplete,
     showExitConfirm,
@@ -46,7 +46,7 @@ export default function ConjugationCoach() {
     setFeedback(null);
   }, [currentRound]);
 
-  if (isLoading) {
+  if (loading) {
     return <GameLoading message="Generating conjugation exercises..." />;
   }
 
@@ -54,7 +54,8 @@ export default function ConjugationCoach() {
     return <GameError error={error} onRetry={startNewGame} />;
   }
 
-  const questions: ConjugationQuestion[] = content?.questions || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const questions: ConjugationQuestion[] = (content as any)?.questions || [];
   const currentQuestion = questions[currentRound];
 
   const handleSelectAnswer = (index: number) => {
@@ -143,15 +144,14 @@ export default function ConjugationCoach() {
                   key={index}
                   onClick={() => handleSelectAnswer(index)}
                   disabled={feedback !== null}
-                  className={`w-full p-4 rounded-lg text-left font-semibold transition-all ${
-                    selectedAnswer === index
+                  className={`w-full p-4 rounded-lg text-left font-semibold transition-all ${selectedAnswer === index
                       ? feedback === 'correct'
                         ? 'bg-green-100 border-2 border-green-500 text-green-900'
                         : 'bg-red-100 border-2 border-red-500 text-red-900'
                       : index === currentQuestion.correctIndex && feedback === 'incorrect'
-                      ? 'bg-green-100 border-2 border-green-500 text-green-900'
-                      : 'bg-teal-100 border-2 border-teal-300 text-teal-900 hover:bg-teal-200'
-                  } ${feedback !== null ? 'cursor-default' : 'cursor-pointer'}`}
+                        ? 'bg-green-100 border-2 border-green-500 text-green-900'
+                        : 'bg-teal-100 border-2 border-teal-300 text-teal-900 hover:bg-teal-200'
+                    } ${feedback !== null ? 'cursor-default' : 'cursor-pointer'}`}
                 >
                   {option}
                 </button>
@@ -160,11 +160,10 @@ export default function ConjugationCoach() {
 
             {feedback && (
               <div
-                className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${
-                  feedback === 'correct'
+                className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${feedback === 'correct'
                     ? 'bg-green-50 border border-green-200'
                     : 'bg-red-50 border border-red-200'
-                }`}
+                  }`}
               >
                 {feedback === 'correct' ? (
                   <>

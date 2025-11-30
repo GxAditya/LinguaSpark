@@ -14,40 +14,39 @@ export default function DailyStreakCard({ currentStreak = 7, longestStreak = 14,
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-surface-base rounded-xl shadow-sm p-8 border border-border-base hover:shadow-md transition-shadow duration-300">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-1">Daily Streak</h3>
-          <p className="text-sm text-gray-600">Last activity: {lastActivityDate}</p>
+          <h3 className="text-xl font-bold text-content-primary mb-1">Daily Streak</h3>
+          <p className="text-sm text-content-secondary">Last activity: {lastActivityDate}</p>
         </div>
-        <div className="w-12 h-12 bg-gradient-to-br from-red-100 to-orange-100 rounded-full flex items-center justify-center">
-          <Flame className="w-6 h-6 text-red-500" />
+        <div className="w-12 h-12 bg-brand-primary-light border border-brand-primary-border rounded-lg flex items-center justify-center">
+          <Flame className="w-6 h-6 text-brand-primary" />
         </div>
       </div>
 
       <div className="mb-8">
-        <div className="text-5xl font-bold text-orange-600 mb-2">{currentStreak}</div>
-        <p className="text-sm text-gray-600">Days in a row</p>
+        <div className="text-5xl font-bold text-content-primary mb-2">{currentStreak}</div>
+        <p className="text-sm text-content-secondary">Days in a row</p>
       </div>
 
       <div className="grid grid-cols-7 gap-2 mb-6">
         {streakDays.map((day) => (
           <div
             key={day.id}
-            className={`aspect-square rounded-lg flex items-center justify-center font-semibold transition-all duration-200 ${
-              day.isActive
-                ? 'bg-gradient-to-br from-orange-500 to-pink-500 text-white'
-                : 'bg-gray-100 text-gray-400'
-            }`}
+            className={`aspect-square rounded-md flex items-center justify-center font-semibold transition-all duration-200 text-sm border ${day.isActive
+              ? 'bg-brand-primary border-brand-primary text-white'
+              : 'bg-surface-subtle border-border-subtle text-content-tertiary'
+              }`}
           >
             {day.id + 1}
           </div>
         ))}
       </div>
 
-      <div className="bg-purple-50 rounded-xl p-4">
-        <div className="text-lg font-bold text-purple-600">{longestStreak} days</div>
-        <div className="text-sm text-gray-600">Longest streak</div>
+      <div className="bg-surface-subtle border border-border-subtle rounded-lg p-4">
+        <div className="text-lg font-bold text-content-primary">{longestStreak} days</div>
+        <div className="text-sm text-content-secondary">Longest streak</div>
       </div>
     </div>
   );

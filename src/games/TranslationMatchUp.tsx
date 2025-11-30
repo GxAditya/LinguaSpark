@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ChevronRight, Check, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import GameLayout from '../components/GameLayout';
@@ -22,7 +22,7 @@ export default function TranslationMatchUp() {
   const {
     content,
     score,
-    isLoading,
+    loading,
     error,
     isComplete,
     showExitConfirm,
@@ -40,7 +40,8 @@ export default function TranslationMatchUp() {
   const [matchedCards, setMatchedCards] = useState<number[]>([]);
   const [feedback, setFeedback] = useState<'match' | 'mismatch' | null>(null);
 
-  const pairs: TranslationPair[] = content?.pairs || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pairs: TranslationPair[] = useMemo(() => (content as any)?.pairs || [], [content]);
 
   // Shuffle cards for display
   const cards: Card[] = useMemo(() => {
@@ -94,7 +95,7 @@ export default function TranslationMatchUp() {
     startNewGame();
   };
 
-  if (isLoading) {
+  if (loading) {
     return <GameLoading message="Generating translation pairs..." />;
   }
 
@@ -149,13 +150,12 @@ export default function TranslationMatchUp() {
                   key={card.id}
                   onClick={() => handleCardClick(card.id)}
                   disabled={matchedCards.includes(card.id)}
-                  className={`aspect-square rounded-xl font-semibold text-sm transition-all flex items-center justify-center p-2 ${
-                    matchedCards.includes(card.id)
-                      ? 'bg-green-100 text-green-600 cursor-default'
-                      : flippedCards.includes(card.id)
+                  className={`aspect-square rounded-xl font-semibold text-sm transition-all flex items-center justify-center p-2 ${matchedCards.includes(card.id)
+                    ? 'bg-green-100 text-green-600 cursor-default'
+                    : flippedCards.includes(card.id)
                       ? 'bg-orange-500 text-white scale-105'
                       : 'bg-gradient-to-br from-orange-100 to-pink-100 text-gray-700 hover:scale-105 cursor-pointer'
-                  }`}
+                    }`}
                 >
                   {flippedCards.includes(card.id) || matchedCards.includes(card.id)
                     ? card.text
@@ -166,11 +166,10 @@ export default function TranslationMatchUp() {
 
             {feedback && (
               <div
-                className={`p-4 rounded-xl mb-6 flex items-center justify-center ${
-                  feedback === 'match'
-                    ? 'bg-green-50 border border-green-200'
-                    : 'bg-red-50 border border-red-200'
-                }`}
+                className={`p-4 rounded-xl mb-6 flex items-center justify-center ${feedback === 'match'
+                  ? 'bg-green-50 border border-green-200'
+                  : 'bg-red-50 border border-red-200'
+                  }`}
               >
                 {feedback === 'match' ? (
                   <p className="font-semibold text-green-900">Match found! +10 points</p>

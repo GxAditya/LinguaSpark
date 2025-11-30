@@ -4,44 +4,65 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary brand colors
-        primary: {
+        // Semantic Color System
+        surface: {
+          base: '#ffffff',
+          subtle: '#fafafa', // zinc-50
+          muted: '#f4f4f5',  // zinc-100
+        },
+        border: {
+          base: '#e4e4e7',   // zinc-200
+          subtle: '#f4f4f5', // zinc-100
+          strong: '#d4d4d8', // zinc-300
+        },
+        content: {
+          primary: '#18181b',   // zinc-900
+          secondary: '#71717a', // zinc-500
+          tertiary: '#a1a1aa',  // zinc-400
+          inverse: '#ffffff',
+        },
+        action: {
+          primary: '#18181b',
+          'primary-hover': '#27272a',
+          'primary-fg': '#ffffff',
+          secondary: '#ffffff',
+          'secondary-hover': '#fafafa',
+          'secondary-border': '#e4e4e7',
+          'secondary-fg': '#18181b',
+        },
+        brand: {
+          primary: '#ea580c',
+          'primary-hover': '#c2410c',
+          'primary-light': '#fff7ed',
+          'primary-border': '#ffedd5',
+          secondary: '#4f46e5',
+          'secondary-light': '#eef2ff',
+          'secondary-border': '#e0e7ff',
+        },
+        // Keep utility scales for specific needs
+        zinc: {
+          50: '#fafafa',
+          100: '#f4f4f5',
+          200: '#e4e4e7',
+          300: '#d4d4d8',
+          400: '#a1a1aa',
+          500: '#71717a',
+          600: '#52525b',
+          700: '#3f3f46',
+          800: '#27272a',
+          900: '#18181b',
+        },
+        orange: {
           50: '#fff7ed',
           100: '#ffedd5',
           200: '#fed7aa',
           300: '#fdba74',
           400: '#fb923c',
-          500: '#f97316', // Main orange
+          500: '#f97316',
           600: '#ea580c',
           700: '#c2410c',
           800: '#9a3412',
           900: '#7c2d12',
-        },
-        // Secondary accent (pink)
-        accent: {
-          50: '#fdf2f8',
-          100: '#fce7f3',
-          200: '#fbcfe8',
-          300: '#f9a8d4',
-          400: '#f472b6',
-          500: '#ec4899', // Main pink
-          600: '#db2777',
-          700: '#be185d',
-          800: '#9d174d',
-          900: '#831843',
-        },
-        // Tertiary (purple)
-        tertiary: {
-          50: '#faf5ff',
-          100: '#f3e8ff',
-          200: '#e9d5ff',
-          300: '#d8b4fe',
-          400: '#c084fc',
-          500: '#a855f7', // Main purple
-          600: '#9333ea',
-          700: '#7e22ce',
-          800: '#6b21a8',
-          900: '#581c87',
         },
       },
       backgroundImage: {
@@ -71,9 +92,9 @@ export default {
         'glow-purple': '0 0 40px rgb(168 85 247 / 0.3)',
       },
       borderRadius: {
-        '2xl': '1rem',
-        '3xl': '1.5rem',
-        '4xl': '2rem',
+        '2xl': '0.75rem', // Reduced from 1rem
+        '3xl': '1rem',    // Reduced from 1.5rem
+        '4xl': '1.5rem',  // Reduced from 2rem
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

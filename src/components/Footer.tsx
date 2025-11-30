@@ -12,24 +12,24 @@ export default function Footer() {
               LinguaSpark
             </span>
           </div>
-          
+
           {/* Social Links */}
           <div className="flex items-center gap-4">
-            <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+            <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors border border-gray-700">
               <Twitter className="w-5 h-5" />
             </a>
-            <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+            <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors border border-gray-700">
               <Instagram className="w-5 h-5" />
             </a>
-            <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+            <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors border border-gray-700">
               <Youtube className="w-5 h-5" />
             </a>
-            <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+            <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-colors border border-gray-700">
               <Mail className="w-5 h-5" />
             </a>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-400 text-sm">
             © 2025 LinguaSpark. All rights reserved.

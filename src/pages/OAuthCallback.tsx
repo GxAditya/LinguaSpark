@@ -8,7 +8,7 @@ export default function OAuthCallback() {
   const { provider } = useParams<{ provider: 'google' | 'github' }>();
   const [searchParams] = useSearchParams();
   const { handleOAuthCallback } = useAuth();
-  
+
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [error, setError] = useState<string>('');
 
@@ -43,9 +43,9 @@ export default function OAuthCallback() {
         setTimeout(() => {
           navigate('/dashboard', { replace: true });
         }, 1500);
-      } catch (err: any) {
+      } catch (err: unknown) {
         setStatus('error');
-        setError(err.message || 'Authentication failed. Please try again.');
+        setError(err instanceof Error ? err.message : 'Authentication failed. Please try again.');
       }
     };
 

@@ -14,27 +14,29 @@ interface UseGameSessionReturn {
   session: GameSession | null;
   loading: boolean;
   error: string | null;
-  
+
   // Game content
-  content: any;
+  content: unknown;
   currentRound: number;
   totalRounds: number;
   score: number;
   maxScore: number;
-  
+
   // Time tracking
   timeSpent: number;
-  
+
   // Actions
   startNewGame: () => Promise<void>;
-  submitAnswer: (answer: any) => Promise<void>;
+  submitAnswer: (answer: unknown) => Promise<void>;
+  updateScore: (newScore: number) => void;
+  nextRound: () => void;
   completeGame: () => Promise<void>;
   abandonGame: () => Promise<void>;
-  
+
   // State helpers
   isComplete: boolean;
   hasActiveSession: boolean;
-  
+
   // Confirmation dialog state
   showExitConfirm: boolean;
   setShowExitConfirm: (show: boolean) => void;
@@ -44,14 +46,14 @@ interface UseGameSessionReturn {
 
 export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameType): UseGameSessionReturn {
   const navigate = useNavigate();
-  
+
   // Support both string (gameType) and object (options) parameters
-  const options: UseGameSessionOptions = typeof optionsOrGameType === 'string' 
+  const options: UseGameSessionOptions = typeof optionsOrGameType === 'string'
     ? { gameType: optionsOrGameType }
     : optionsOrGameType;
-    
+
   const { gameType, difficulty = 'beginner', targetLanguage = 'spanish', topic } = options;
-  
+
   const [session, setSession] = useState<GameSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,10 +61,10 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
   const [score, setScore] = useState(0);
   const [timeSpent, setTimeSpent] = useState(0);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
-  
+
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const sessionIdRef = useRef<string | null>(null);
-  
+
   // Start timer when session becomes active
   useEffect(() => {
     if (session && !timerRef.current) {
@@ -70,7 +72,7 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
         setTimeSpent((prev) => prev + 1);
       }, 1000);
     }
-    
+
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -78,7 +80,7 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
       }
     };
   }, [session]);
-  
+
   // Auto-save progress periodically
   useEffect(() => {
     if (session && sessionIdRef.current) {
@@ -89,20 +91,20 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
             score,
             timeSpentSeconds: timeSpent,
           });
-        } catch (err) {
+        } catch (err: unknown) {
           console.error('Failed to save progress:', err);
         }
       }, 30000); // Save every 30 seconds
-      
+
       return () => clearInterval(saveInterval);
     }
   }, [session, currentRound, score, timeSpent]);
-  
+
   // Initialize game session
   const startNewGame = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const newSession = await gameService.startGame({
         gameType,
@@ -110,25 +112,27 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
         targetLanguage,
         topic,
       });
-      
+
       setSession(newSession);
       sessionIdRef.current = newSession.sessionId;
       setCurrentRound(0);
       setScore(0);
       setTimeSpent(0);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to start game:', err);
-      
-      if (err.status === 429) {
-        setError(`Rate limit exceeded. Please try again in ${err.retryAfterSeconds || 60} seconds.`);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = err as any; // Temporary cast for accessing properties
+      if (error.status === 429) {
+        setError(`Rate limit exceeded. Please try again in ${error.retryAfterSeconds || 60} seconds.`);
       } else {
-        setError(err.message || 'Failed to start game. Please try again.');
+        setError(error.message || 'Failed to start game. Please try again.');
       }
     } finally {
       setLoading(false);
     }
   }, [gameType, difficulty, targetLanguage, topic]);
-  
+
   // Check for existing active session on mount
   useEffect(() => {
     const checkExistingSession = async () => {
@@ -151,20 +155,20 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
         await startNewGame();
       }
     };
-    
+
     checkExistingSession();
   }, [gameType, startNewGame]);
-  
+
   const completeGame = useCallback(async () => {
     if (!sessionIdRef.current) return;
-    
+
     try {
       // Stop timer
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
-      
+
       await gameService.completeGame(sessionIdRef.current, {
         score,
         timeSpentSeconds: timeSpent,
@@ -173,13 +177,13 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
       console.error('Failed to complete game:', err);
     }
   }, [score, timeSpent]);
-  
+
   const abandonGame = useCallback(async () => {
     if (!sessionIdRef.current) {
       navigate('/games');
       return;
     }
-    
+
     try {
       await gameService.abandonGame(sessionIdRef.current);
     } catch (err) {
@@ -188,21 +192,21 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
       navigate('/games');
     }
   }, [navigate]);
-  
+
   const confirmExit = useCallback(async () => {
     setShowExitConfirm(false);
     await abandonGame();
   }, [abandonGame]);
-  
+
   const cancelExit = useCallback(() => {
     setShowExitConfirm(false);
   }, []);
-  
-  const submitAnswer = useCallback(async (_answer: any) => {
+
+  const submitAnswer = useCallback(async () => {
     // This method is a convenience for updating progress after an answer
     // The actual score/round update should be handled by the game component
     if (!sessionIdRef.current) return;
-    
+
     try {
       await gameService.updateProgress(sessionIdRef.current, {
         currentRound,
@@ -213,13 +217,21 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
       console.error('Failed to submit answer:', err);
     }
   }, [currentRound, score, timeSpent]);
-  
+
+  const updateScore = useCallback((newScore: number) => {
+    setScore(newScore);
+  }, []);
+
+  const nextRound = useCallback(() => {
+    setCurrentRound((prev) => prev + 1);
+  }, []);
+
   // Calculate derived state
   const totalRounds = session?.totalRounds || 0;
   const maxScore = session?.maxScore || 100;
   const isComplete = currentRound >= totalRounds && totalRounds > 0;
   const hasActiveSession = !!session;
-  
+
   return {
     session,
     loading,
@@ -232,6 +244,8 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
     timeSpent,
     startNewGame,
     submitAnswer,
+    updateScore,
+    nextRound,
     completeGame,
     abandonGame,
     isComplete,

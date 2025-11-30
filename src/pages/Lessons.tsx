@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
 import { BookOpen, Volume2, CheckCircle, Clock, Zap, ChevronRight, PlayCircle, ChevronLeft, Loader2, AlertCircle, Pause, ChevronDown } from 'lucide-react';
@@ -40,8 +40,8 @@ export default function Lessons() {
         setError(null);
         const data = await lessonService.getLessons(selectedLanguage);
         setLessons(data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load lessons');
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Failed to load lessons');
       } finally {
         setIsLoading(false);
       }
@@ -61,8 +61,8 @@ export default function Lessons() {
   // Auth loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
+      <div className="min-h-screen bg-surface-base flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-content-primary animate-spin" />
       </div>
     );
   }
@@ -82,13 +82,13 @@ export default function Lessons() {
       setActiveContentIndex(0);
       setActiveExerciseIndex(0);
       setShowExercises(false);
-      
+
       // Start the lesson if not started
       if (progress.status === 'not-started') {
         await lessonService.startLesson(lesson.slug);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to load lesson');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to load lesson');
     } finally {
       setIsLoading(false);
     }
@@ -98,14 +98,14 @@ export default function Lessons() {
     if (audioRef.current) {
       audioRef.current.pause();
     }
-    
+
     const audioUrl = ttsService.getDirectTTSUrl(text, 'nova');
     audioRef.current = new Audio(audioUrl);
-    
+
     audioRef.current.onplay = () => setIsPlayingAudio(true);
     audioRef.current.onended = () => setIsPlayingAudio(false);
     audioRef.current.onerror = () => setIsPlayingAudio(false);
-    
+
     audioRef.current.play().catch(console.error);
   };
 
@@ -138,64 +138,64 @@ export default function Lessons() {
 
   const handleContentComplete = async (contentIndex: number) => {
     if (!selectedLesson || !lessonProgress) return;
-    
+
     try {
       const result = await lessonService.updateContentProgress(
         selectedLesson.slug,
         contentIndex,
         { completed: true }
       );
-      
+
       setLessonProgress(prev => prev ? {
         ...prev,
         progress: result.progress,
         contentProgress: result.contentProgress,
       } : null);
-      
+
       // Move to next content or exercises
       if (contentIndex < selectedLesson.contents.length - 1) {
         setActiveContentIndex(contentIndex + 1);
       } else {
         setShowExercises(true);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to update progress:', err);
     }
   };
 
   const handleSubmitExercise = async () => {
     if (!selectedLesson || !lessonProgress || !exerciseAnswer.trim()) return;
-    
+
     try {
       const result = await lessonService.submitExercise(
         selectedLesson.slug,
         activeExerciseIndex,
         exerciseAnswer
       );
-      
+
       setExerciseResult({
         isCorrect: result.isCorrect,
         correctAnswer: result.correctAnswer,
         explanation: result.explanation,
       });
-      
+
       setLessonProgress(prev => prev ? {
         ...prev,
         progress: result.progress,
         score: result.score,
         exerciseProgress: result.exerciseProgress,
       } : null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to submit exercise:', err);
     }
   };
 
   const handleNextExercise = () => {
     if (!selectedLesson) return;
-    
+
     setExerciseResult(null);
     setExerciseAnswer('');
-    
+
     if (activeExerciseIndex < selectedLesson.exercises.length - 1) {
       setActiveExerciseIndex(activeExerciseIndex + 1);
     }
@@ -203,14 +203,14 @@ export default function Lessons() {
 
   const handleCompleteLesson = async () => {
     if (!selectedLesson) return;
-    
+
     try {
       await lessonService.completeLesson(selectedLesson.slug);
       // Refresh lessons list
       const data = await lessonService.getLessons(selectedLanguage);
       setLessons(data);
       resetLessonState();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to complete lesson:', err);
     }
   };
@@ -218,11 +218,11 @@ export default function Lessons() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-700';
+        return 'bg-green-50 text-green-700 border border-green-100';
       case 'in-progress':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-blue-50 text-blue-700 border border-blue-100';
       default:
-        return 'bg-gray-100 text-gray-700';
+        return 'bg-surface-subtle text-content-secondary border border-border-subtle';
     }
   };
 
@@ -244,8 +244,8 @@ export default function Lessons() {
   };
 
   const LanguageSelector = ({ id, className = '' }: { id: string; className?: string }) => (
-    <div className={`flex flex-col text-sm text-gray-600 ${className}`}>
-      <label htmlFor={id} className="font-semibold text-gray-800 mb-1">
+    <div className={`flex flex-col text-sm text-content-secondary ${className}`}>
+      <label htmlFor={id} className="font-semibold text-content-primary mb-1">
         Learning language
       </label>
       <div className="relative">
@@ -253,7 +253,7 @@ export default function Lessons() {
           id={id}
           value={selectedLanguage}
           onChange={(event) => handleLanguageChange(event.target.value)}
-          className="appearance-none w-48 rounded-xl border border-gray-200 bg-white py-2 pl-3 pr-8 text-sm font-medium text-gray-700 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-100"
+          className="appearance-none w-48 rounded-lg border border-border-base bg-surface-base py-2 pl-3 pr-8 text-sm font-medium text-content-secondary shadow-sm focus:border-content-primary focus:outline-none focus:ring-1 focus:ring-content-primary"
         >
           {LANGUAGE_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -261,7 +261,7 @@ export default function Lessons() {
             </option>
           ))}
         </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-2.5 h-4 w-4 text-gray-500" />
+        <ChevronDown className="pointer-events-none absolute right-3 top-2.5 h-4 w-4 text-content-tertiary" />
       </div>
     </div>
   );
@@ -269,20 +269,20 @@ export default function Lessons() {
   const getLevelColor = (level: string) => {
     switch (level) {
       case 'beginner':
-        return 'from-green-500 to-emerald-500';
+        return 'bg-green-50 text-green-700 border border-green-100';
       case 'intermediate':
-        return 'from-blue-500 to-cyan-500';
+        return 'bg-blue-50 text-blue-700 border border-blue-100';
       case 'advanced':
-        return 'from-purple-500 to-pink-500';
+        return 'bg-purple-50 text-purple-700 border border-purple-100';
       default:
-        return 'from-gray-500 to-gray-600';
+        return 'bg-surface-subtle text-content-secondary border border-border-subtle';
     }
   };
 
   // Error state
   if (error && !selectedLesson) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
+      <div className="min-h-screen bg-surface-base">
         <DashboardHeader userName={user.name} userAvatar={user.avatar} />
         <main className="max-w-7xl mx-auto px-6 py-12">
           <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex items-center gap-4">
@@ -303,17 +303,17 @@ export default function Lessons() {
     const currentExercise = selectedLesson.exercises[activeExerciseIndex];
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 relative overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
-        
+      <div className="min-h-screen bg-surface-base relative overflow-hidden">
+        {/* Grid Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+
         <DashboardHeader userName={user.name} userAvatar={user.avatar} />
 
         <main className="relative z-10 max-w-4xl mx-auto px-6 py-12">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
             <button
               onClick={resetLessonState}
-              className="flex items-center gap-2 text-orange-600 font-semibold hover:gap-3 transition-all group"
+              className="flex items-center gap-2 text-content-secondary font-semibold hover:gap-3 hover:text-content-primary transition-all group"
             >
               <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back to Lessons
             </button>
@@ -323,35 +323,35 @@ export default function Lessons() {
           </div>
 
           {/* Lesson Header */}
-          <div className="card p-8 mb-8">
+          <div className="bg-surface-base p-8 rounded-xl border border-border-base shadow-sm mb-8">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{selectedLesson.title}</h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-content-primary mb-3">{selectedLesson.title}</h1>
                 <div className="flex items-center gap-4 flex-wrap">
-                  <span className={`badge text-white bg-gradient-to-r ${getLevelColor(selectedLesson.level)}`}>
+                  <span className={`px-3 py-1 rounded-md text-xs font-medium ${getLevelColor(selectedLesson.level)}`}>
                     {selectedLesson.level.charAt(0).toUpperCase() + selectedLesson.level.slice(1)}
                   </span>
-                  <span className="text-gray-600 flex items-center gap-2 text-sm">
+                  <span className="text-content-secondary flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4" /> {selectedLesson.duration} minutes
                   </span>
-                  <span className="text-gray-700 flex items-center gap-2 text-sm bg-gray-100 rounded-full px-3 py-1 font-medium">
+                  <span className="text-content-primary flex items-center gap-2 text-sm bg-surface-subtle rounded-full px-3 py-1 font-medium">
                     {getLanguageLabel(selectedLesson.language)}
                   </span>
                 </div>
               </div>
-              <div className="icon-container-orange w-16 h-16">
-                <PlayCircle className="w-8 h-8 text-orange-600" />
+              <div className="w-16 h-16 bg-brand-primary-light border border-brand-primary-border rounded-lg flex items-center justify-center">
+                <PlayCircle className="w-8 h-8 text-brand-primary" />
               </div>
             </div>
 
-            <p className="text-gray-600 text-lg mb-6">{selectedLesson.description}</p>
+            <p className="text-content-secondary text-lg mb-6">{selectedLesson.description}</p>
 
             {/* Objectives */}
-            <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-6 mb-6">
-              <h3 className="font-semibold text-gray-900 mb-3">Learning Objectives</h3>
+            <div className="bg-surface-subtle border border-border-subtle rounded-lg p-6 mb-6">
+              <h3 className="font-semibold text-content-primary mb-3">Learning Objectives</h3>
               <ul className="space-y-2">
                 {selectedLesson.objectives.map((obj, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-gray-700">
+                  <li key={idx} className="flex items-start gap-2 text-content-secondary">
                     <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                     {obj}
                   </li>
@@ -362,12 +362,12 @@ export default function Lessons() {
             {/* Progress Bar */}
             <div className="mb-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-700 font-medium">Progress:</span>
-                <span className="text-2xl font-bold text-gradient-brand">{lessonProgress.progress}%</span>
+                <span className="text-content-secondary font-medium">Progress:</span>
+                <span className="text-2xl font-bold text-content-primary">{lessonProgress.progress}%</span>
               </div>
               <div className="progress-bar h-4">
                 <div
-                  className="progress-bar-fill"
+                  className="bg-content-primary h-full rounded-full transition-all duration-500 ease-out"
                   style={{ width: `${lessonProgress.progress}%` }}
                 ></div>
               </div>
@@ -376,20 +376,19 @@ export default function Lessons() {
 
           {/* Content or Exercises */}
           {!showExercises ? (
-            <div className="card p-8">
+            <div className="bg-surface-base p-8 rounded-xl border border-border-base shadow-sm">
               {/* Content Navigation */}
               <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
                 {selectedLesson.contents.map((content, idx) => (
                   <button
                     key={idx}
                     onClick={() => setActiveContentIndex(idx)}
-                    className={`px-4 py-2 rounded-xl font-medium whitespace-nowrap transition-all ${
-                      idx === activeContentIndex
-                        ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white'
-                        : lessonProgress.contentProgress[idx]?.completed
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
+                    className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all border ${idx === activeContentIndex
+                      ? 'bg-action-primary text-action-primary-fg border-action-primary'
+                      : lessonProgress.contentProgress[idx]?.completed
+                        ? 'bg-green-50 text-green-700 border-green-100'
+                        : 'bg-surface-base text-content-secondary border-border-base hover:bg-surface-subtle'
+                      }`}
                   >
                     {idx + 1}. {content.title.substring(0, 20)}...
                   </button>
@@ -399,11 +398,11 @@ export default function Lessons() {
               {/* Current Content */}
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-gray-900">{currentContent.title}</h2>
+                  <h2 className="text-2xl font-bold text-content-primary">{currentContent.title}</h2>
                   {currentContent.audioText && (
                     <button
                       onClick={() => isPlayingAudio ? handlePauseAudio() : handlePlayAudio(currentContent.audioText!)}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-xl font-medium hover:bg-blue-200 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-100 rounded-lg font-medium hover:bg-blue-100 transition-colors"
                     >
                       {isPlayingAudio ? <Pause className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                       {isPlayingAudio ? 'Pause' : 'Listen'}
@@ -414,20 +413,20 @@ export default function Lessons() {
                 {/* Content based on type */}
                 <div className="prose max-w-none">
                   {currentContent.type === 'dialogue' ? (
-                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 space-y-3">
+                    <div className="bg-purple-50 border border-purple-100 rounded-lg p-6 space-y-3">
                       {currentContent.content.split('\n').map((line, idx) => {
                         const [speaker, ...text] = line.split(':');
                         return (
                           <div key={idx} className="flex gap-3">
                             <span className="font-semibold text-purple-700 min-w-[80px]">{speaker}:</span>
-                            <span className="text-gray-700">{text.join(':')}</span>
+                            <span className="text-content-primary">{text.join(':')}</span>
                           </div>
                         );
                       })}
                     </div>
                   ) : currentContent.type === 'grammar' ? (
-                    <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6">
-                      <pre className="whitespace-pre-wrap text-gray-700 font-mono text-sm">{currentContent.content}</pre>
+                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-6">
+                      <pre className="whitespace-pre-wrap text-content-primary font-mono text-sm">{currentContent.content}</pre>
                       {currentContent.grammarPoints && (
                         <div className="mt-4 pt-4 border-t border-blue-200">
                           <h4 className="font-semibold text-blue-800 mb-2">Key Points:</h4>
@@ -441,64 +440,64 @@ export default function Lessons() {
                     </div>
                   ) : currentContent.type === 'vocabulary' ? (
                     <div className="space-y-4">
-                      <p className="text-gray-700">{currentContent.content}</p>
+                      <p className="text-content-primary">{currentContent.content}</p>
                       <div className="grid gap-4">
                         {currentContent.vocabulary?.map((vocab, idx) => (
-                          <div key={idx} className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4">
+                          <div key={idx} className="bg-green-50 border border-green-100 rounded-lg p-4">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-3">
-                                <span className="text-xl font-bold text-gray-900">{vocab.word}</span>
-                                <span className="text-gray-500">→</span>
+                                <span className="text-xl font-bold text-content-primary">{vocab.word}</span>
+                                <span className="text-content-tertiary">→</span>
                                 <span className="text-lg text-green-700">{vocab.translation}</span>
                               </div>
                               <button
                                 onClick={() => handlePlayAudio(vocab.word)}
-                                className="p-2 bg-green-100 rounded-lg hover:bg-green-200 transition-colors"
+                                className="p-2 bg-white border border-green-200 rounded-md hover:bg-green-100 transition-colors"
                               >
                                 <Volume2 className="w-4 h-4 text-green-700" />
                               </button>
                             </div>
                             {vocab.pronunciation && (
-                              <p className="text-sm text-gray-500 mb-2">/{vocab.pronunciation}/</p>
+                              <p className="text-sm text-content-secondary mb-2">/{vocab.pronunciation}/</p>
                             )}
-                            <div className="bg-white/50 rounded-lg p-3">
-                              <p className="text-gray-700 italic">"{vocab.example}"</p>
-                              <p className="text-gray-500 text-sm mt-1">{vocab.exampleTranslation}</p>
+                            <div className="bg-surface-base border border-green-200 rounded-md p-3">
+                              <p className="text-content-primary italic">"{vocab.example}"</p>
+                              <p className="text-content-secondary text-sm mt-1">{vocab.exampleTranslation}</p>
                             </div>
                           </div>
                         ))}
                       </div>
                     </div>
                   ) : (
-                    <p className="text-gray-700 text-lg leading-relaxed">{currentContent.content}</p>
+                    <p className="text-content-primary text-lg leading-relaxed">{currentContent.content}</p>
                   )}
                 </div>
               </div>
 
               {/* Navigation Buttons */}
-              <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+              <div className="flex items-center justify-between pt-6 border-t border-border-base">
                 <button
                   onClick={() => setActiveContentIndex(Math.max(0, activeContentIndex - 1))}
                   disabled={activeContentIndex === 0}
-                  className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 px-6 py-3 border border-border-base rounded-lg font-medium text-content-secondary hover:bg-surface-subtle disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronLeft className="w-5 h-5" /> Previous
                 </button>
-                
+
                 {activeContentIndex === selectedLesson.contents.length - 1 ? (
                   <button
                     onClick={() => {
                       handleContentComplete(activeContentIndex);
                       setShowExercises(true);
                     }}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+                    className="flex items-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover transition-colors"
                   >
                     Start Exercises <Zap className="w-5 h-5" />
                   </button>
                 ) : (
                   <button
                     onClick={() => handleContentComplete(activeContentIndex)}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+                    className="flex items-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover transition-colors"
                   >
                     Next <ChevronRight className="w-5 h-5" />
                   </button>
@@ -507,23 +506,23 @@ export default function Lessons() {
             </div>
           ) : (
             /* Exercises Section */
-            <div className="card p-8">
+            <div className="bg-surface-base p-8 rounded-xl border border-border-base shadow-sm">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Practice Exercises</h2>
-                <span className="text-gray-600">
+                <h2 className="text-2xl font-bold text-content-primary">Practice Exercises</h2>
+                <span className="text-content-secondary">
                   {activeExerciseIndex + 1} of {selectedLesson.exercises.length}
                 </span>
               </div>
 
               {/* Exercise */}
               <div className="mb-8">
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6">
-                  <p className="text-lg font-medium text-gray-900 mb-4">{currentExercise.question}</p>
-                  
+                <div className="bg-purple-50 border border-purple-100 rounded-lg p-6 mb-6">
+                  <p className="text-lg font-medium text-content-primary mb-4">{currentExercise.question}</p>
+
                   {currentExercise.audioText && (
                     <button
                       onClick={() => handlePlayAudio(currentExercise.audioText!)}
-                      className="flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-xl font-medium hover:bg-purple-200 transition-colors mb-4"
+                      className="flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg font-medium hover:bg-purple-200 transition-colors mb-4"
                     >
                       <Volume2 className="w-5 h-5" /> Listen to Audio
                     </button>
@@ -536,17 +535,16 @@ export default function Lessons() {
                           key={idx}
                           onClick={() => setExerciseAnswer(option)}
                           disabled={!!exerciseResult}
-                          className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all ${
-                            exerciseAnswer === option
-                              ? exerciseResult
-                                ? exerciseResult.isCorrect
-                                  ? 'border-green-500 bg-green-50'
-                                  : 'border-red-500 bg-red-50'
-                                : 'border-orange-500 bg-orange-50'
-                              : exerciseResult && option === exerciseResult.correctAnswer
+                          className={`w-full text-left px-4 py-3 rounded-lg border transition-all ${exerciseAnswer === option
+                            ? exerciseResult
+                              ? exerciseResult.isCorrect
+                                ? 'border-green-500 bg-green-50'
+                                : 'border-red-500 bg-red-50'
+                              : 'border-action-primary bg-surface-subtle'
+                            : exerciseResult && option === exerciseResult.correctAnswer
                               ? 'border-green-500 bg-green-50'
-                              : 'border-gray-200 hover:border-gray-300'
-                          } ${!!exerciseResult ? 'cursor-default' : 'cursor-pointer'}`}
+                              : 'border-border-base hover:border-border-strong'
+                            } ${exerciseResult ? 'cursor-default' : 'cursor-pointer'}`}
                         >
                           {option}
                         </button>
@@ -559,14 +557,14 @@ export default function Lessons() {
                       onChange={(e) => setExerciseAnswer(e.target.value)}
                       disabled={!!exerciseResult}
                       placeholder="Type your answer..."
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-0 outline-none transition-colors"
+                      className="w-full px-4 py-3 border border-border-base rounded-lg focus:border-content-primary focus:ring-1 focus:ring-content-primary outline-none transition-colors"
                     />
                   )}
                 </div>
 
                 {/* Result */}
                 {exerciseResult && (
-                  <div className={`rounded-xl p-6 mb-6 ${exerciseResult.isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                  <div className={`rounded-lg p-6 mb-6 ${exerciseResult.isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
                     <div className="flex items-center gap-3 mb-2">
                       {exerciseResult.isCorrect ? (
                         <CheckCircle className="w-6 h-6 text-green-600" />
@@ -578,45 +576,45 @@ export default function Lessons() {
                       </span>
                     </div>
                     {!exerciseResult.isCorrect && (
-                      <p className="text-gray-700 mb-2">
+                      <p className="text-content-primary mb-2">
                         Correct answer: <strong>{exerciseResult.correctAnswer}</strong>
                       </p>
                     )}
                     {exerciseResult.explanation && (
-                      <p className="text-gray-600 text-sm">{exerciseResult.explanation}</p>
+                      <p className="text-content-secondary text-sm">{exerciseResult.explanation}</p>
                     )}
                   </div>
                 )}
               </div>
 
               {/* Exercise Navigation */}
-              <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+              <div className="flex items-center justify-between pt-6 border-t border-border-base">
                 <button
                   onClick={() => setShowExercises(false)}
-                  className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-2 px-6 py-3 border border-border-base rounded-lg font-medium text-content-secondary hover:bg-surface-subtle transition-colors"
                 >
                   <BookOpen className="w-5 h-5" /> Back to Content
                 </button>
-                
+
                 {!exerciseResult ? (
                   <button
                     onClick={handleSubmitExercise}
                     disabled={!exerciseAnswer.trim()}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                    className="flex items-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Submit Answer <ChevronRight className="w-5 h-5" />
                   </button>
                 ) : activeExerciseIndex === selectedLesson.exercises.length - 1 ? (
                   <button
                     onClick={handleCompleteLesson}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+                    className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
                   >
                     Complete Lesson <CheckCircle className="w-5 h-5" />
                   </button>
                 ) : (
                   <button
                     onClick={handleNextExercise}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+                    className="flex items-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover transition-colors"
                   >
                     Next Exercise <ChevronRight className="w-5 h-5" />
                   </button>
@@ -631,28 +629,27 @@ export default function Lessons() {
 
   // Lessons list view
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 relative overflow-hidden">
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
-      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-to-r from-yellow-200 to-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000"></div>
-      
+    <div className="min-h-screen bg-surface-base relative overflow-hidden">
+      {/* Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+
       <DashboardHeader userName={user.name} userAvatar={user.avatar} />
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-              AI-Generated <span className="text-gradient-brand">Lessons</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-content-primary mb-3">
+              AI-Generated <span className="text-content-primary">Lessons</span>
             </h1>
-            <p className="text-lg text-gray-600">Personalized lessons created by our AI to match your learning pace</p>
-            <p className="text-sm text-gray-500 mt-2">Showing content for {getLanguageLabel(selectedLanguage)}</p>
+            <p className="text-lg text-content-secondary">Personalized lessons created by our AI to match your learning pace</p>
+            <p className="text-sm text-content-tertiary mt-2">Showing content for {getLanguageLabel(selectedLanguage)}</p>
           </div>
           <LanguageSelector id="lesson-language-selector" />
         </div>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
+            <Loader2 className="w-12 h-12 text-content-primary animate-spin" />
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -660,7 +657,7 @@ export default function Lessons() {
               <button
                 key={lesson.id}
                 onClick={() => handleLessonClick(lesson)}
-                className="card-interactive p-6 text-left"
+                className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm hover:shadow-md hover:border-border-strong transition-all duration-200 text-left group"
               >
                 <div className="flex items-start justify-between mb-4">
                   <span className={`badge flex items-center gap-2 ${getStatusColor(lesson.status)}`}>
@@ -668,32 +665,32 @@ export default function Lessons() {
                   </span>
                 </div>
 
-                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                <p className="text-xs font-semibold uppercase tracking-wide text-content-tertiary mb-2">
                   {getLanguageLabel(lesson.language)}
                 </p>
 
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{lesson.title}</h3>
-                <p className="text-sm text-gray-600 mb-4">{lesson.topic}</p>
+                <h3 className="text-lg font-bold text-content-primary mb-2">{lesson.title}</h3>
+                <p className="text-sm text-content-secondary mb-4">{lesson.topic}</p>
 
                 <div className="flex items-center gap-2 mb-4 flex-wrap">
-                  <span className={`badge text-white bg-gradient-to-r ${getLevelColor(lesson.level)}`}>
+                  <span className={`px-2 py-1 rounded-md text-xs font-medium ${getLevelColor(lesson.level)}`}>
                     {lesson.level.charAt(0).toUpperCase() + lesson.level.slice(1)}
                   </span>
-                  <span className="text-xs text-gray-600 flex items-center gap-1">
+                  <span className="text-xs text-content-secondary flex items-center gap-1">
                     <Clock className="w-3 h-3" /> {lesson.duration} min
                   </span>
                 </div>
 
                 <div className="mb-4">
-                  <div className="progress-bar h-2">
+                  <div className="progress-bar h-2 bg-surface-muted rounded-full overflow-hidden">
                     <div
-                      className="progress-bar-fill"
+                      className="bg-content-primary h-full rounded-full"
                       style={{ width: `${lesson.progress}%` }}
                     ></div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-orange-600 font-semibold text-sm group-hover:gap-3 transition-all">
+                <div className="flex items-center gap-2 text-content-primary font-semibold text-sm group-hover:gap-3 transition-all">
                   Learn More <ChevronRight className="w-4 h-4" />
                 </div>
               </button>

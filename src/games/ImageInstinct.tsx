@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, Check, X, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import GameLayout from '../components/GameLayout';
@@ -22,7 +22,6 @@ export default function ImageInstinct() {
     showExitConfirm,
     setShowExitConfirm,
     confirmExit,
-    cancelExit,
     completeGame,
     startNewGame,
     submitAnswer,
@@ -33,7 +32,8 @@ export default function ImageInstinct() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
-  const rounds: ImageRound[] = content?.rounds || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rounds: ImageRound[] = (content as any)?.rounds || [];
   const totalRounds = rounds.length;
   const isComplete = currentRound >= totalRounds && totalRounds > 0;
 
@@ -141,15 +141,14 @@ export default function ImageInstinct() {
                   key={index}
                   onClick={() => handleSelectImage(index)}
                   disabled={feedback !== null}
-                  className={`aspect-square rounded-2xl text-6xl flex items-center justify-center transition-all ${
-                    selectedImage === index
-                      ? feedback === 'correct'
-                        ? 'bg-green-100 scale-110 ring-4 ring-green-500'
-                        : 'bg-red-100 scale-105 ring-4 ring-red-500'
-                      : index === correctIndex && feedback === 'incorrect'
+                  className={`aspect-square rounded-2xl text-6xl flex items-center justify-center transition-all ${selectedImage === index
+                    ? feedback === 'correct'
+                      ? 'bg-green-100 scale-110 ring-4 ring-green-500'
+                      : 'bg-red-100 scale-105 ring-4 ring-red-500'
+                    : index === correctIndex && feedback === 'incorrect'
                       ? 'bg-green-100 ring-4 ring-green-500'
                       : 'bg-gray-100 hover:bg-gray-200'
-                  } ${feedback !== null ? 'cursor-default' : 'cursor-pointer hover:scale-105'}`}
+                    } ${feedback !== null ? 'cursor-default' : 'cursor-pointer hover:scale-105'}`}
                 >
                   {image}
                 </button>
@@ -158,11 +157,10 @@ export default function ImageInstinct() {
 
             {feedback && (
               <div
-                className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${
-                  feedback === 'correct'
-                    ? 'bg-green-50 border border-green-200'
-                    : 'bg-red-50 border border-red-200'
-                }`}
+                className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${feedback === 'correct'
+                  ? 'bg-green-50 border border-green-200'
+                  : 'bg-red-50 border border-red-200'
+                  }`}
               >
                 {feedback === 'correct' ? (
                   <>

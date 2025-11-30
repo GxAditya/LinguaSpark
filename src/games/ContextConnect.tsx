@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, Check, X, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import GameLayout from '../components/GameLayout';
@@ -23,7 +23,7 @@ export default function ContextConnect() {
     currentRound,
     totalRounds,
     score,
-    isLoading,
+    loading,
     error,
     isComplete,
     showExitConfirm,
@@ -41,7 +41,8 @@ export default function ContextConnect() {
   const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
-  const passages: PassageData[] = content?.passages || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const passages: PassageData[] = (content as any)?.passages || [];
   const currentPassage = passages[currentRound];
 
   // Reset local state when round changes
@@ -50,7 +51,7 @@ export default function ContextConnect() {
     setFeedback(null);
   }, [currentRound]);
 
-  if (isLoading) {
+  if (loading) {
     return <GameLoading message="Generating context exercises..." />;
   }
 
@@ -159,17 +160,16 @@ export default function ContextConnect() {
                         key={optIdx}
                         onClick={() => handleSelectOption(idx, optIdx)}
                         disabled={feedback !== null}
-                        className={`p-3 rounded-lg text-left font-medium transition-all ${
-                          answers[idx] === optIdx
+                        className={`p-3 rounded-lg text-left font-medium transition-all ${answers[idx] === optIdx
                             ? feedback === null
                               ? 'bg-rose-300 text-rose-900'
                               : option === blank.correctWord
-                              ? 'bg-green-200 text-green-900'
-                              : 'bg-red-200 text-red-900'
+                                ? 'bg-green-200 text-green-900'
+                                : 'bg-red-200 text-red-900'
                             : feedback !== null && option === blank.correctWord
-                            ? 'bg-green-200 text-green-900'
-                            : 'bg-rose-100 text-rose-900 hover:bg-rose-200'
-                        } ${feedback !== null ? 'cursor-default' : 'cursor-pointer'}`}
+                              ? 'bg-green-200 text-green-900'
+                              : 'bg-rose-100 text-rose-900 hover:bg-rose-200'
+                          } ${feedback !== null ? 'cursor-default' : 'cursor-pointer'}`}
                       >
                         {option}
                       </button>
@@ -181,11 +181,10 @@ export default function ContextConnect() {
 
             {feedback && (
               <div
-                className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${
-                  feedback === 'correct'
+                className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${feedback === 'correct'
                     ? 'bg-green-50 border border-green-200'
                     : 'bg-red-50 border border-red-200'
-                }`}
+                  }`}
               >
                 {feedback === 'correct' ? (
                   <>

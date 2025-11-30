@@ -4,7 +4,7 @@ interface ApiResponse<T> {
   success: boolean;
   message?: string;
   data?: T;
-  errors?: any[];
+  errors?: unknown[];
 }
 
 class ApiService {
@@ -47,13 +47,15 @@ class ApiService {
       }
 
       return data;
-    } catch (error: any) {
-      if (error.status) {
-        throw error;
+    } catch (error: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = error as any;
+      if (err.status) {
+        throw err;
       }
       throw {
         status: 500,
-        message: error.message || 'Network error. Please try again.',
+        message: err.message || 'Network error. Please try again.',
       };
     }
   }
@@ -64,7 +66,7 @@ class ApiService {
   }
 
   // POST request
-  async post<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
+  async post<T>(endpoint: string, body?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
@@ -72,7 +74,7 @@ class ApiService {
   }
 
   // PUT request
-  async put<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
+  async put<T>(endpoint: string, body?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,
@@ -80,7 +82,7 @@ class ApiService {
   }
 
   // PATCH request
-  async patch<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
+  async patch<T>(endpoint: string, body?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
       body: body ? JSON.stringify(body) : undefined,

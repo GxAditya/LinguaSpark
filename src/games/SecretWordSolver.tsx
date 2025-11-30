@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, Check, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import GameLayout from '../components/GameLayout';
@@ -18,7 +18,7 @@ export default function SecretWordSolver() {
     currentRound,
     totalRounds,
     score,
-    isLoading,
+    loading,
     error,
     isComplete,
     showExitConfirm,
@@ -35,6 +35,7 @@ export default function SecretWordSolver() {
 
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
   const [wrongGuesses, setWrongGuesses] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
   const maxWrongs = 6;
@@ -47,7 +48,7 @@ export default function SecretWordSolver() {
     setFeedback(null);
   }, [currentRound]);
 
-  if (isLoading) {
+  if (loading) {
     return <GameLoading message="Generating secret words..." />;
   }
 
@@ -55,7 +56,8 @@ export default function SecretWordSolver() {
     return <GameError error={error} onRetry={startNewGame} />;
   }
 
-  const words: SecretWord[] = content?.words || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const words: SecretWord[] = (content as any)?.words || [];
   const currentWordData = words[currentRound];
   const currentWord = currentWordData?.word?.toUpperCase() || '';
 
@@ -190,11 +192,10 @@ export default function SecretWordSolver() {
                 {guessedLetters.map((letter) => (
                   <span
                     key={letter}
-                    className={`px-3 py-1 rounded-lg font-medium text-sm ${
-                      currentWord.includes(letter)
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700'
-                    }`}
+                    className={`px-3 py-1 rounded-lg font-medium text-sm ${currentWord.includes(letter)
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-red-100 text-red-700'
+                      }`}
                   >
                     {letter}
                   </span>
@@ -211,11 +212,10 @@ export default function SecretWordSolver() {
                       key={letter}
                       onClick={() => handleGuess(letter)}
                       disabled={guessedLetters.includes(letter)}
-                      className={`w-10 h-10 rounded-lg font-semibold transition-all ${
-                        guessedLetters.includes(letter)
-                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                          : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200 cursor-pointer'
-                      }`}
+                      className={`w-10 h-10 rounded-lg font-semibold transition-all ${guessedLetters.includes(letter)
+                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200 cursor-pointer'
+                        }`}
                     >
                       {letter}
                     </button>

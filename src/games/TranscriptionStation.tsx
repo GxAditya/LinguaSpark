@@ -21,7 +21,6 @@ export default function TranscriptionStation() {
     loading,
     error,
     showExitConfirm,
-    setShowExitConfirm,
     submitAnswer,
     completeGame,
     confirmExit,
@@ -130,11 +129,10 @@ export default function TranscriptionStation() {
           </div>
 
           {feedback && (
-            <div className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${
-              feedback === 'correct'
+            <div className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${feedback === 'correct'
                 ? 'bg-green-50 border border-green-200'
                 : 'bg-red-50 border border-red-200'
-            }`}>
+              }`}>
               {feedback === 'correct' ? (
                 <>
                   <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />

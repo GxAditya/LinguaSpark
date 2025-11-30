@@ -9,7 +9,7 @@ interface SuccessResponse<T> {
 interface ErrorResponse {
   success: false;
   message: string;
-  errors?: any[];
+  errors?: unknown[];
 }
 
 export const sendSuccess = <T>(
@@ -30,7 +30,7 @@ export const sendError = (
   res: Response,
   statusCode: number,
   message: string,
-  errors?: any[]
+  errors?: unknown[]
 ): Response => {
   const response: ErrorResponse = {
     success: false,

@@ -17,7 +17,7 @@ export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 export interface GameSession {
   sessionId: string;
   gameType: GameType;
-  content: any;
+  content: unknown;
   currentRound: number;
   totalRounds: number;
   score: number;
@@ -95,11 +95,13 @@ class GameService {
         return response.data;
       }
       return null;
-    } catch (error: any) {
-      if (error.status === 404) {
+    } catch (error: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = error as any;
+      if (err.status === 404) {
         return null;
       }
-      throw error;
+      throw err;
     }
   }
 
@@ -132,6 +134,7 @@ class GameService {
     accuracy: number;
     timeSpentSeconds: number;
   }> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await api.post<any>(`/games/session/${sessionId}/complete`, result);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to complete game');
@@ -162,6 +165,7 @@ class GameService {
     if (options?.offset) params.set('offset', options.offset.toString());
     if (options?.gameType) params.set('gameType', options.gameType);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await api.get<any>(`/games/history?${params.toString()}`);
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to get game history');

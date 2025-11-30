@@ -64,13 +64,13 @@ const getIconForTopic = (topic: string) => {
 const getDifficultyColor = (difficulty: string) => {
   switch (difficulty.toLowerCase()) {
     case 'easy':
-      return 'from-green-500 to-emerald-500';
+      return 'bg-green-50 text-green-700 border border-green-100';
     case 'medium':
-      return 'from-blue-500 to-cyan-500';
+      return 'bg-blue-50 text-blue-700 border border-blue-100';
     case 'hard':
-      return 'from-purple-500 to-pink-500';
+      return 'bg-purple-50 text-purple-700 border border-purple-100';
     default:
-      return 'from-gray-500 to-gray-600';
+      return 'bg-surface-subtle text-content-secondary border border-border-subtle';
   }
 };
 
@@ -105,9 +105,9 @@ export default function Practice() {
         if (!ignore) {
           setScenarios(data);
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (!ignore) {
-          setScenarioError(error?.message || 'Failed to load practice scenarios');
+          setScenarioError(error instanceof Error ? error.message : 'Failed to load practice scenarios');
         }
       } finally {
         if (!ignore) {
@@ -145,8 +145,8 @@ export default function Practice() {
   };
 
   const LanguageSelector = ({ id, className = '' }: { id: string; className?: string }) => (
-    <div className={`flex flex-col text-sm text-gray-600 ${className}`}>
-      <label htmlFor={id} className="font-semibold text-gray-800 mb-1">
+    <div className={`flex flex-col text-sm text-content-secondary ${className}`}>
+      <label htmlFor={id} className="font-semibold text-content-primary mb-1">
         Learning language
       </label>
       <div className="relative">
@@ -154,7 +154,7 @@ export default function Practice() {
           id={id}
           value={selectedLanguage}
           onChange={(event) => handleLanguageChange(event.target.value as PracticeLanguage)}
-          className="appearance-none w-48 rounded-xl border border-gray-200 bg-white py-2 pl-3 pr-8 text-sm font-medium text-gray-700 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-100"
+          className="appearance-none w-48 rounded-lg border border-border-base bg-surface-base py-2 pl-3 pr-8 text-sm font-medium text-content-secondary shadow-sm focus:border-content-primary focus:outline-none focus:ring-1 focus:ring-content-primary"
         >
           {LANGUAGE_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -162,7 +162,7 @@ export default function Practice() {
             </option>
           ))}
         </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-2.5 h-4 w-4 text-gray-500" />
+        <ChevronDown className="pointer-events-none absolute right-3 top-2.5 h-4 w-4 text-content-tertiary" />
       </div>
     </div>
   );
@@ -177,8 +177,8 @@ export default function Practice() {
     try {
       const session = await practiceService.startSession({ scenarioId: scenario.id });
       setActiveSession(session);
-    } catch (error: any) {
-      setSessionError(error?.message || 'Unable to start practice session');
+    } catch (error: unknown) {
+      setSessionError(error instanceof Error ? error.message : 'Unable to start practice session');
     } finally {
       setIsSessionLoading(false);
     }
@@ -194,8 +194,8 @@ export default function Practice() {
       const session = await practiceService.sendMessage(activeSession.id, trimmed);
       setActiveSession(session);
       setInputValue('');
-    } catch (error: any) {
-      setSessionError(error?.message || 'Unable to send message');
+    } catch (error: unknown) {
+      setSessionError(error instanceof Error ? error.message : 'Unable to send message');
     } finally {
       setIsSendingMessage(false);
     }
@@ -208,8 +208,8 @@ export default function Practice() {
     try {
       const session = await practiceService.completeSession(activeSession.id);
       setActiveSession(session);
-    } catch (error: any) {
-      setSessionError(error?.message || 'Unable to complete session');
+    } catch (error: unknown) {
+      setSessionError(error instanceof Error ? error.message : 'Unable to complete session');
     } finally {
       setIsCompletingSession(false);
     }
@@ -237,7 +237,7 @@ export default function Practice() {
 
     if (scenarioError) {
       return (
-        <div className="card p-6 text-red-700 bg-red-50 border border-red-100">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-700">
           <p>{scenarioError}</p>
         </div>
       );
@@ -245,7 +245,7 @@ export default function Practice() {
 
     if (filteredScenarios.length === 0) {
       return (
-        <div className="card p-8 text-center text-gray-700">
+        <div className="bg-surface-base p-8 rounded-xl border border-border-base shadow-sm text-center text-content-secondary">
           <p>
             We&apos;re still preparing {getLanguageLabel(selectedLanguage)} practice scenarios. Try another language for now!
           </p>
@@ -259,27 +259,27 @@ export default function Practice() {
           <button
             key={scenario.id}
             onClick={() => handleStartScenario(scenario)}
-            className="card-interactive p-6 text-left"
+            className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm hover:shadow-md hover:border-border-strong transition-all duration-200 text-left group"
           >
             <div className="flex items-start justify-between mb-4">
-              <div className="icon-container-orange w-12 h-12 text-orange-600 group-hover:scale-110">
+              <div className="w-12 h-12 bg-brand-primary-light border border-brand-primary-border rounded-lg flex items-center justify-center text-brand-primary group-hover:scale-105 transition-transform">
                 {getIconForTopic(scenario.topic)}
               </div>
-              <span className={`badge text-white bg-gradient-to-r ${getDifficultyColor(scenario.difficulty)}`}>
+              <span className={`px-2 py-1 rounded-md text-xs font-medium ${getDifficultyColor(scenario.difficulty)}`}>
                 {formatDifficultyLabel(scenario.difficulty)}
               </span>
             </div>
 
-            <h3 className="text-lg font-bold text-gray-900 mb-2">{scenario.title}</h3>
-            <p className="text-sm text-gray-600 mb-4 line-clamp-2">{scenario.description}</p>
+            <h3 className="text-lg font-bold text-content-primary mb-2">{scenario.title}</h3>
+            <p className="text-sm text-content-secondary mb-4 line-clamp-2">{scenario.description}</p>
 
-            <div className="flex items-center justify-between text-xs text-gray-600">
+            <div className="flex items-center justify-between text-xs text-content-secondary">
               <span>~{scenario.durationMinutes} minutes</span>
-              <span className="badge bg-gray-100 text-gray-600">{scenario.topic}</span>
+              <span className="bg-surface-subtle border border-border-subtle px-2 py-1 rounded-md text-content-secondary">{scenario.topic}</span>
             </div>
-            <div className="text-xs text-gray-600 mt-2">{getLanguageLabel(scenario.language)}</div>
+            <div className="text-xs text-content-secondary mt-2">{getLanguageLabel(scenario.language)}</div>
 
-            <div className="flex items-center gap-2 text-orange-600 font-semibold text-sm group-hover:gap-3 transition-all mt-4">
+            <div className="flex items-center gap-2 text-content-primary font-semibold text-sm group-hover:gap-3 transition-all mt-4">
               Start Practice <ChevronRight className="w-4 h-4" />
             </div>
           </button>
@@ -296,9 +296,9 @@ export default function Practice() {
     const placeholder = `Type your response in ${getLanguageLabel(selectedScenario.language)}...`;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex flex-col relative overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000" />
+      <div className="min-h-screen bg-surface-base flex flex-col relative overflow-hidden">
+        {/* Grid Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
 
         <DashboardHeader userName={userName} activeTab="practice" />
 
@@ -306,67 +306,67 @@ export default function Practice() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <button
               onClick={handleExitScenario}
-              className="flex items-center gap-2 text-orange-600 font-semibold hover:gap-3 transition-all group"
+              className="flex items-center gap-2 text-content-secondary font-semibold hover:gap-3 hover:text-content-primary transition-all group"
             >
               <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back to scenarios
             </button>
             <LanguageSelector id="scenario-language" />
           </div>
 
-          <div className="card p-6 space-y-4">
+          <div className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm space-y-4">
             <div>
-              <p className="text-sm uppercase tracking-wide text-orange-500 font-semibold">Scenario</p>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mt-1">{selectedScenario.title}</h1>
-              <p className="text-gray-600 mt-2">{selectedScenario.description}</p>
+              <p className="text-sm uppercase tracking-wide text-content-tertiary font-semibold">Scenario</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-content-primary mt-1">{selectedScenario.title}</h1>
+              <p className="text-content-secondary mt-2">{selectedScenario.description}</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-content-secondary">
               <div>
-                <p className="font-semibold text-gray-900">Difficulty</p>
+                <p className="font-semibold text-content-primary">Difficulty</p>
                 <p>{formatDifficultyLabel(selectedScenario.difficulty)}</p>
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Duration</p>
+                <p className="font-semibold text-content-primary">Duration</p>
                 <p>~{selectedScenario.durationMinutes} minutes</p>
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Topic</p>
+                <p className="font-semibold text-content-primary">Topic</p>
                 <p>{selectedScenario.topic}</p>
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Language</p>
+                <p className="font-semibold text-content-primary">Language</p>
                 <p>{getLanguageLabel(selectedScenario.language)}</p>
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-sm text-gray-600 pt-2 border-t border-gray-100">
+            <div className="flex items-center justify-between text-sm text-content-secondary pt-2 border-t border-border-subtle">
               <span>
                 Session status:{' '}
-                <span className="font-semibold text-gray-900 capitalize">{activeSession?.status || 'connecting'}</span>
+                <span className="font-semibold text-content-primary capitalize">{activeSession?.status || 'connecting'}</span>
               </span>
-              <span className="text-gray-500 font-semibold">AI tutor ready</span>
+              <span className="text-content-tertiary font-semibold">AI tutor ready</span>
             </div>
           </div>
 
-          <div className="card flex-1 flex flex-col">
-            <div className="flex-1 overflow-y-auto mb-4 space-y-4 bg-gradient-to-r from-orange-50/70 to-pink-50/70 rounded-2xl p-6">
+          <div className="bg-surface-base rounded-xl border border-border-base shadow-sm flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto mb-4 space-y-4 bg-surface-subtle p-6">
               {isSessionLoading && (
-                <div className="flex flex-col items-center justify-center text-center text-gray-600 gap-3 py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+                <div className="flex flex-col items-center justify-center text-center text-content-secondary gap-3 py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-content-primary" />
                   <p>Warming up your AI partner...</p>
                 </div>
               )}
 
               {!isSessionLoading && !activeSession && (
-                <div className="flex flex-col items-center justify-center text-center text-gray-600 gap-4 py-12">
-                  <MessageCircle className="w-10 h-10 text-orange-400" />
+                <div className="flex flex-col items-center justify-center text-center text-content-secondary gap-4 py-12">
+                  <MessageCircle className="w-10 h-10 text-content-tertiary" />
                   <div>
-                    <p className="font-semibold text-gray-900">We couldn&apos;t start this chat</p>
+                    <p className="font-semibold text-content-primary">We couldn&apos;t start this chat</p>
                     <p>Tap below to try again.</p>
                   </div>
                   <button
                     onClick={() => handleStartScenario(selectedScenario)}
-                    className="btn-primary-md"
+                    className="bg-action-primary text-action-primary-fg font-medium py-2 px-6 rounded-lg hover:bg-action-primary-hover transition-all"
                   >
                     Retry session
                   </button>
@@ -386,13 +386,12 @@ export default function Practice() {
                       className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
-                        className={`max-w-xs md:max-w-md px-4 py-3 rounded-2xl shadow-sm whitespace-pre-wrap text-sm ${
-                          message.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'
-                        }`}
+                        className={`max-w-xs md:max-w-md px-4 py-3 rounded-xl shadow-sm whitespace-pre-wrap text-sm border ${message.role === 'user' ? 'bg-action-primary text-action-primary-fg border-action-primary' : 'bg-surface-base text-content-primary border-border-base'
+                          }`}
                       >
                         <p>{message.content}</p>
                         {message.feedback && (
-                          <p className="text-xs text-orange-700 mt-2">Feedback: {message.feedback}</p>
+                          <p className="text-xs text-orange-300 mt-2 border-t border-white/20 pt-2">Feedback: {message.feedback}</p>
                         )}
                       </div>
                     </div>
@@ -411,9 +410,8 @@ export default function Practice() {
               <button
                 onClick={() => setIsRecording((prev) => !prev)}
                 disabled={!sessionActive}
-                className={`p-3 rounded-full transition-all border ${
-                  isRecording ? 'bg-red-500 text-white border-red-500 animate-pulse' : 'bg-white text-orange-600 border-orange-100 hover:bg-orange-50'
-                } ${sessionActive ? '' : 'opacity-50 cursor-not-allowed'}`}
+                className={`p-3 rounded-full transition-all border ${isRecording ? 'bg-red-500 text-white border-red-500 animate-pulse' : 'bg-surface-base text-content-secondary border-border-base hover:bg-surface-subtle'
+                  } ${sessionActive ? '' : 'opacity-50 cursor-not-allowed'}`}
               >
                 <Mic className="w-5 h-5" />
               </button>
@@ -433,12 +431,12 @@ export default function Practice() {
                 onChange={(event) => setInputValue(event.target.value)}
                 disabled={!sessionActive || isSendingMessage}
                 placeholder={placeholder}
-                className="input-primary flex-1 disabled:bg-gray-50 disabled:text-gray-400"
+                className="flex-1 px-4 py-3 border border-border-base rounded-lg bg-surface-subtle focus:bg-surface-base focus:ring-2 focus:ring-content-primary/10 focus:border-content-primary transition-all outline-none disabled:bg-surface-subtle disabled:text-content-tertiary"
               />
               <button
                 type="submit"
                 disabled={!sessionActive || isSendingMessage}
-                className="btn-primary-md flex items-center justify-center gap-2 disabled:opacity-60"
+                className="bg-action-primary text-action-primary-fg font-medium py-3 px-6 rounded-lg hover:bg-action-primary-hover active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 <Send className="w-5 h-5" /> {isSendingMessage ? 'Sending...' : 'Send'}
               </button>
@@ -449,7 +447,7 @@ export default function Practice() {
                 <button
                   onClick={handleCompleteSession}
                   disabled={isCompletingSession}
-                  className="px-4 py-2 rounded-xl border border-orange-200 text-orange-600 font-semibold hover:bg-orange-50 transition disabled:opacity-60"
+                  className="px-4 py-2 rounded-lg border border-border-base text-content-secondary font-semibold hover:bg-surface-subtle transition disabled:opacity-60"
                 >
                   {isCompletingSession ? 'Saving...' : 'Mark session complete'}
                 </button>
@@ -457,14 +455,14 @@ export default function Practice() {
               {activeSession?.status === 'completed' && (
                 <button
                   onClick={() => handleStartScenario(selectedScenario)}
-                  className="px-4 py-2 rounded-xl border border-green-200 text-green-600 font-semibold hover:bg-green-50 transition"
+                  className="px-4 py-2 rounded-lg border border-green-200 text-green-700 font-semibold hover:bg-green-50 transition"
                 >
                   Start new session
                 </button>
               )}
               <button
                 onClick={handleExitScenario}
-                className="px-4 py-2 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition"
+                className="px-4 py-2 rounded-lg text-content-secondary hover:text-content-primary hover:bg-surface-subtle transition"
               >
                 Choose another scenario
               </button>
@@ -473,7 +471,7 @@ export default function Practice() {
 
         </main>
         <div className="relative z-10 max-w-5xl mx-auto w-full px-6 pb-10">
-          <div className="alert-info">
+          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
             <h4 className="font-semibold text-blue-900 mb-2">Pro tip</h4>
             <p className="text-sm text-blue-800">
               Mix text and speech responses to get richer pronunciation feedback from your AI tutor. When you complete a session, we&apos;ll rate how ready you are for a similar real-world interaction.
@@ -489,21 +487,20 @@ export default function Practice() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 relative overflow-hidden">
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
-      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000" />
-      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-to-r from-yellow-200 to-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000" />
+    <div className="min-h-screen bg-surface-base relative overflow-hidden">
+      {/* Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
 
       <DashboardHeader userName={userName} activeTab="practice" />
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-12 space-y-10">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-wide text-orange-500 font-semibold mb-2">AI conversation lab</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-              Scenario-based <span className="text-gradient-brand">practice</span>
+            <p className="text-sm uppercase tracking-wide text-content-tertiary font-semibold mb-2">AI conversation lab</p>
+            <h1 className="text-4xl md:text-5xl font-bold text-content-primary mb-3">
+              Scenario-based <span className="text-content-primary">practice</span>
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-content-secondary">
               Real-time {getLanguageLabel(selectedLanguage)} conversations guided entirely by our live AI tutors—no more mock replies.
             </p>
           </div>
@@ -511,20 +508,20 @@ export default function Practice() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="card p-6">
-            <span className="badge bg-orange-100 text-orange-600 mb-3">01</span>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Pick a scenario</h3>
-            <p className="text-sm text-gray-600">Choose a real-world challenge crafted for your current skill level.</p>
+          <div className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm">
+            <span className="inline-block bg-orange-50 text-orange-700 px-2 py-1 rounded-md text-xs font-bold mb-3 border border-orange-100">01</span>
+            <h3 className="text-lg font-semibold text-content-primary mb-2">Pick a scenario</h3>
+            <p className="text-sm text-content-secondary">Choose a real-world challenge crafted for your current skill level.</p>
           </div>
-          <div className="card p-6">
-            <span className="badge bg-pink-100 text-pink-600 mb-3">02</span>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Chat with AI tutor</h3>
-            <p className="text-sm text-gray-600">Type or speak replies. The AI keeps the dialogue flowing naturally.</p>
+          <div className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm">
+            <span className="inline-block bg-pink-50 text-pink-700 px-2 py-1 rounded-md text-xs font-bold mb-3 border border-pink-100">02</span>
+            <h3 className="text-lg font-semibold text-content-primary mb-2">Chat with AI tutor</h3>
+            <p className="text-sm text-content-secondary">Type or speak replies. The AI keeps the dialogue flowing naturally.</p>
           </div>
-          <div className="card p-6">
-            <span className="badge bg-purple-100 text-purple-600 mb-3">03</span>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Get smart feedback</h3>
-            <p className="text-sm text-gray-600">Instant corrections, suggestions, and a session summary when you finish.</p>
+          <div className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm">
+            <span className="inline-block bg-purple-50 text-purple-700 px-2 py-1 rounded-md text-xs font-bold mb-3 border border-purple-100">03</span>
+            <h3 className="text-lg font-semibold text-content-primary mb-2">Get smart feedback</h3>
+            <p className="text-sm text-content-secondary">Instant corrections, suggestions, and a session summary when you finish.</p>
           </div>
         </div>
 
@@ -532,19 +529,19 @@ export default function Practice() {
       </main>
 
       <section className="relative z-10 max-w-7xl mx-auto px-6 pb-12">
-        <div className="card p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Power tips</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
+        <div className="bg-surface-base p-8 rounded-xl border border-border-base shadow-sm">
+          <h2 className="text-2xl font-bold text-content-primary mb-6">Power tips</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-content-secondary">
             <div>
-              <p className="font-semibold text-gray-900 mb-1">Warm up first</p>
+              <p className="font-semibold text-content-primary mb-1">Warm up first</p>
               <p>Skim the scenario summary and plan an opening line so you can jump into the chat with confidence.</p>
             </div>
             <div>
-              <p className="font-semibold text-gray-900 mb-1">Complete sessions</p>
+              <p className="font-semibold text-content-primary mb-1">Complete sessions</p>
               <p>Mark a session complete to save transcripts and unlock follow-up drills tailored to your weak spots.</p>
             </div>
             <div>
-              <p className="font-semibold text-gray-900 mb-1">Reset anytime</p>
+              <p className="font-semibold text-content-primary mb-1">Reset anytime</p>
               <p>Need a fresh run? Exit and jump back in. We&apos;ll spin up a brand-new conversation instantly.</p>
             </div>
           </div>

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
-import { Headphones, BookOpen, Grid3X3, Shuffle, Award, Zap, RotateCcw, FileText, BarChart3, Clock, ChevronRight } from 'lucide-react';
+import { Headphones, BookOpen, Grid3X3, Shuffle, Award, Zap, RotateCcw, FileText, BarChart3, Clock, ChevronRight, Loader2 } from 'lucide-react';
+import { useAuth } from '../context';
 
 const games = [
   {
@@ -107,21 +107,37 @@ const games = [
 ];
 
 export default function Games() {
+  const { user, isLoading, isAuthenticated } = useAuth();
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
+          <p className="text-gray-600 font-medium">Loading games...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to sign in if not authenticated
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/signin" replace />;
+  }
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 relative overflow-hidden">
-      {/* Background glow effects */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000"></div>
-      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-to-r from-yellow-200 to-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000"></div>
-      
-      <DashboardHeader userName="John Doe" />
+    <div className="min-h-screen bg-surface-base relative overflow-hidden">
+      {/* Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+
+      <DashboardHeader userName={user.name} userAvatar={user.avatar} />
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-            Language Learning <span className="text-gradient-brand">Games</span>
+          <h1 className="text-4xl md:text-5xl font-bold text-content-primary mb-3">
+            Language Learning <span className="text-content-primary">Games</span>
           </h1>
-          <p className="text-lg text-gray-600">Master your skills through fun, interactive games</p>
+          <p className="text-lg text-content-secondary">Master your skills through fun, interactive games</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -131,17 +147,18 @@ export default function Games() {
               <Link
                 key={game.id}
                 to={`/games/${game.id}`}
-                className="card-interactive p-6 group"
+                className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm hover:shadow-md hover:border-border-strong transition-all duration-200 group"
               >
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${game.bgColor} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                <div className={`w-14 h-14 rounded-lg border flex items-center justify-center mb-4 group-hover:scale-105 transition-transform ${game.bgColor.replace('to-', 'border-').replace('100', '200').replace('from-', 'bg-').split(' ')[0] + ' ' + game.bgColor.replace('to-', 'border-').replace('100', '200').replace('from-', 'bg-').split(' ')[0].replace('bg-', 'border-')
+                  } bg-opacity-50`}>
                   <Icon className={`w-7 h-7 ${game.iconColor}`} />
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 mb-1">{game.name}</h3>
-                <p className="text-sm text-gray-500 mb-3">{game.category}</p>
-                <p className="text-gray-600 text-sm mb-4">{game.description}</p>
+                <h3 className="text-xl font-bold text-content-primary mb-1">{game.name}</h3>
+                <p className="text-sm text-content-tertiary mb-3">{game.category}</p>
+                <p className="text-content-secondary text-sm mb-4">{game.description}</p>
 
-                <div className="flex items-center gap-2 text-orange-600 font-semibold text-sm group-hover:gap-3 transition-all">
+                <div className="flex items-center gap-2 text-content-primary font-semibold text-sm group-hover:gap-3 transition-all">
                   Play Now <ChevronRight className="w-4 h-4" />
                 </div>
               </Link>
