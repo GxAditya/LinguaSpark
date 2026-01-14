@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export default function CTA() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white border-t border-gray-100">
+    <section id="pricing" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white border-t border-gray-100">
       {/* Grid Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#f5f5f5_1px,transparent_1px),linear-gradient(to_bottom,#f5f5f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
 
@@ -47,9 +47,9 @@ export default function CTA() {
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
           </Link>
 
-          <button className="text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200 bg-white">
+          <Link to="/pricing" className="text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200 bg-white">
             View Pricing
-          </button>
+          </Link>
         </div>
 
         {/* Trust Indicators */}

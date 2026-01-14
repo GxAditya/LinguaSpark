@@ -6,10 +6,10 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { name: 'Features', href: '#features' },
-    { name: 'Languages', href: '#languages' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'About', href: '#about' }
+    { name: 'Features', href: '#features', isHash: true },
+    { name: 'Languages', href: '#languages', isHash: true },
+    { name: 'Pricing', href: '/pricing', isHash: false },
+    { name: 'About', href: '#about', isHash: true }
   ];
 
   return (
@@ -26,13 +26,28 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200"
-              >
-                {item.name}
-              </a>
+              item.isHash ? (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const element = document.querySelector(item.href);
+                    element?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200"
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
           </nav>
           
@@ -64,14 +79,30 @@ export default function Header() {
           <div className="md:hidden py-4 border-t border-white/20">
             <nav className="flex flex-col gap-4">
               {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </a>
+                item.isHash ? (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const element = document.querySelector(item.href);
+                      element?.scrollIntoView({ behavior: 'smooth' });
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="text-gray-700 hover:text-orange-600 font-medium transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
               <div className="flex flex-col gap-2 mt-4">
                 <Link to="/signin" className="text-gray-700 hover:text-orange-600 font-medium transition-colors" onClick={() => setIsMenuOpen(false)}>

@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex">
       {/* Form side */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white relative overflow-hidden">
+      <div className="flex-1 flex items-center justify-center px-6 py-6 bg-white relative overflow-hidden">
         {/* Grid Background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#f5f5f5_1px,transparent_1px),linear-gradient(to_bottom,#f5f5f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
 

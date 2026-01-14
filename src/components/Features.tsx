@@ -3,7 +3,7 @@ import { MessageCircle, Keyboard, Music, Brain, TrendingUp, Bot } from 'lucide-r
 
 export default function Features() {
   return (
-    <section className="py-24 bg-white border-t border-gray-100">
+    <section id="features" className="py-24 bg-white border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 tracking-tight">

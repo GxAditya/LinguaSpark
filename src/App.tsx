@@ -13,6 +13,9 @@ import Games from './pages/Games';
 import Lessons from './pages/Lessons';
 import Practice from './pages/Practice';
 import OAuthCallback from './pages/OAuthCallback';
+import Pricing from './pages/Pricing';
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import TranscriptionStation from './games/TranscriptionStation';
 import AudioJumble from './games/AudioJumble';
 import ImageInstinct from './games/ImageInstinct';
@@ -80,6 +83,9 @@ function AppRoutes() {
       />
       <Route path="/signin" element={<PublicRoute><SignIn /></PublicRoute>} />
       <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="/terms" element={<TermsOfService />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/auth/:provider/callback" element={<OAuthCallback />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/lessons" element={<ProtectedRoute><Lessons /></ProtectedRoute>} />

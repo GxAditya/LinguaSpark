@@ -37,7 +37,7 @@ const stats = [
 
 export default function SocialProof() {
   return (
-    <section className="py-24 bg-white border-t border-gray-100">
+    <section id="languages" className="py-24 bg-white border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-6">
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
