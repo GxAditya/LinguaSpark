@@ -13,32 +13,20 @@ export interface TTSResult {
 }
 
 export const ttsService = {
-  // Generate TTS audio
+  // Generate TTS audio using Groq only
   async generateAudio(
     text: string,
-    voice: string = 'alloy',
-    provider: 'pollinations' | 'groq' = 'pollinations'
+    voice: string = 'alloy'
   ): Promise<TTSResult> {
     const response = await api.post<TTSResult>('/tts/generate', {
       text,
       voice,
-      provider,
+      provider: 'groq',
     });
     if (response.data) {
       return response.data;
     }
     throw new Error(response.message || 'Failed to generate audio');
-  },
-
-  // Get TTS URL for direct playback
-  async getAudioUrl(text: string, voice: string = 'alloy'): Promise<string> {
-    const response = await api.get<{ audioUrl: string }>(
-      `/tts/url?text=${encodeURIComponent(text)}&voice=${voice}`
-    );
-    if (response.data) {
-      return response.data.audioUrl;
-    }
-    throw new Error(response.message || 'Failed to get audio URL');
   },
 
   // Get available voices
@@ -48,13 +36,6 @@ export const ttsService = {
       return response.data.voices;
     }
     throw new Error(response.message || 'Failed to get voices');
-  },
-
-  // Simple URL generation for client-side (no API call needed)
-  // Correct Pollinations TTS URL format: https://text.pollinations.ai/{prompt}?model=openai-audio&voice={voice}
-  getDirectTTSUrl(text: string, voice: string = 'alloy'): string {
-    const encodedText = encodeURIComponent(text.substring(0, 500));
-    return `https://text.pollinations.ai/${encodedText}?model=openai-audio&voice=${voice}`;
   },
 
   // Play audio helper

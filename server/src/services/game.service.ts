@@ -1,5 +1,6 @@
 import config from '../config/index.js';
 import { pollinationsApi } from './pollinations.api.service.js';
+import { contentCache } from './content.cache.service.js';
 import type { 
   GameType, 
   GameContent,
@@ -1006,72 +1007,476 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
   }
 }
 
+/**
+ * Perform quality checks on generated game content
+ * @param content - The generated game content
+ * @param gameType - Type of game
+ * @param difficulty - Difficulty level
+ * @returns Quality assessment with score and issues
+ */
+function assessContentQuality(content: any, gameType: GameType, difficulty: string): {
+  score: number;
+  issues: string[];
+  recommendations: string[];
+} {
+  const issues: string[] = [];
+  const recommendations: string[] = [];
+  let qualityScore = 100;
+
+  try {
+    // Common quality checks across all game types
+    
+    // 1. Content diversity check
+    const contentItems = extractContentItems(content, gameType);
+    if (contentItems.length > 0) {
+      const uniqueItems = new Set(contentItems.map(item => item.toLowerCase().trim()));
+      const diversityRatio = uniqueItems.size / contentItems.length;
+      
+      if (diversityRatio < 0.8) {
+        issues.push(`Low content diversity: ${Math.round(diversityRatio * 100)}% unique items`);
+        recommendations.push('Ensure more varied vocabulary and avoid repetition');
+        qualityScore -= 15;
+      }
+    }
+
+    // 2. Difficulty appropriateness check
+    const difficultyIssues = checkDifficultyAppropriate(content, gameType, difficulty);
+    issues.push(...difficultyIssues.issues);
+    recommendations.push(...difficultyIssues.recommendations);
+    qualityScore -= difficultyIssues.penalty;
+
+    // 3. Language quality check
+    const languageIssues = checkLanguageQuality(content, gameType);
+    issues.push(...languageIssues.issues);
+    recommendations.push(...languageIssues.recommendations);
+    qualityScore -= languageIssues.penalty;
+
+    // 4. Game-specific quality checks
+    const gameSpecificIssues = checkGameSpecificQuality(content, gameType);
+    issues.push(...gameSpecificIssues.issues);
+    recommendations.push(...gameSpecificIssues.recommendations);
+    qualityScore -= gameSpecificIssues.penalty;
+
+    // Ensure score doesn't go below 0
+    qualityScore = Math.max(0, qualityScore);
+
+    return {
+      score: qualityScore,
+      issues,
+      recommendations
+    };
+
+  } catch (error) {
+    console.error('Quality assessment error:', error);
+    return {
+      score: 50,
+      issues: ['Quality assessment failed due to unexpected error'],
+      recommendations: ['Manual review recommended']
+    };
+  }
+}
+
+/**
+ * Extract content items for diversity analysis
+ */
+function extractContentItems(content: any, gameType: GameType): string[] {
+  const items: string[] = [];
+
+  try {
+    switch (gameType) {
+      case 'transcription-station':
+        content.rounds?.forEach((r: any) => {
+          if (r.audioText) items.push(r.audioText);
+        });
+        break;
+      case 'audio-jumble':
+        content.rounds?.forEach((r: any) => {
+          if (r.sentence) items.push(r.sentence);
+        });
+        break;
+      case 'image-instinct':
+        content.rounds?.forEach((r: any) => {
+          if (r.word) items.push(r.word);
+          if (r.translation) items.push(r.translation);
+        });
+        break;
+      case 'translation-matchup':
+        content.pairs?.forEach((p: any) => {
+          if (p.original) items.push(p.original);
+          if (p.translation) items.push(p.translation);
+        });
+        break;
+      case 'secret-word-solver':
+        content.words?.forEach((w: any) => {
+          if (w.word) items.push(w.word);
+        });
+        break;
+      case 'word-drop-dash':
+        content.rounds?.forEach((r: any) => {
+          r.words?.forEach((w: any) => {
+            if (w.word) items.push(w.word);
+          });
+        });
+        break;
+      case 'conjugation-coach':
+        content.questions?.forEach((q: any) => {
+          if (q.sentence) items.push(q.sentence);
+        });
+        break;
+      case 'context-connect':
+        content.passages?.forEach((p: any) => {
+          if (p.text) items.push(p.text);
+        });
+        break;
+      case 'syntax-scrambler':
+        content.sentences?.forEach((s: any) => {
+          if (s.correct) items.push(s.correct);
+        });
+        break;
+      case 'time-warp-tagger':
+        content.questions?.forEach((q: any) => {
+          if (q.sentence) items.push(q.sentence);
+        });
+        break;
+    }
+  } catch (error) {
+    console.warn('Error extracting content items:', error);
+  }
+
+  return items;
+}
+
+/**
+ * Check if content difficulty is appropriate
+ */
+function checkDifficultyAppropriate(content: any, gameType: GameType, difficulty: string): {
+  issues: string[];
+  recommendations: string[];
+  penalty: number;
+} {
+  const issues: string[] = [];
+  const recommendations: string[] = [];
+  let penalty = 0;
+
+  // Simple heuristics for difficulty assessment
+  const items = extractContentItems(content, gameType);
+  
+  if (items.length > 0) {
+    const avgLength = items.reduce((sum, item) => sum + item.length, 0) / items.length;
+    
+    // Length-based difficulty heuristics
+    const expectedLengths = {
+      beginner: { min: 5, max: 30 },
+      intermediate: { min: 15, max: 60 },
+      advanced: { min: 25, max: 100 }
+    };
+
+    const expected = expectedLengths[difficulty as keyof typeof expectedLengths];
+    if (expected) {
+      if (avgLength < expected.min) {
+        issues.push(`Content may be too simple for ${difficulty} level (avg length: ${Math.round(avgLength)})`);
+        recommendations.push(`Increase complexity and length for ${difficulty} learners`);
+        penalty += 10;
+      } else if (avgLength > expected.max) {
+        issues.push(`Content may be too complex for ${difficulty} level (avg length: ${Math.round(avgLength)})`);
+        recommendations.push(`Simplify content for ${difficulty} learners`);
+        penalty += 10;
+      }
+    }
+  }
+
+  return { issues, recommendations, penalty };
+}
+
+/**
+ * Check language quality and naturalness
+ */
+function checkLanguageQuality(content: any, gameType: GameType): {
+  issues: string[];
+  recommendations: string[];
+  penalty: number;
+} {
+  const issues: string[] = [];
+  const recommendations: string[] = [];
+  let penalty = 0;
+
+  const items = extractContentItems(content, gameType);
+  
+  // Check for common language issues
+  items.forEach((item, index) => {
+    // Check for excessive repetition of words
+    const words = item.toLowerCase().split(/\s+/);
+    const wordCounts = words.reduce((acc, word) => {
+      acc[word] = (acc[word] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const maxRepetition = Math.max(...Object.values(wordCounts));
+    if (maxRepetition > 3 && words.length > 5) {
+      issues.push(`Excessive word repetition in item ${index + 1}`);
+      penalty += 5;
+    }
+
+    // Check for very short or very long items
+    if (item.trim().length < 3) {
+      issues.push(`Item ${index + 1} is too short`);
+      penalty += 5;
+    } else if (item.trim().length > 200) {
+      issues.push(`Item ${index + 1} may be too long`);
+      penalty += 3;
+    }
+  });
+
+  if (issues.length > 0) {
+    recommendations.push('Review content for natural language flow and appropriate length');
+  }
+
+  return { issues, recommendations, penalty };
+}
+
+/**
+ * Game-specific quality checks
+ */
+function checkGameSpecificQuality(content: any, gameType: GameType): {
+  issues: string[];
+  recommendations: string[];
+  penalty: number;
+} {
+  const issues: string[] = [];
+  const recommendations: string[] = [];
+  let penalty = 0;
+
+  try {
+    switch (gameType) {
+      case 'conjugation-coach':
+        // Check that questions have varied tenses
+        if (content.questions && Array.isArray(content.questions)) {
+          const tenses = content.questions.map((q: any) => q.tense).filter(Boolean);
+          const uniqueTenses = new Set(tenses);
+          
+          if (tenses.length > 2 && uniqueTenses.size === 1) {
+            issues.push('All conjugation questions use the same tense');
+            recommendations.push('Include variety in verb tenses for better learning');
+            penalty += 15;
+          }
+        }
+        break;
+
+      case 'image-instinct':
+        // Check emoji diversity
+        if (content.rounds && Array.isArray(content.rounds)) {
+          const allEmojis = content.rounds.flatMap((r: any) => r.emojiOptions || r.options || []);
+          const uniqueEmojis = new Set(allEmojis);
+          
+          if (allEmojis.length > 0 && uniqueEmojis.size / allEmojis.length < 0.6) {
+            issues.push('Low emoji diversity across rounds');
+            recommendations.push('Use more varied emojis to avoid confusion');
+            penalty += 10;
+          }
+        }
+        break;
+
+      case 'translation-matchup':
+        // Check for balanced word types
+        if (content.pairs && Array.isArray(content.pairs)) {
+          const words = content.pairs.map((p: any) => p.original).filter(Boolean);
+          
+          // Simple heuristic: check if all words are very similar in length
+          if (words.length > 3) {
+            const lengths = words.map((w: string) => w.length);
+            const avgLength = lengths.reduce((a: number, b: number) => a + b, 0) / lengths.length;
+            const variance = lengths.reduce((acc: number, len: number) => acc + Math.pow(len - avgLength, 2), 0) / lengths.length;
+            
+            if (variance < 2) {
+              issues.push('All translation words are very similar in length');
+              recommendations.push('Include variety in word lengths and types');
+              penalty += 5;
+            }
+          }
+        }
+        break;
+
+      case 'word-drop-dash':
+        // Check time limits are reasonable
+        if (content.rounds && Array.isArray(content.rounds)) {
+          content.rounds.forEach((round: any, index: number) => {
+            if (round.timeLimit && round.words) {
+              const wordsPerSecond = round.words.length / round.timeLimit;
+              
+              if (wordsPerSecond > 0.5) {
+                issues.push(`Round ${index + 1} may be too fast (${wordsPerSecond.toFixed(1)} words/sec)`);
+                penalty += 5;
+              } else if (wordsPerSecond < 0.1) {
+                issues.push(`Round ${index + 1} may be too slow (${wordsPerSecond.toFixed(1)} words/sec)`);
+                penalty += 3;
+              }
+            }
+          });
+          
+          if (issues.length > 0) {
+            recommendations.push('Adjust time limits for optimal challenge level');
+          }
+        }
+        break;
+    }
+  } catch (error) {
+    console.warn('Game-specific quality check error:', error);
+  }
+
+  return { issues, recommendations, penalty };
+}
+
 export async function generateGameContent(options: GenerateGameOptions): Promise<{
   content: GameContent;
   usedFallback: boolean;
+  qualityScore?: number;
+  qualityIssues?: string[];
+  fromCache?: boolean;
+  generationTime?: number;
 }> {
   const { gameType, difficulty, language, targetLanguage, topic } = options;
 
   try {
-    const prompt = getGamePrompt(gameType, difficulty, language, targetLanguage, topic);
-    const messages: ChatMessage[] = [
-      { role: 'system', content: 'You are a helpful assistant that generates language learning game content. Always respond with valid JSON only.' },
-      { role: 'user', content: prompt },
-    ];
+    // Try to get content from cache first
+    const cacheResult = await contentCache.getOrGenerate(
+      { gameType, difficulty, language, targetLanguage, topic },
+      async () => {
+        // Content generation logic
+        const prompt = getGamePrompt(gameType, difficulty, language, targetLanguage, topic);
+        const messages: ChatMessage[] = [
+          { role: 'system', content: 'You are a helpful assistant that generates language learning game content. Always respond with valid JSON only.' },
+          { role: 'user', content: prompt },
+        ];
 
-    let response: string;
-    // For image-instinct, use Pollinations only (for image generation compatibility)
-    // For all other games, use Groq as primary with Pollinations as fallback
-    if (gameType === 'image-instinct') {
-      try {
-        response = await callPollinations(messages);
-      } catch (pollinationsError) {
-        console.error('Pollinations API failed for image-instinct:', pollinationsError);
-        throw pollinationsError; // Will fall through to fallback content
-      }
+        let response: string;
+        // For image-instinct, use Pollinations only (for image generation compatibility)
+        // For all other games, use Groq as primary with Pollinations as fallback
+        if (gameType === 'image-instinct') {
+          try {
+            response = await callPollinations(messages);
+          } catch (pollinationsError) {
+            console.error('Pollinations API failed for image-instinct:', pollinationsError);
+            throw pollinationsError; // Will fall through to fallback content
+          }
+        } else {
+          // Use Groq as primary, Pollinations as fallback for all other games
+          try {
+            response = await callGroq(messages);
+          } catch (groqError) {
+            console.error('Groq API failed, trying Pollinations:', groqError);
+            response = await callPollinations(messages);
+          }
+        }
+
+        let parsed = parseGameContent(response, gameType);
+
+        if (!validateGameContent(parsed, gameType)) {
+          throw new Error('Generated content failed validation');
+        }
+
+        // Perform quality assessment
+        const qualityAssessment = assessContentQuality(parsed, gameType, difficulty);
+        console.log(`Content quality score: ${qualityAssessment.score}/100 for ${gameType}`);
+        
+        if (qualityAssessment.issues.length > 0) {
+          console.warn('Content quality issues:', qualityAssessment.issues);
+        }
+
+        // If quality is very poor (below 40), consider using fallback
+        if (qualityAssessment.score < 40) {
+          console.warn(`Quality score too low (${qualityAssessment.score}), using fallback content`);
+          throw new Error('Content quality below acceptable threshold');
+        }
+
+        // Transform image-instinct content to add Pollinations image URLs
+        if (gameType === 'image-instinct') {
+          parsed = await transformImageInstinctContent(parsed);
+        }
+
+        // Construct the full GameContent object
+        const baseContent = {
+          type: gameType,
+          difficulty,
+          language,
+          targetLanguage,
+        };
+
+        return {
+          content: { ...baseContent, ...parsed } as GameContent,
+          qualityScore: qualityAssessment.score,
+          qualityIssues: qualityAssessment.issues
+        };
+      },
+      // Cache for 2 hours for generated content
+      7200000
+    );
+
+    // If content was generated (not from cache), return with generation info
+    if (!cacheResult.fromCache) {
+      return {
+        content: cacheResult.data.content,
+        usedFallback: false,
+        qualityScore: cacheResult.data.qualityScore,
+        qualityIssues: cacheResult.data.qualityIssues,
+        fromCache: false,
+        generationTime: cacheResult.generationTime
+      };
     } else {
-      // Use Groq as primary, Pollinations as fallback for all other games
-      try {
-        response = await callGroq(messages);
-      } catch (groqError) {
-        console.error('Groq API failed, trying Pollinations:', groqError);
-        response = await callPollinations(messages);
-      }
+      // Content was from cache
+      return {
+        content: cacheResult.data.content,
+        usedFallback: false,
+        qualityScore: cacheResult.data.qualityScore,
+        qualityIssues: cacheResult.data.qualityIssues,
+        fromCache: true
+      };
     }
 
-    let parsed = parseGameContent(response, gameType);
-
-    if (!validateGameContent(parsed, gameType)) {
-      throw new Error('Generated content failed validation');
-    }
-
-    // Transform image-instinct content to add Pollinations image URLs
-    if (gameType === 'image-instinct') {
-      parsed = await transformImageInstinctContent(parsed);
-    }
-
-    // Construct the full GameContent object
-    const baseContent = {
-      type: gameType,
-      difficulty,
-      language,
-      targetLanguage,
-    };
-
-    return {
-      content: { ...baseContent, ...parsed } as GameContent,
-      usedFallback: false,
-    };
   } catch (error) {
     console.error('Game generation failed, using fallback:', error);
     
-    // Handle async fallback for image-instinct
+    // Try to get fallback content from cache first
+    const fallbackCacheKey = { 
+      gameType: `${gameType}_fallback` as GameType, 
+      difficulty, 
+      language, 
+      targetLanguage, 
+      topic: 'fallback' 
+    };
+
+    try {
+      const cachedFallback = await contentCache.get(fallbackCacheKey);
+      if (cachedFallback) {
+        console.log('Using cached fallback content');
+        return {
+          content: cachedFallback as GameContent,
+          usedFallback: true,
+          qualityScore: 75,
+          qualityIssues: ['Used cached fallback content'],
+          fromCache: true
+        };
+      }
+    } catch (cacheError) {
+      console.warn('Failed to retrieve cached fallback:', cacheError);
+    }
+    
+    // Generate fresh fallback content
     const fallbackGenerator = FALLBACK_GAMES[gameType];
     const fallbackContent = await fallbackGenerator(options);
+    
+    // Cache the fallback content for future use
+    try {
+      await contentCache.set(fallbackCacheKey, fallbackContent, 86400000); // Cache for 24 hours
+    } catch (cacheError) {
+      console.warn('Failed to cache fallback content:', cacheError);
+    }
     
     return {
       content: fallbackContent,
       usedFallback: true,
+      qualityScore: 75, // Fallback content gets a decent score
+      qualityIssues: ['Used fallback content due to generation failure'],
+      fromCache: false
     };
   }
 }

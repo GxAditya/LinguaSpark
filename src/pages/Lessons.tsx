@@ -100,19 +100,32 @@ export default function Lessons() {
     }
   };
 
-  const handlePlayAudio = (text: string) => {
+  const handlePlayAudio = async (text: string) => {
     if (audioRef.current) {
       audioRef.current.pause();
     }
 
-    const audioUrl = ttsService.getDirectTTSUrl(text, 'nova');
-    audioRef.current = new Audio(audioUrl);
+    try {
+      setIsPlayingAudio(true);
+      const result = await ttsService.generateAudio(text, 'nova');
+      
+      if (result.audioBase64) {
+        audioRef.current = new Audio(result.audioBase64);
+      } else if (result.audioUrl) {
+        audioRef.current = new Audio(result.audioUrl);
+      } else {
+        throw new Error('No audio data received');
+      }
 
-    audioRef.current.onplay = () => setIsPlayingAudio(true);
-    audioRef.current.onended = () => setIsPlayingAudio(false);
-    audioRef.current.onerror = () => setIsPlayingAudio(false);
+      audioRef.current.onplay = () => setIsPlayingAudio(true);
+      audioRef.current.onended = () => setIsPlayingAudio(false);
+      audioRef.current.onerror = () => setIsPlayingAudio(false);
 
-    audioRef.current.play().catch(console.error);
+      await audioRef.current.play();
+    } catch (error) {
+      console.error('Audio playback failed:', error);
+      setIsPlayingAudio(false);
+    }
   };
 
   const handlePauseAudio = () => {

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { GameSession, type GameType, type IGameSession } from '../models/index.js';
 import { generateGameContent, calculateMaxScore, calculateTotalRounds } from '../services/game.service.js';
+import { contentCache } from '../services/content.cache.service.js';
 import { getUserRateLimitStatus, RATE_LIMITS } from '../middleware/rateLimit.middleware.js';
 import { sendSuccess, sendError } from '../utils/response.utils.js';
 import type { IUser } from '../models/index.js';
@@ -59,7 +60,7 @@ export const startGame = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Generate new game content using AI
-    const { content, usedFallback } = await generateGameContent({
+    const { content, usedFallback, qualityScore, qualityIssues, fromCache, generationTime } = await generateGameContent({
       gameType,
       difficulty,
       language,
@@ -92,6 +93,10 @@ export const startGame = async (req: Request, res: Response): Promise<void> => {
       totalRounds,
       maxScore,
       usedFallback,
+      qualityScore,
+      qualityIssues,
+      fromCache,
+      generationTime,
     });
   } catch (error) {
     console.error('Start game error:', error);
@@ -363,5 +368,48 @@ export const getRateLimitStatus = async (req: Request, res: Response): Promise<v
   } catch (error) {
     console.error('Get rate limit status error:', error);
     sendError(res, 500, 'Failed to get rate limit status');
+  }
+};
+
+/**
+ * Get cache statistics
+ * GET /api/games/cache/stats
+ */
+export const getCacheStats = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const stats = contentCache.getStats();
+    sendSuccess(res, 200, 'Cache statistics retrieved', stats);
+  } catch (error) {
+    console.error('Get cache stats error:', error);
+    sendError(res, 500, 'Failed to get cache statistics');
+  }
+};
+
+/**
+ * Clear cache entries
+ * DELETE /api/games/cache
+ */
+export const clearCache = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { gameType, difficulty, language, targetLanguage } = req.query;
+    
+    if (gameType || difficulty || language || targetLanguage) {
+      // Partial invalidation
+      const pattern: any = {};
+      if (gameType) pattern.gameType = gameType;
+      if (difficulty) pattern.difficulty = difficulty;
+      if (language) pattern.language = language;
+      if (targetLanguage) pattern.targetLanguage = targetLanguage;
+      
+      const invalidatedCount = await contentCache.invalidate(pattern);
+      sendSuccess(res, 200, `Invalidated ${invalidatedCount} cache entries`, { invalidatedCount });
+    } else {
+      // Clear all cache
+      await contentCache.clear();
+      sendSuccess(res, 200, 'Cache cleared successfully');
+    }
+  } catch (error) {
+    console.error('Clear cache error:', error);
+    sendError(res, 500, 'Failed to clear cache');
   }
 };
