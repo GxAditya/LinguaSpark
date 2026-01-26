@@ -10,7 +10,7 @@ export function useLoadingState(id: string) {
   useEffect(() => {
     // Subscribe to loading state changes
     const unsubscribe = loadingService.subscribe(id, setLoadingState);
-    
+
     // Get initial state
     const initialState = loadingService.getState(id);
     if (initialState) {
@@ -81,7 +81,7 @@ export function useGameContentLoading(gameType: string) {
       LOADING_STAGES.INITIALIZING,
       LOADING_STAGES.GENERATING_CONTENT,
       LOADING_STAGES.VALIDATING_CONTENT,
-      ...(gameType === 'image-instinct' ? [LOADING_STAGES.PROCESSING_IMAGES] : []),
+
       LOADING_STAGES.FINALIZING,
       LOADING_STAGES.COMPLETE
     ];

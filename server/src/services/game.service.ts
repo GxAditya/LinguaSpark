@@ -1,12 +1,12 @@
 import config from '../config/index.js';
 import { pollinationsApi } from './pollinations.api.service.js';
 import { contentCache } from './content.cache.service.js';
-import type { 
-  GameType, 
+import type {
+  GameType,
   GameContent,
   ITranscriptionContent,
   IAudioJumbleContent,
-  IImageInstinctContent,
+
   ITranslationMatchUpContent,
   ISecretWordContent,
   IWordDropContent,
@@ -34,27 +34,7 @@ interface ChatMessage {
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama-3.1-8b-instant';
 
-// Helper function to generate Pollinations image URL using new API
-async function generatePollinationsImageUrl(prompt: string, seed?: number): Promise<string> {
-  try {
-    const imageResponse = await pollinationsApi.generateImage(prompt, {
-      width: 256,
-      height: 256,
-      seed: seed || -1,
-      enhance: false
-    });
-    return imageResponse.imageUrl;
-  } catch (error) {
-    console.error('Image generation failed:', error);
-    // Return empty string to trigger emoji fallback
-    return '';
-  }
-}
 
-// Helper function to enhance image prompt for better image generation
-function enhanceImagePrompt(word: string, translation: string): string {
-  return `simple icon of ${translation.toLowerCase()}, minimalist, clean background, flat design, colorful, cute illustration style`;
-}
 
 // Fallback game content for each game type
 const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<GameContent> | GameContent> = {
@@ -82,71 +62,7 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<Ga
       { sentence: 'Nosotros vamos a la playa', words: ['playa', 'a', 'la', 'vamos', 'Nosotros'], correctOrder: [4, 3, 1, 2, 0] },
     ],
   }),
-  'image-instinct': async (opts) => {
-    // Generate images asynchronously for fallback content
-    const rounds = [
-      { 
-        word: 'Perro', 
-        translation: 'Dog', 
-        correctImage: await generatePollinationsImageUrl('simple icon of dog, minimalist, cute illustration', 1), 
-        options: [
-          await generatePollinationsImageUrl('simple icon of dog, minimalist, cute illustration', 1),
-          await generatePollinationsImageUrl('simple icon of cat, minimalist, cute illustration', 2),
-          await generatePollinationsImageUrl('simple icon of bird, minimalist, cute illustration', 3),
-          await generatePollinationsImageUrl('simple icon of fish, minimalist, cute illustration', 4)
-        ],
-        isImageUrl: true,
-        fallbackEmojis: ['🐕', '🐱', '🐦', '🐠']
-      },
-      { 
-        word: 'Casa', 
-        translation: 'House', 
-        correctImage: await generatePollinationsImageUrl('simple icon of house, minimalist, cute illustration', 5),
-        options: [
-          await generatePollinationsImageUrl('simple icon of house, minimalist, cute illustration', 5),
-          await generatePollinationsImageUrl('simple icon of office building, minimalist, cute illustration', 6),
-          await generatePollinationsImageUrl('simple icon of school, minimalist, cute illustration', 7),
-          await generatePollinationsImageUrl('simple icon of hospital, minimalist, cute illustration', 8)
-        ],
-        isImageUrl: true,
-        fallbackEmojis: ['🏠', '🏢', '🏫', '🏥']
-      },
-      { 
-        word: 'Sol', 
-        translation: 'Sun', 
-        correctImage: await generatePollinationsImageUrl('simple icon of sun, minimalist, bright yellow', 9),
-        options: [
-          await generatePollinationsImageUrl('simple icon of sun, minimalist, bright yellow', 9),
-          await generatePollinationsImageUrl('simple icon of moon, minimalist, illustration', 10),
-          await generatePollinationsImageUrl('simple icon of star, minimalist, illustration', 11),
-          await generatePollinationsImageUrl('simple icon of rain cloud, minimalist, illustration', 12)
-        ],
-        isImageUrl: true,
-        fallbackEmojis: ['☀️', '🌙', '⭐', '🌧️']
-      },
-      { 
-        word: 'Árbol', 
-        translation: 'Tree', 
-        correctImage: await generatePollinationsImageUrl('simple icon of green tree, minimalist, cute illustration', 13),
-        options: [
-          await generatePollinationsImageUrl('simple icon of green tree, minimalist, cute illustration', 13),
-          await generatePollinationsImageUrl('simple icon of pink flower, minimalist, cute illustration', 14),
-          await generatePollinationsImageUrl('simple icon of cactus, minimalist, cute illustration', 15),
-          await generatePollinationsImageUrl('simple icon of mushroom, minimalist, cute illustration', 16)
-        ],
-        isImageUrl: true,
-        fallbackEmojis: ['🌳', '🌸', '🌵', '🍄']
-      },
-    ];
 
-    return {
-      type: 'image-instinct',
-      difficulty: opts.difficulty,
-      language: opts.language,
-      targetLanguage: opts.targetLanguage,
-      rounds
-    };
-  },
   'translation-matchup': (opts) => ({
     type: 'translation-matchup',
     difficulty: opts.difficulty,
@@ -314,34 +230,7 @@ JSON STRUCTURE:
 
 VALIDATION: The correctOrder array indices must rearrange the words array to form the exact sentence.`,
 
-    'image-instinct': `${basePrompt}
 
-TASK: Generate 5 vocabulary items for visual word matching. Each needs a word, translation, and 4 emoji options.
-
-CONTENT GUIDELINES:
-- Choose concrete nouns that have clear visual representations
-- Use high-frequency vocabulary appropriate for the difficulty level
-- Select emojis that are universally recognizable and unambiguous
-- Create logical distractors (similar category items)
-- Ensure one emoji clearly represents the correct word
-
-JSON STRUCTURE:
-{
-  "rounds": [
-    { 
-      "word": "${targetLanguage} word", 
-      "translation": "English translation", 
-      "correctEmoji": "🎯",
-      "emojiOptions": ["🎯", "🏀", "⚽", "🎾"]
-    }
-  ]
-}
-
-EMOJI SELECTION RULES:
-- Use common, widely-supported emojis
-- Avoid ambiguous or culturally-specific symbols
-- Group distractors logically (animals, food, objects, etc.)
-- Ensure the correct emoji is included in emojiOptions array`,
 
     'translation-matchup': `${basePrompt}
 
@@ -584,7 +473,7 @@ async function callPollinations(messages: ChatMessage[]): Promise<string> {
       temperature: 0.7,
       max_tokens: 2000
     });
-    
+
     return response.content;
   } catch (error: any) {
     console.error('Pollinations API error:', error);
@@ -608,104 +497,7 @@ function parseGameContent(content: string, gameType: GameType): any {
   return JSON.parse(cleaned);
 }
 
-// Transform image-instinct content to add Pollinations image URLs with emoji fallbacks
-async function transformImageInstinctContent(parsed: any): Promise<any> {
-  if (!parsed.rounds || !Array.isArray(parsed.rounds)) {
-    return parsed;
-  }
 
-  // Generate a base seed from current timestamp for consistent images within a game
-  const baseSeed = Date.now() % 10000;
-
-  const transformedRounds = await Promise.all(
-    parsed.rounds.map(async (round: any, roundIndex: number) => {
-      // Handle both new format (correctEmoji/emojiOptions) and old format (correctImage/options)
-      const emojis = round.emojiOptions || round.options || [];
-      const correctEmoji = round.correctEmoji || round.correctImage;
-
-      // Generate image URLs for each option
-      const imageOptions = await Promise.all(
-        emojis.map(async (emoji: string, optionIndex: number) => {
-          // Create a descriptive prompt based on what the emoji represents
-          const emojiDescription = getEmojiDescription(emoji);
-          const seed = baseSeed + (roundIndex * 10) + optionIndex;
-          return await generatePollinationsImageUrl(enhanceImagePrompt(emoji, emojiDescription), seed);
-        })
-      );
-
-      // Find the correct image URL
-      const correctIndex = emojis.indexOf(correctEmoji);
-      const correctImageUrl = correctIndex >= 0 ? imageOptions[correctIndex] : imageOptions[0];
-
-      return {
-        word: round.word,
-        translation: round.translation,
-        correctImage: correctImageUrl,
-        options: imageOptions,
-        isImageUrl: true,
-        fallbackEmojis: emojis,
-      };
-    })
-  );
-
-  parsed.rounds = transformedRounds;
-  return parsed;
-}
-
-// Helper to get a description for common emojis
-function getEmojiDescription(emoji: string): string {
-  const emojiDescriptions: Record<string, string> = {
-    // Animals
-    '🐕': 'dog', '🐶': 'dog', '🐩': 'poodle',
-    '🐱': 'cat', '🐈': 'cat',
-    '🐦': 'bird', '🐤': 'chick', '🐧': 'penguin',
-    '🐠': 'fish', '🐟': 'fish', '🐡': 'pufferfish',
-    '🐴': 'horse', '🦁': 'lion', '🐯': 'tiger',
-    '🐘': 'elephant', '🐻': 'bear', '🐼': 'panda',
-    '🐰': 'rabbit', '🐭': 'mouse', '🐹': 'hamster',
-    '🦊': 'fox', '🐺': 'wolf', '🦝': 'raccoon',
-    '🐮': 'cow', '🐷': 'pig', '🐔': 'chicken',
-    '🦆': 'duck', '🦅': 'eagle', '🦉': 'owl',
-    '🦋': 'butterfly', '🐝': 'bee', '🐞': 'ladybug',
-    '🐢': 'turtle', '🐍': 'snake', '🦎': 'lizard',
-    '🦈': 'shark', '🐳': 'whale', '🐙': 'octopus',
-    
-    // Buildings & Places
-    '🏠': 'house', '🏡': 'house with garden',
-    '🏢': 'office building', '🏣': 'post office',
-    '🏫': 'school', '🏥': 'hospital',
-    '🏪': 'convenience store', '🏨': 'hotel',
-    '⛪': 'church', '🕌': 'mosque',
-    '🏰': 'castle', '🏯': 'japanese castle',
-    
-    // Nature & Weather
-    '☀️': 'sun', '🌙': 'moon', '⭐': 'star',
-    '🌧️': 'rain', '☁️': 'cloud', '⛈️': 'storm',
-    '🌈': 'rainbow', '❄️': 'snow', '🔥': 'fire',
-    '🌳': 'tree', '🌲': 'evergreen tree', '🌴': 'palm tree',
-    '🌸': 'cherry blossom', '🌺': 'flower', '🌻': 'sunflower',
-    '🌵': 'cactus', '🍄': 'mushroom', '🍀': 'clover',
-    '🌊': 'wave', '⛰️': 'mountain', '🏔️': 'snow mountain',
-    
-    // Food
-    '🍎': 'apple', '🍊': 'orange', '🍋': 'lemon',
-    '🍌': 'banana', '🍇': 'grapes', '🍓': 'strawberry',
-    '🍕': 'pizza', '🍔': 'burger', '🌭': 'hot dog',
-    '🍞': 'bread', '🧀': 'cheese', '🥚': 'egg',
-    '🍰': 'cake', '🍪': 'cookie', '🍩': 'donut',
-    '☕': 'coffee', '🍵': 'tea', '🥤': 'drink',
-    
-    // Objects
-    '📚': 'books', '📖': 'book', '✏️': 'pencil',
-    '💻': 'laptop', '📱': 'phone', '⌚': 'watch',
-    '🚗': 'car', '🚌': 'bus', '✈️': 'airplane',
-    '🚲': 'bicycle', '🛵': 'scooter', '🚂': 'train',
-    '⚽': 'soccer ball', '🏀': 'basketball', '🎾': 'tennis',
-    '🎸': 'guitar', '🎹': 'piano', '🥁': 'drums',
-  };
-
-  return emojiDescriptions[emoji] || emoji;
-}
 
 function validateGameContent(parsed: any, gameType: GameType): boolean {
   // Basic structure validation
@@ -722,10 +514,10 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return false;
         }
         return parsed.rounds.every((r: any, index: number) => {
-          const isValid = r.audioText && typeof r.audioText === 'string' && 
-                          r.correctAnswer && typeof r.correctAnswer === 'string' &&
-                          r.audioText.trim().length > 0 && r.correctAnswer.trim().length > 0 &&
-                          r.audioText === r.correctAnswer; // Must match exactly for transcription
+          const isValid = r.audioText && typeof r.audioText === 'string' &&
+            r.correctAnswer && typeof r.correctAnswer === 'string' &&
+            r.audioText.trim().length > 0 && r.correctAnswer.trim().length > 0 &&
+            r.audioText === r.correctAnswer; // Must match exactly for transcription
           if (!isValid) {
             console.warn(`Transcription round ${index} validation failed:`, r);
           }
@@ -738,21 +530,21 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return false;
         }
         return parsed.rounds.every((r: any, index: number) => {
-          const hasValidStructure = r.sentence && typeof r.sentence === 'string' && 
-                                   Array.isArray(r.words) && Array.isArray(r.correctOrder) &&
-                                   r.words.length > 0 && r.correctOrder.length === r.words.length;
-          
+          const hasValidStructure = r.sentence && typeof r.sentence === 'string' &&
+            Array.isArray(r.words) && Array.isArray(r.correctOrder) &&
+            r.words.length > 0 && r.correctOrder.length === r.words.length;
+
           if (!hasValidStructure) {
             console.warn(`Audio jumble round ${index} structure validation failed:`, r);
             return false;
           }
 
           // Validate that correctOrder indices are valid and unique
-          const validIndices = r.correctOrder.every((idx: number) => 
+          const validIndices = r.correctOrder.every((idx: number) =>
             Number.isInteger(idx) && idx >= 0 && idx < r.words.length
           );
           const uniqueIndices = new Set(r.correctOrder).size === r.correctOrder.length;
-          
+
           if (!validIndices || !uniqueIndices) {
             console.warn(`Audio jumble round ${index} indices validation failed:`, r);
             return false;
@@ -762,7 +554,7 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           const reorderedWords = r.correctOrder.map((idx: number) => r.words[idx]);
           const reconstructed = reorderedWords.join(' ');
           const isValidReconstruction = reconstructed === r.sentence;
-          
+
           if (!isValidReconstruction) {
             console.warn(`Audio jumble round ${index} reconstruction failed. Expected: "${r.sentence}", Got: "${reconstructed}"`);
             return false;
@@ -771,40 +563,7 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return true;
         });
 
-      case 'image-instinct':
-        if (!Array.isArray(parsed.rounds) || parsed.rounds.length === 0) {
-          console.warn('Image instinct validation failed: Missing or empty rounds array');
-          return false;
-        }
-        return parsed.rounds.every((r: any, index: number) => {
-          const hasBasicFields = r.word && typeof r.word === 'string' && 
-                                 r.translation && typeof r.translation === 'string';
-          
-          if (!hasBasicFields) {
-            console.warn(`Image instinct round ${index} basic fields validation failed:`, r);
-            return false;
-          }
 
-          // Support both new format (correctEmoji/emojiOptions) and old format (correctImage/options)
-          const hasNewFormat = r.correctEmoji && Array.isArray(r.emojiOptions) && r.emojiOptions.length >= 2;
-          const hasOldFormat = r.correctImage && Array.isArray(r.options) && r.options.length >= 2;
-          
-          if (!hasNewFormat && !hasOldFormat) {
-            console.warn(`Image instinct round ${index} format validation failed:`, r);
-            return false;
-          }
-
-          // Validate that correct option is included in options array
-          if (hasNewFormat) {
-            const correctIncluded = r.emojiOptions.includes(r.correctEmoji);
-            if (!correctIncluded) {
-              console.warn(`Image instinct round ${index} correct emoji not in options:`, r);
-              return false;
-            }
-          }
-
-          return true;
-        });
 
       case 'translation-matchup':
         if (!Array.isArray(parsed.pairs) || parsed.pairs.length === 0) {
@@ -812,9 +571,9 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return false;
         }
         return parsed.pairs.every((p: any, index: number) => {
-          const isValid = p.original && typeof p.original === 'string' && 
-                          p.translation && typeof p.translation === 'string' &&
-                          p.original.trim().length > 0 && p.translation.trim().length > 0;
+          const isValid = p.original && typeof p.original === 'string' &&
+            p.translation && typeof p.translation === 'string' &&
+            p.original.trim().length > 0 && p.translation.trim().length > 0;
           if (!isValid) {
             console.warn(`Translation pair ${index} validation failed:`, p);
           }
@@ -827,10 +586,10 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return false;
         }
         return parsed.words.every((w: any, index: number) => {
-          const isValid = w.word && typeof w.word === 'string' && 
-                          w.hint && typeof w.hint === 'string' &&
-                          w.word.trim().length >= 4 && w.word.trim().length <= 15 && // Reasonable word length
-                          w.hint.trim().length > 0;
+          const isValid = w.word && typeof w.word === 'string' &&
+            w.hint && typeof w.hint === 'string' &&
+            w.word.trim().length >= 4 && w.word.trim().length <= 15 && // Reasonable word length
+            w.hint.trim().length > 0;
           if (!isValid) {
             console.warn(`Secret word ${index} validation failed:`, w);
           }
@@ -843,18 +602,18 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return false;
         }
         return parsed.rounds.every((r: any, index: number) => {
-          const hasValidStructure = Array.isArray(r.words) && r.words.length > 0 && 
-                                   typeof r.timeLimit === 'number' && r.timeLimit > 0;
-          
+          const hasValidStructure = Array.isArray(r.words) && r.words.length > 0 &&
+            typeof r.timeLimit === 'number' && r.timeLimit > 0;
+
           if (!hasValidStructure) {
             console.warn(`Word drop round ${index} structure validation failed:`, r);
             return false;
           }
 
           const wordsValid = r.words.every((w: any, wordIndex: number) => {
-            const isValid = w.word && typeof w.word === 'string' && 
-                           w.translation && typeof w.translation === 'string' &&
-                           w.emoji && typeof w.emoji === 'string';
+            const isValid = w.word && typeof w.word === 'string' &&
+              w.translation && typeof w.translation === 'string' &&
+              w.emoji && typeof w.emoji === 'string';
             if (!isValid) {
               console.warn(`Word drop round ${index}, word ${wordIndex} validation failed:`, w);
             }
@@ -870,11 +629,11 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return false;
         }
         return parsed.questions.every((q: any, index: number) => {
-          const hasValidStructure = q.sentence && typeof q.sentence === 'string' && 
-                                   Array.isArray(q.options) && q.options.length >= 2 && 
-                                   typeof q.correctIndex === 'number' &&
-                                   q.correctIndex >= 0 && q.correctIndex < q.options.length;
-          
+          const hasValidStructure = q.sentence && typeof q.sentence === 'string' &&
+            Array.isArray(q.options) && q.options.length >= 2 &&
+            typeof q.correctIndex === 'number' &&
+            q.correctIndex >= 0 && q.correctIndex < q.options.length;
+
           if (!hasValidStructure) {
             console.warn(`Conjugation question ${index} structure validation failed:`, q);
             return false;
@@ -903,9 +662,9 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return false;
         }
         return parsed.passages.every((p: any, index: number) => {
-          const hasValidStructure = p.text && typeof p.text === 'string' && 
-                                   Array.isArray(p.blanks) && p.blanks.length > 0;
-          
+          const hasValidStructure = p.text && typeof p.text === 'string' &&
+            Array.isArray(p.blanks) && p.blanks.length > 0;
+
           if (!hasValidStructure) {
             console.warn(`Context passage ${index} structure validation failed:`, p);
             return false;
@@ -921,9 +680,9 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           // Validate each blank
           const blanksValid = p.blanks.every((b: any, blankIndex: number) => {
             const isValid = typeof b.position === 'number' && b.position >= 0 &&
-                           b.correctWord && typeof b.correctWord === 'string' &&
-                           Array.isArray(b.options) && b.options.length >= 2 &&
-                           b.options.includes(b.correctWord);
+              b.correctWord && typeof b.correctWord === 'string' &&
+              Array.isArray(b.options) && b.options.length >= 2 &&
+              b.options.includes(b.correctWord);
             if (!isValid) {
               console.warn(`Context passage ${index}, blank ${blankIndex} validation failed:`, b);
             }
@@ -939,9 +698,9 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return false;
         }
         return parsed.sentences.every((s: any, index: number) => {
-          const hasValidStructure = Array.isArray(s.scrambled) && s.scrambled.length > 0 && 
-                                   s.correct && typeof s.correct === 'string';
-          
+          const hasValidStructure = Array.isArray(s.scrambled) && s.scrambled.length > 0 &&
+            s.correct && typeof s.correct === 'string';
+
           if (!hasValidStructure) {
             console.warn(`Syntax sentence ${index} structure validation failed:`, s);
             return false;
@@ -951,10 +710,10 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           const scrambledSet = new Set(s.scrambled.map((w: string) => w.toLowerCase().trim()));
           const correctWords = s.correct.split(/\s+/).map((w: string) => w.toLowerCase().trim());
           const correctSet = new Set(correctWords);
-          
-          const wordsMatch = scrambledSet.size === correctSet.size && 
-                            [...scrambledSet].every(word => correctSet.has(word));
-          
+
+          const wordsMatch = scrambledSet.size === correctSet.size &&
+            [...scrambledSet].every(word => correctSet.has(word));
+
           if (!wordsMatch) {
             console.warn(`Syntax sentence ${index} word mismatch. Scrambled:`, s.scrambled, 'Correct:', correctWords);
             return false;
@@ -969,12 +728,12 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return false;
         }
         return parsed.questions.every((q: any, index: number) => {
-          const hasValidStructure = q.sentence && typeof q.sentence === 'string' && 
-                                   q.timeReference && typeof q.timeReference === 'string' &&
-                                   Array.isArray(q.options) && q.options.length >= 2 && 
-                                   typeof q.correctIndex === 'number' &&
-                                   q.correctIndex >= 0 && q.correctIndex < q.options.length;
-          
+          const hasValidStructure = q.sentence && typeof q.sentence === 'string' &&
+            q.timeReference && typeof q.timeReference === 'string' &&
+            Array.isArray(q.options) && q.options.length >= 2 &&
+            typeof q.correctIndex === 'number' &&
+            q.correctIndex >= 0 && q.correctIndex < q.options.length;
+
           if (!hasValidStructure) {
             console.warn(`Time warp question ${index} structure validation failed:`, q);
             return false;
@@ -1025,13 +784,13 @@ function assessContentQuality(content: any, gameType: GameType, difficulty: stri
 
   try {
     // Common quality checks across all game types
-    
+
     // 1. Content diversity check
     const contentItems = extractContentItems(content, gameType);
     if (contentItems.length > 0) {
       const uniqueItems = new Set(contentItems.map(item => item.toLowerCase().trim()));
       const diversityRatio = uniqueItems.size / contentItems.length;
-      
+
       if (diversityRatio < 0.8) {
         issues.push(`Low content diversity: ${Math.round(diversityRatio * 100)}% unique items`);
         recommendations.push('Ensure more varied vocabulary and avoid repetition');
@@ -1094,12 +853,7 @@ function extractContentItems(content: any, gameType: GameType): string[] {
           if (r.sentence) items.push(r.sentence);
         });
         break;
-      case 'image-instinct':
-        content.rounds?.forEach((r: any) => {
-          if (r.word) items.push(r.word);
-          if (r.translation) items.push(r.translation);
-        });
-        break;
+
       case 'translation-matchup':
         content.pairs?.forEach((p: any) => {
           if (p.original) items.push(p.original);
@@ -1160,10 +914,10 @@ function checkDifficultyAppropriate(content: any, gameType: GameType, difficulty
 
   // Simple heuristics for difficulty assessment
   const items = extractContentItems(content, gameType);
-  
+
   if (items.length > 0) {
     const avgLength = items.reduce((sum, item) => sum + item.length, 0) / items.length;
-    
+
     // Length-based difficulty heuristics
     const expectedLengths = {
       beginner: { min: 5, max: 30 },
@@ -1201,7 +955,7 @@ function checkLanguageQuality(content: any, gameType: GameType): {
   let penalty = 0;
 
   const items = extractContentItems(content, gameType);
-  
+
   // Check for common language issues
   items.forEach((item, index) => {
     // Check for excessive repetition of words
@@ -1253,7 +1007,7 @@ function checkGameSpecificQuality(content: any, gameType: GameType): {
         if (content.questions && Array.isArray(content.questions)) {
           const tenses = content.questions.map((q: any) => q.tense).filter(Boolean);
           const uniqueTenses = new Set(tenses);
-          
+
           if (tenses.length > 2 && uniqueTenses.size === 1) {
             issues.push('All conjugation questions use the same tense');
             recommendations.push('Include variety in verb tenses for better learning');
@@ -1262,31 +1016,19 @@ function checkGameSpecificQuality(content: any, gameType: GameType): {
         }
         break;
 
-      case 'image-instinct':
-        // Check emoji diversity
-        if (content.rounds && Array.isArray(content.rounds)) {
-          const allEmojis = content.rounds.flatMap((r: any) => r.emojiOptions || r.options || []);
-          const uniqueEmojis = new Set(allEmojis);
-          
-          if (allEmojis.length > 0 && uniqueEmojis.size / allEmojis.length < 0.6) {
-            issues.push('Low emoji diversity across rounds');
-            recommendations.push('Use more varied emojis to avoid confusion');
-            penalty += 10;
-          }
-        }
-        break;
+
 
       case 'translation-matchup':
         // Check for balanced word types
         if (content.pairs && Array.isArray(content.pairs)) {
           const words = content.pairs.map((p: any) => p.original).filter(Boolean);
-          
+
           // Simple heuristic: check if all words are very similar in length
           if (words.length > 3) {
             const lengths = words.map((w: string) => w.length);
             const avgLength = lengths.reduce((a: number, b: number) => a + b, 0) / lengths.length;
             const variance = lengths.reduce((acc: number, len: number) => acc + Math.pow(len - avgLength, 2), 0) / lengths.length;
-            
+
             if (variance < 2) {
               issues.push('All translation words are very similar in length');
               recommendations.push('Include variety in word lengths and types');
@@ -1302,7 +1044,7 @@ function checkGameSpecificQuality(content: any, gameType: GameType): {
           content.rounds.forEach((round: any, index: number) => {
             if (round.timeLimit && round.words) {
               const wordsPerSecond = round.words.length / round.timeLimit;
-              
+
               if (wordsPerSecond > 0.5) {
                 issues.push(`Round ${index + 1} may be too fast (${wordsPerSecond.toFixed(1)} words/sec)`);
                 penalty += 5;
@@ -1312,7 +1054,7 @@ function checkGameSpecificQuality(content: any, gameType: GameType): {
               }
             }
           });
-          
+
           if (issues.length > 0) {
             recommendations.push('Adjust time limits for optimal challenge level');
           }
@@ -1349,23 +1091,13 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
         ];
 
         let response: string;
-        // For image-instinct, use Pollinations only (for image generation compatibility)
-        // For all other games, use Groq as primary with Pollinations as fallback
-        if (gameType === 'image-instinct') {
-          try {
-            response = await callPollinations(messages);
-          } catch (pollinationsError) {
-            console.error('Pollinations API failed for image-instinct:', pollinationsError);
-            throw pollinationsError; // Will fall through to fallback content
-          }
-        } else {
-          // Use Groq as primary, Pollinations as fallback for all other games
-          try {
-            response = await callGroq(messages);
-          } catch (groqError) {
-            console.error('Groq API failed, trying Pollinations:', groqError);
-            response = await callPollinations(messages);
-          }
+
+        // Use Groq as primary, Pollinations as fallback for all games
+        try {
+          response = await callGroq(messages);
+        } catch (groqError) {
+          console.error('Groq API failed, trying Pollinations:', groqError);
+          response = await callPollinations(messages);
         }
 
         let parsed = parseGameContent(response, gameType);
@@ -1377,7 +1109,7 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
         // Perform quality assessment
         const qualityAssessment = assessContentQuality(parsed, gameType, difficulty);
         console.log(`Content quality score: ${qualityAssessment.score}/100 for ${gameType}`);
-        
+
         if (qualityAssessment.issues.length > 0) {
           console.warn('Content quality issues:', qualityAssessment.issues);
         }
@@ -1388,10 +1120,7 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
           throw new Error('Content quality below acceptable threshold');
         }
 
-        // Transform image-instinct content to add Pollinations image URLs
-        if (gameType === 'image-instinct') {
-          parsed = await transformImageInstinctContent(parsed);
-        }
+
 
         // Construct the full GameContent object
         const baseContent = {
@@ -1434,14 +1163,14 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
 
   } catch (error) {
     console.error('Game generation failed, using fallback:', error);
-    
+
     // Try to get fallback content from cache first
-    const fallbackCacheKey = { 
-      gameType: `${gameType}_fallback` as GameType, 
-      difficulty, 
-      language, 
-      targetLanguage, 
-      topic: 'fallback' 
+    const fallbackCacheKey = {
+      gameType: `${gameType}_fallback` as GameType,
+      difficulty,
+      language,
+      targetLanguage,
+      topic: 'fallback'
     };
 
     try {
@@ -1459,18 +1188,18 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
     } catch (cacheError) {
       console.warn('Failed to retrieve cached fallback:', cacheError);
     }
-    
+
     // Generate fresh fallback content
     const fallbackGenerator = FALLBACK_GAMES[gameType];
     const fallbackContent = await fallbackGenerator(options);
-    
+
     // Cache the fallback content for future use
     try {
       await contentCache.set(fallbackCacheKey, fallbackContent, 86400000); // Cache for 24 hours
     } catch (cacheError) {
       console.warn('Failed to cache fallback content:', cacheError);
     }
-    
+
     return {
       content: fallbackContent,
       usedFallback: true,
@@ -1489,8 +1218,7 @@ export function calculateMaxScore(content: GameContent): number {
       return content.rounds.length * pointsPerItem;
     case 'audio-jumble':
       return content.rounds.length * pointsPerItem;
-    case 'image-instinct':
-      return content.rounds.length * pointsPerItem;
+
     case 'translation-matchup':
       return content.pairs.length * pointsPerItem;
     case 'secret-word-solver':
@@ -1516,8 +1244,7 @@ export function calculateTotalRounds(content: GameContent): number {
       return content.rounds.length;
     case 'audio-jumble':
       return content.rounds.length;
-    case 'image-instinct':
-      return content.rounds.length;
+
     case 'translation-matchup':
       return 1; // It's a single matching round
     case 'secret-word-solver':

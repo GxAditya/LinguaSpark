@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
-import { Headphones, BookOpen, Grid3X3, Shuffle, Award, Zap, RotateCcw, FileText, BarChart3, Clock, ChevronRight, Loader2, Globe, ChevronDown } from 'lucide-react';
+import { Headphones, BookOpen, Shuffle, Award, Zap, RotateCcw, FileText, BarChart3, Clock, ChevronRight, Loader2, Globe, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context';
 
 const languages = [
@@ -40,16 +40,7 @@ const games = [
     iconColor: 'text-orange-700',
     description: 'Drag and drop words in the correct order'
   },
-  {
-    id: 'image-instinct',
-    name: 'Image Instinct',
-    category: 'Vocabulary, Recognition',
-    icon: Grid3X3,
-    color: 'from-orange-500 to-amber-500',
-    bgColor: 'from-orange-50 to-amber-50',
-    iconColor: 'text-orange-600',
-    description: 'Match words with their corresponding images'
-  },
+
   {
     id: 'translation-matchup',
     name: 'Translation Match-Up',
@@ -158,7 +149,7 @@ export default function Games() {
             <h1 className="text-4xl md:text-5xl font-bold text-content-primary">
               Language Learning <span className="text-content-primary">Games</span>
             </h1>
-            
+
             {/* Language Dropdown */}
             <div className="relative">
               <button
@@ -170,15 +161,15 @@ export default function Games() {
                 <span className="font-medium text-content-primary">{currentLanguage.name}</span>
                 <ChevronDown className={`w-4 h-4 text-content-secondary transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              
+
               {isDropdownOpen && (
                 <>
                   {/* Backdrop to close dropdown */}
-                  <div 
-                    className="fixed inset-0 z-10" 
+                  <div
+                    className="fixed inset-0 z-10"
                     onClick={() => setIsDropdownOpen(false)}
                   />
-                  
+
                   {/* Dropdown menu */}
                   <div className="absolute right-0 mt-2 w-56 bg-surface-base border border-border-base rounded-xl shadow-lg z-20 py-2 max-h-80 overflow-y-auto">
                     {languages.map((lang) => (
@@ -188,9 +179,8 @@ export default function Games() {
                           setSelectedLanguage(lang.code);
                           setIsDropdownOpen(false);
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-orange-50 transition-colors ${
-                          selectedLanguage === lang.code ? 'bg-orange-50 text-orange-600' : 'text-content-primary'
-                        }`}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-orange-50 transition-colors ${selectedLanguage === lang.code ? 'bg-orange-50 text-orange-600' : 'text-content-primary'
+                          }`}
                       >
                         <span className="text-xl">{lang.flag}</span>
                         <span className="font-medium">{lang.name}</span>

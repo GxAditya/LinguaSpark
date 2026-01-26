@@ -99,23 +99,22 @@ describe('FallbackContentService', () => {
   describe('Content Discovery', () => {
     it('should return supported game types', () => {
       const gameTypes = service.getSupportedGameTypes();
-      
+
       expect(gameTypes).toContain('translation-match-up');
       expect(gameTypes).toContain('conjugation-coach');
-      expect(gameTypes).toContain('image-instinct');
       expect(gameTypes).toContain('audio-jumble');
     });
 
     it('should return available language pairs for a game type', () => {
       const languagePairs = service.getAvailableLanguagePairs('translation-match-up', 'beginner');
-      
+
       expect(languagePairs).toContain('en-es');
       expect(languagePairs).toContain('en-fr');
     });
 
     it('should return available difficulties for a game type', () => {
       const difficulties = service.getAvailableDifficulties('translation-match-up');
-      
+
       expect(difficulties).toContain('beginner');
       expect(difficulties).toContain('intermediate');
     });
@@ -124,7 +123,7 @@ describe('FallbackContentService', () => {
   describe('Statistics', () => {
     it('should provide accurate statistics', () => {
       const stats = service.getStatistics();
-      
+
       expect(stats.totalGameTypes).toBeGreaterThan(0);
       expect(stats.totalLanguagePairs).toBeGreaterThan(0);
       expect(stats.supportedCombinations).toBeInstanceOf(Array);
@@ -167,10 +166,10 @@ describe('FallbackContentService', () => {
 
       // Generate content to populate cache
       service.getFallbackContent(options, 'API_FAILURE');
-      
+
       // Clear cache
       service.clearCache();
-      
+
       // Generate again - should work fine
       const content = service.getFallbackContent(options, 'API_FAILURE');
       expect(content).toBeDefined();

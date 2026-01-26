@@ -108,7 +108,7 @@ export default function Lessons() {
     try {
       setIsPlayingAudio(true);
       const result = await ttsService.generateAudio(text, 'nova');
-      
+
       if (result.audioBase64) {
         audioRef.current = new Audio(result.audioBase64);
       } else if (result.audioUrl) {
@@ -388,7 +388,7 @@ export default function Lessons() {
               </div>
               <div className="progress-bar h-4">
                 <div
-                  className="bg-content-primary h-full rounded-full transition-all duration-500 ease-out"
+                  className="bg-orange-500 h-full rounded-full transition-all duration-500 ease-out"
                   style={{ width: `${lessonProgress.progress}%` }}
                 ></div>
               </div>
@@ -705,7 +705,7 @@ export default function Lessons() {
                 <div className="mb-4">
                   <div className="progress-bar h-2 bg-surface-muted rounded-full overflow-hidden">
                     <div
-                      className="bg-content-primary h-full rounded-full"
+                      className="bg-orange-500 h-full rounded-full"
                       style={{ width: `${lesson.progress}%` }}
                     ></div>
                   </div>

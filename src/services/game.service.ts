@@ -1,11 +1,11 @@
 import api from './api';
 import { loadingService, LOADING_STAGES } from './loading.service';
-import { ErrorService, ContentErrorType } from './error.service';
+import { ErrorService } from './error.service';
 
 export type GameType =
   | 'transcription-station'
   | 'audio-jumble'
-  | 'image-instinct'
+
   | 'translation-matchup'
   | 'secret-word-solver'
   | 'word-drop-dash'
@@ -85,41 +85,41 @@ class GameService {
    */
   async startGame(options: StartGameOptions): Promise<GameSession> {
     const loadingId = `game-start-${options.gameType}`;
-    
+
     try {
       // Start loading process
       loadingService.startLoading(loadingId, [
         LOADING_STAGES.INITIALIZING,
         LOADING_STAGES.GENERATING_CONTENT,
         LOADING_STAGES.VALIDATING_CONTENT,
-        ...(options.gameType === 'image-instinct' ? [LOADING_STAGES.PROCESSING_IMAGES] : []),
+
         LOADING_STAGES.FINALIZING
       ]);
 
       const response = await api.post<GameSession>('/games/start', options);
-      
+
       if (!response.success || !response.data) {
         const error = ErrorService.parseError(
           new Error(response.message || 'Failed to start game'),
-          options.gameType
+          { gameType: options.gameType }
         );
-        
+
         loadingService.setError(loadingId, ErrorService.getUserFriendlyMessage(error));
         throw error;
       }
 
       loadingService.completeLoading(loadingId, 'Game ready!');
       return response.data;
-      
+
     } catch (error: any) {
-      const parsedError = ErrorService.parseError(error, options.gameType);
+      const parsedError = ErrorService.parseError(error, { gameType: options.gameType });
       const userMessage = ErrorService.getUserFriendlyMessage(parsedError);
-      
+
       loadingService.setError(loadingId, userMessage);
-      
+
       // Log error for debugging
       console.error('Game start error:', ErrorService.formatForLogging(parsedError));
-      
+
       throw parsedError;
     }
   }
@@ -139,8 +139,8 @@ class GameService {
       if (err.status === 404) {
         return null;
       }
-      
-      const parsedError = ErrorService.parseError(err, gameType);
+
+      const parsedError = ErrorService.parseError(err, { gameType });
       console.error('Get active session error:', ErrorService.formatForLogging(parsedError));
       throw parsedError;
     }
@@ -305,11 +305,11 @@ class GameService {
 
       const url = `/games/cache${params.toString() ? `?${params.toString()}` : ''}`;
       const response = await api.delete<any>(url);
-      
+
       if (!response.success) {
         throw new Error(response.message || 'Failed to clear cache');
       }
-      
+
       return response.data || { invalidatedCount: 0 };
     } catch (error: any) {
       const parsedError = ErrorService.parseError(error);

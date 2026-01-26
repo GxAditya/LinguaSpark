@@ -18,7 +18,7 @@ vi.mock('../models/index.js', () => ({
 
 describe('Cost Optimization Services', () => {
   const mockUserId = new mongoose.Types.ObjectId().toString();
-  const mockGameType = 'image-instinct';
+  const mockGameType = 'transcription-station';
 
   beforeEach(() => {
     // Reset services before each test
@@ -114,7 +114,7 @@ describe('Cost Optimization Services', () => {
       expect(scenarios).toHaveProperty('scenarios');
       expect(Array.isArray(scenarios.scenarios)).toBe(true);
       expect(scenarios.scenarios.length).toBeGreaterThan(0);
-      
+
       scenarios.scenarios.forEach(scenario => {
         expect(scenario).toHaveProperty('name');
         expect(scenario).toHaveProperty('description');
@@ -271,7 +271,7 @@ describe('Cost Optimization Services', () => {
 
     it('should manage user sessions', () => {
       const sessionId = 'test-session-123';
-      
+
       // Test starting session
       expect(() => {
         usageAnalyticsService.startUserSession(mockUserId, sessionId);
@@ -290,7 +290,7 @@ describe('Cost Optimization Services', () => {
       expect(typeof modelSelectionService).toBe('object');
       expect(typeof costMonitoringService).toBe('object');
       expect(typeof usageAnalyticsService).toBe('object');
-      
+
       // Test that key methods exist
       expect(typeof modelSelectionService.selectModel).toBe('function');
       expect(typeof costMonitoringService.getCostMonitoringMetrics).toBe('function');

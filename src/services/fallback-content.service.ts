@@ -83,21 +83,21 @@ const FALLBACK_CONTENT_TEMPLATES = {
     beginner: {
       'en-es': {
         rounds: [
-          { 
-            sentence: 'Me gusta la ___', 
-            correctWord: 'pizza', 
+          {
+            sentence: 'Me gusta la ___',
+            correctWord: 'pizza',
             options: ['pizza', 'libro', 'agua', 'música'],
             translation: 'I like ___'
           },
-          { 
-            sentence: 'El ___ es azul', 
-            correctWord: 'cielo', 
+          {
+            sentence: 'El ___ es azul',
+            correctWord: 'cielo',
             options: ['cielo', 'casa', 'perro', 'coche'],
             translation: 'The ___ is blue'
           },
-          { 
-            sentence: 'Voy a la ___', 
-            correctWord: 'escuela', 
+          {
+            sentence: 'Voy a la ___',
+            correctWord: 'escuela',
             options: ['escuela', 'playa', 'tienda', 'casa'],
             translation: 'I go to ___'
           }
@@ -106,58 +106,26 @@ const FALLBACK_CONTENT_TEMPLATES = {
       }
     }
   },
-  'image-instinct': {
-    beginner: {
-      'en-es': {
-        rounds: [
-          { 
-            word: 'gato', 
-            translation: 'cat', 
-            emoji: '🐱',
-            options: ['cat', 'dog', 'bird', 'fish']
-          },
-          { 
-            word: 'casa', 
-            translation: 'house', 
-            emoji: '🏠',
-            options: ['house', 'car', 'tree', 'book']
-          },
-          { 
-            word: 'sol', 
-            translation: 'sun', 
-            emoji: '☀️',
-            options: ['sun', 'moon', 'star', 'cloud']
-          },
-          { 
-            word: 'agua', 
-            translation: 'water', 
-            emoji: '💧',
-            options: ['water', 'fire', 'earth', 'air']
-          }
-        ],
-        instructions: 'Look at the emoji and choose the correct English translation.'
-      }
-    }
-  },
+
   'audio-jumble': {
     beginner: {
       'en-es': {
         rounds: [
-          { 
-            word: 'hola', 
-            scrambled: ['a', 'l', 'o', 'h'], 
+          {
+            word: 'hola',
+            scrambled: ['a', 'l', 'o', 'h'],
             translation: 'hello',
             audioText: 'hola'
           },
-          { 
-            word: 'gracias', 
-            scrambled: ['s', 'a', 'i', 'c', 'a', 'r', 'g'], 
+          {
+            word: 'gracias',
+            scrambled: ['s', 'a', 'i', 'c', 'a', 'r', 'g'],
             translation: 'thank you',
             audioText: 'gracias'
           },
-          { 
-            word: 'amigo', 
-            scrambled: ['o', 'g', 'i', 'm', 'a'], 
+          {
+            word: 'amigo',
+            scrambled: ['o', 'g', 'i', 'm', 'a'],
             translation: 'friend',
             audioText: 'amigo'
           }
@@ -175,7 +143,7 @@ export class FallbackContentService {
   private static instance: FallbackContentService;
   private contentCache = new Map<string, FallbackGameContent>();
 
-  private constructor() {}
+  private constructor() { }
 
   static getInstance(): FallbackContentService {
     if (!FallbackContentService.instance) {
@@ -189,7 +157,7 @@ export class FallbackContentService {
    */
   getFallbackContent(options: FallbackContentOptions, reason: string = 'API_FAILURE'): FallbackGameContent | null {
     const cacheKey = this.generateCacheKey(options);
-    
+
     // Check cache first
     if (this.contentCache.has(cacheKey)) {
       const cached = this.contentCache.get(cacheKey)!;
@@ -204,7 +172,7 @@ export class FallbackContentService {
 
     // Generate fallback content
     const content = this.generateFallbackContent(options, reason);
-    
+
     if (content) {
       this.contentCache.set(cacheKey, content);
     }
@@ -217,7 +185,7 @@ export class FallbackContentService {
    */
   private generateFallbackContent(options: FallbackContentOptions, reason: string): FallbackGameContent | null {
     const { gameType, difficulty, language, targetLanguage } = options;
-    
+
     // Get template for game type
     const gameTemplate = FALLBACK_CONTENT_TEMPLATES[gameType as keyof typeof FALLBACK_CONTENT_TEMPLATES];
     if (!gameTemplate) {
@@ -260,7 +228,7 @@ export class FallbackContentService {
    */
   hasFallbackContent(options: FallbackContentOptions): boolean {
     const { gameType, difficulty, language, targetLanguage } = options;
-    
+
     const gameTemplate = FALLBACK_CONTENT_TEMPLATES[gameType as keyof typeof FALLBACK_CONTENT_TEMPLATES];
     if (!gameTemplate) return false;
 
@@ -269,7 +237,7 @@ export class FallbackContentService {
 
     const languagePair = `${language}-${targetLanguage}`;
     const languageTemplate = difficultyTemplate[languagePair as keyof typeof difficultyTemplate];
-    
+
     return !!languageTemplate;
   }
 
@@ -321,20 +289,21 @@ export class FallbackContentService {
    * Add custom fallback content template
    */
   addCustomTemplate(
-    gameType: string, 
-    difficulty: string, 
-    languagePair: string, 
+    gameType: string,
+    difficulty: string,
+    languagePair: string,
     template: { rounds: any[]; instructions: string }
   ): void {
-    if (!FALLBACK_CONTENT_TEMPLATES[gameType as keyof typeof FALLBACK_CONTENT_TEMPLATES]) {
-      (FALLBACK_CONTENT_TEMPLATES as any)[gameType] = {};
+    const templates = FALLBACK_CONTENT_TEMPLATES as any;
+    if (!templates[gameType]) {
+      templates[gameType] = {};
     }
 
-    if (!FALLBACK_CONTENT_TEMPLATES[gameType as keyof typeof FALLBACK_CONTENT_TEMPLATES][difficulty as keyof any]) {
-      (FALLBACK_CONTENT_TEMPLATES[gameType as keyof typeof FALLBACK_CONTENT_TEMPLATES] as any)[difficulty] = {};
+    if (!templates[gameType][difficulty]) {
+      templates[gameType][difficulty] = {};
     }
 
-    (FALLBACK_CONTENT_TEMPLATES[gameType as keyof typeof FALLBACK_CONTENT_TEMPLATES][difficulty as keyof any] as any)[languagePair] = template;
+    templates[gameType][difficulty][languagePair] = template;
   }
 
   /**

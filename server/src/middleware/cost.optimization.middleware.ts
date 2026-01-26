@@ -10,11 +10,11 @@ export function costAwareGameGenerationLimit() {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const user = req.user as IUser | undefined;
     const userId = user?._id.toString() || 'anonymous';
-    
+
     try {
       // Estimate cost based on request type
       const estimatedCost = estimateRequestCost(req);
-      
+
       // Check if user can make this request
       const result = await costOptimizationService.checkGameGenerationLimit(
         userId,
@@ -79,21 +79,21 @@ export function costAwareGameGenerationLimit() {
 export function recordGameGenerationUsage() {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const originalSend = res.send;
-    
-    res.send = function(data: any) {
+
+    res.send = function (data: any) {
       // Record usage after response is sent
       setImmediate(async () => {
         if (req.costOptimization) {
           const { userId, estimatedCost, tier, startTime } = req.costOptimization;
           const responseTime = Date.now() - startTime;
-          
+
           try {
             // Calculate actual cost based on response
             const actualCost = calculateActualCost(req, res, data);
-            
+
             // Record the usage
             await costOptimizationService.recordGameGeneration(userId, actualCost);
-            
+
             // Log detailed usage information
             apiUsageMonitor.logUsage({
               userId,
@@ -129,11 +129,11 @@ export function modelOptimizationMiddleware() {
   return (req: Request, res: Response, next: NextFunction): void => {
     const user = req.user as IUser | undefined;
     const userTier = user ? 'free' : 'anonymous'; // Simplified tier detection
-    
+
     // Get use case from request or default to cost optimization
     const useCase = req.body.optimization || req.query.optimization || 'cost';
     const contentType = req.path.includes('image') ? 'image' : 'text';
-    
+
     try {
       const recommendation = costOptimizationService.getModelRecommendation(
         contentType as 'text' | 'image',
@@ -143,7 +143,7 @@ export function modelOptimizationMiddleware() {
 
       // Add recommendation to request for use by the service
       req.modelRecommendation = recommendation;
-      
+
       // Set recommendation headers
       res.setHeader('X-Recommended-Model', recommendation.model);
       res.setHeader('X-Recommendation-Reason', recommendation.reason);
@@ -168,7 +168,7 @@ export function modelOptimizationMiddleware() {
 export function costAnalyticsMiddleware() {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const user = req.user as IUser | undefined;
-    
+
     if (user && req.path.includes('/analytics')) {
       try {
         const analytics = await costOptimizationService.getUserCostAnalytics(
@@ -200,11 +200,11 @@ export function costAnalyticsMiddleware() {
  */
 function estimateRequestCost(req: Request): number {
   const baseGameCost = 0.05; // Base cost for game generation
-  
+
   // Adjust based on game type
   const gameType = req.body.gameType;
   const gameTypeMultipliers: Record<string, number> = {
-    'image-instinct': 1.5, // Higher cost due to image generation
+
     'audio-jumble': 1.2,   // Higher cost due to TTS
     'translation-match': 1.0,
     'word-drop': 1.0,
@@ -217,7 +217,7 @@ function estimateRequestCost(req: Request): number {
   };
 
   const multiplier = gameTypeMultipliers[gameType] || 1.0;
-  
+
   // Adjust based on difficulty (more complex content = higher cost)
   const difficulty = req.body.difficulty || 'beginner';
   const difficultyMultipliers: Record<string, number> = {
@@ -236,7 +236,7 @@ function estimateRequestCost(req: Request): number {
  */
 function calculateActualCost(req: Request, res: Response, responseData: any): number {
   const estimatedCost = req.costOptimization?.estimatedCost || 0.05;
-  
+
   // If we have token information, calculate more precisely
   const tokens = extractTokenCount(responseData);
   if (tokens > 0) {

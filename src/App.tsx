@@ -3,8 +3,8 @@ import { AuthProvider, useAuth } from './context';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Features from './components/Features';
-import SocialProof from './components/SocialProof';
-import CTA from './components/CTA';
+import InteractiveDemo from './components/InteractiveDemo';
+import AppShowcase from './components/AppShowcase';
 import Footer from './components/Footer';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
@@ -18,7 +18,7 @@ import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TranscriptionStation from './games/TranscriptionStation';
 import AudioJumble from './games/AudioJumble';
-import ImageInstinct from './games/ImageInstinct';
+
 import TranslationMatchUp from './games/TranslationMatchUp';
 import SecretWordSolver from './games/SecretWordSolver';
 import WordDropDash from './games/WordDropDash';
@@ -75,8 +75,8 @@ function AppRoutes() {
             <Header />
             <Hero />
             <Features />
-            <SocialProof />
-            <CTA />
+            <InteractiveDemo />
+            <AppShowcase />
             <Footer />
           </div>
         }
@@ -93,7 +93,7 @@ function AppRoutes() {
       <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
       <Route path="/games/transcription-station" element={<ProtectedRoute><TranscriptionStation /></ProtectedRoute>} />
       <Route path="/games/audio-jumble" element={<ProtectedRoute><AudioJumble /></ProtectedRoute>} />
-      <Route path="/games/image-instinct" element={<ProtectedRoute><ImageInstinct /></ProtectedRoute>} />
+
       <Route path="/games/translation-matchup" element={<ProtectedRoute><TranslationMatchUp /></ProtectedRoute>} />
       <Route path="/games/secret-word-solver" element={<ProtectedRoute><SecretWordSolver /></ProtectedRoute>} />
       <Route path="/games/word-drop-dash" element={<ProtectedRoute><WordDropDash /></ProtectedRoute>} />

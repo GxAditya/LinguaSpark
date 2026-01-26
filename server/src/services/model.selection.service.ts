@@ -62,7 +62,7 @@ export class ModelSelectionService {
 
   constructor() {
     this.initializeModelMetrics();
-    
+
     // Update metrics periodically
     setInterval(() => this.updateModelMetrics(), 300000); // Every 5 minutes
   }
@@ -339,9 +339,7 @@ export class ModelSelectionService {
       score -= 15; // Penalty for low-quality models for advanced content
     }
 
-    if (context.gameType === 'image-instinct' && model.name.includes('image')) {
-      score += 10; // Bonus for image models in image-heavy games
-    }
+
 
     return Math.max(0, Math.min(100, score));
   }
@@ -377,7 +375,7 @@ export class ModelSelectionService {
       reasons.push('reliable performance');
     }
 
-    return reasons.length > 0 
+    return reasons.length > 0
       ? `Selected for ${reasons.join(', ')}`
       : 'Best overall match for requirements';
   }
@@ -418,7 +416,7 @@ export class ModelSelectionService {
    */
   private getAvailableModels(contentType: 'text' | 'image'): any[] {
     const config = costOptimizationService.getModelRecommendation('text', 'cost');
-    
+
     if (contentType === 'text') {
       return [
         { name: 'nova-fast', costMultiplier: 1.0, qualityScore: 7, speedScore: 9 },
@@ -443,7 +441,7 @@ export class ModelSelectionService {
     success: boolean
   ): void {
     const existing = this.modelMetrics.get(model);
-    
+
     if (existing) {
       const totalUsage = existing.usageCount + 1;
       existing.averageCost = (existing.averageCost * existing.usageCount + cost) / totalUsage;
@@ -494,7 +492,7 @@ export class ModelSelectionService {
    */
   private updateModelMetrics(): void {
     const stats = apiUsageMonitor.getStats();
-    
+
     Object.entries(stats.modelUsage).forEach(([model, usage]) => {
       const existing = this.modelMetrics.get(model);
       if (existing && usage.requests > 0) {
@@ -522,21 +520,21 @@ export class ModelSelectionService {
       if (!gameTypePreferences[entry.context.gameType]) {
         gameTypePreferences[entry.context.gameType] = {};
       }
-      gameTypePreferences[entry.context.gameType][entry.selectedModel] = 
+      gameTypePreferences[entry.context.gameType][entry.selectedModel] =
         (gameTypePreferences[entry.context.gameType][entry.selectedModel] || 0) + 1;
 
       // Difficulty preferences
       if (!difficultyPreferences[entry.context.difficulty]) {
         difficultyPreferences[entry.context.difficulty] = {};
       }
-      difficultyPreferences[entry.context.difficulty][entry.selectedModel] = 
+      difficultyPreferences[entry.context.difficulty][entry.selectedModel] =
         (difficultyPreferences[entry.context.difficulty][entry.selectedModel] || 0) + 1;
 
       // Tier preferences
       if (!tierPreferences[entry.context.userTier]) {
         tierPreferences[entry.context.userTier] = {};
       }
-      tierPreferences[entry.context.userTier][entry.selectedModel] = 
+      tierPreferences[entry.context.userTier][entry.selectedModel] =
         (tierPreferences[entry.context.userTier][entry.selectedModel] || 0) + 1;
     });
 

@@ -41,7 +41,7 @@ export default function SignIn() {
     <AuthLayout>
       <div className="bg-white p-6 md:p-8 border border-gray-200 rounded-xl shadow-sm">
         <div className="mb-5">
-          <Link to="/" className="inline-flex items-center gap-2 lg:hidden mb-4 group">
+          <Link to="/" className="inline-flex items-center gap-2 mb-6 group">
             <div className="icon-container-sm">
               <Sparkles className="w-4 h-4 text-orange-600" />
             </div>

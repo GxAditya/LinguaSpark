@@ -42,7 +42,7 @@ export const generateText = asyncHandler(async (req: Request, res: Response): Pr
     sendSuccess(res, 200, 'Text generated successfully', response);
   } catch (error: any) {
     console.error('Text generation error:', error);
-    
+
     // Handle specific API errors with enhanced classification
     if (error.type === 'AUTHENTICATION' || error.statusCode === 401) {
       throw createApiError(
@@ -122,7 +122,7 @@ export const generateImage = asyncHandler(async (req: Request, res: Response): P
     sendSuccess(res, 200, 'Image generated successfully', response);
   } catch (error: any) {
     console.error('Image generation error:', error);
-    
+
     // Handle specific API errors with enhanced classification
     if (error.type === 'AUTHENTICATION' || error.statusCode === 401) {
       throw createApiError(
@@ -199,7 +199,7 @@ export const generateGameContent = asyncHandler(async (req: Request, res: Respon
   // Validate game type
   const validGameTypes = [
     'translation-match-up', 'conjugation-coach', 'word-drop-dash',
-    'image-instinct', 'audio-jumble', 'context-connect',
+    'audio-jumble', 'context-connect',
     'syntax-scrambler', 'secret-word-solver', 'transcription-station',
     'time-warp-tagger'
   ];
@@ -224,7 +224,7 @@ export const generateGameContent = asyncHandler(async (req: Request, res: Respon
   try {
     // Import the game service function
     const { generateGameContent: generateContent } = await import('../services/game.service.js');
-    
+
     const result = await generateContent({
       gameType: gameType as any,
       difficulty,
@@ -236,7 +236,7 @@ export const generateGameContent = asyncHandler(async (req: Request, res: Respon
     sendSuccess(res, 200, 'Game content generated successfully', result.content);
   } catch (error: any) {
     console.error('Game content generation error:', error);
-    
+
     // Handle specific errors
     if (error.type === 'AUTHENTICATION' || error.statusCode === 401) {
       throw createApiError(
@@ -295,7 +295,7 @@ export const checkApiStatus = asyncHandler(async (req: Request, res: Response): 
     });
   } catch (error: any) {
     console.error('API status check error:', error);
-    
+
     // Even if status check fails, we should return a response
     sendSuccess(res, 200, 'API status check completed', {
       available: false,
@@ -333,7 +333,7 @@ export const testApiConnection = asyncHandler(async (req: Request, res: Response
   try {
     // Make a minimal test request to verify API works
     const testResponse = await pollinationsApi.generateText('test', { max_tokens: 1 });
-    
+
     sendSuccess(res, 200, 'API connection test successful', {
       connected: true,
       model: testResponse.model,
@@ -341,11 +341,11 @@ export const testApiConnection = asyncHandler(async (req: Request, res: Response
     });
   } catch (error: any) {
     console.error('API connection test failed:', error);
-    
+
     // Classify the error for better user feedback
     let errorType = 'CONNECTION_FAILED';
     let statusCode = 503;
-    
+
     if (error.statusCode === 401) {
       errorType = 'AUTHENTICATION';
       statusCode = 401;
@@ -356,7 +356,7 @@ export const testApiConnection = asyncHandler(async (req: Request, res: Response
       errorType = 'RATE_LIMIT';
       statusCode = 429;
     }
-    
+
     throw createApiError(
       `API connection test failed: ${error.message}`,
       statusCode,

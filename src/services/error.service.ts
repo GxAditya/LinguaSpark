@@ -7,36 +7,36 @@ export enum ApiErrorType {
   AUTHORIZATION = 'AUTHORIZATION',
   API_KEY_INVALID = 'API_KEY_INVALID',
   API_KEY_EXPIRED = 'API_KEY_EXPIRED',
-  
+
   // Rate Limiting & Quotas
   RATE_LIMIT = 'RATE_LIMIT',
   QUOTA_EXCEEDED = 'QUOTA_EXCEEDED',
   INSUFFICIENT_BALANCE = 'INSUFFICIENT_BALANCE',
   DAILY_LIMIT_EXCEEDED = 'DAILY_LIMIT_EXCEEDED',
-  
+
   // Network & Connectivity
   NETWORK = 'NETWORK',
   TIMEOUT = 'TIMEOUT',
   CONNECTION_REFUSED = 'CONNECTION_REFUSED',
   DNS_ERROR = 'DNS_ERROR',
-  
+
   // Server Errors
   SERVER_ERROR = 'SERVER_ERROR',
   SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE',
   MAINTENANCE = 'MAINTENANCE',
   OVERLOADED = 'OVERLOADED',
-  
+
   // Validation & Content
   VALIDATION = 'VALIDATION',
   CONTENT_POLICY = 'CONTENT_POLICY',
   PROMPT_TOO_LONG = 'PROMPT_TOO_LONG',
   INVALID_PARAMETERS = 'INVALID_PARAMETERS',
-  
+
   // Content Generation Specific
   GENERATION_FAILED = 'GENERATION_FAILED',
   QUALITY_CHECK_FAILED = 'QUALITY_CHECK_FAILED',
   MODEL_UNAVAILABLE = 'MODEL_UNAVAILABLE',
-  
+
   // Legacy compatibility
   NETWORK_ERROR = 'NETWORK',
   API_ERROR = 'SERVER_ERROR',
@@ -56,22 +56,22 @@ export interface ApiError {
   type: ApiErrorType;
   message: string;
   userMessage: string;
-  
+
   // Technical details
   statusCode?: number;
   errorCode?: string;
   technicalDetails?: string;
-  
+
   // Retry information
   retryable: boolean;
   retryAfter?: number;
   maxRetries?: number;
-  
+
   // Context information
   endpoint?: string;
   requestId?: string;
   timestamp: string;
-  
+
   // User guidance
   suggestions: string[];
   recoveryActions: {
@@ -79,7 +79,7 @@ export interface ApiError {
     shortTerm: string[];
     longTerm: string[];
   };
-  
+
   // Game context
   gameType?: string;
   operation?: string;
@@ -411,7 +411,7 @@ export class ErrorService {
 
     const template = ERROR_TEMPLATES[errorType];
     const recoveryActions = this.createRecoveryPlan(errorType, context);
-    
+
     return {
       type: errorType,
       message: error.message || 'Unknown error occurred',
@@ -632,9 +632,7 @@ export class ErrorService {
     if (error.gameType) {
       switch (error.type) {
         case ApiErrorType.TIMEOUT:
-          if (error.gameType === 'image-instinct') {
-            baseSuggestions.unshift('Image generation can take longer - try a text-based game');
-          }
+
           break;
         case ApiErrorType.QUALITY_CHECK_FAILED:
           baseSuggestions.unshift('Try adjusting the difficulty level or topic');
@@ -690,7 +688,7 @@ export class ErrorService {
     // Exponential backoff with jitter
     const exponentialDelay = baseDelay * Math.pow(2, attemptNumber - 1);
     const jitter = Math.random() * 1000; // Add up to 1 second of jitter
-    
+
     return Math.min(exponentialDelay + jitter, 60000); // Cap at 60 seconds
   }
 
@@ -707,7 +705,7 @@ export class ErrorService {
     }
   ): Promise<T> {
     const maxRetries = context?.maxRetries || 3;
-    
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await operation();
@@ -725,7 +723,7 @@ export class ErrorService {
         }
 
         const delay = this.getRetryDelay(error, attempt);
-        
+
         console.warn(`Attempt ${attempt} failed, retrying in ${delay}ms:`, {
           type: error.type,
           message: error.message,
@@ -837,10 +835,7 @@ export class ErrorService {
         longTerm.push('Contact support if needed');
     }
 
-    // Add context-specific actions
-    if (context?.gameType === 'image-instinct' && errorType === ApiErrorType.TIMEOUT) {
-      immediate.unshift('Try a text-based game instead');
-    }
+
 
     return { immediate, shortTerm, longTerm };
   }

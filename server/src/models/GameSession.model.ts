@@ -1,9 +1,9 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export type GameType = 
+export type GameType =
   | 'transcription-station'
   | 'audio-jumble'
-  | 'image-instinct'
+
   | 'translation-matchup'
   | 'secret-word-solver'
   | 'word-drop-dash'
@@ -42,18 +42,7 @@ export interface IAudioJumbleContent extends IBaseGameContent {
   }>;
 }
 
-// Image Instinct
-export interface IImageInstinctContent extends IBaseGameContent {
-  type: 'image-instinct';
-  rounds: Array<{
-    word: string;
-    translation: string;
-    correctImage: string;      // Can be emoji or image URL
-    options: string[];         // Can be emojis or image URLs
-    isImageUrl?: boolean;      // True if options are Pollinations image URLs
-    fallbackEmojis?: string[]; // Emoji fallbacks if image loading fails
-  }>;
-}
+
 
 // Translation Match-Up
 export interface ITranslationMatchUpContent extends IBaseGameContent {
@@ -137,10 +126,10 @@ export interface ITimeWarpContent extends IBaseGameContent {
   }>;
 }
 
-export type GameContent = 
+export type GameContent =
   | ITranscriptionContent
   | IAudioJumbleContent
-  | IImageInstinctContent
+
   | ITranslationMatchUpContent
   | ISecretWordContent
   | IWordDropContent
@@ -181,7 +170,7 @@ const gameSessionSchema = new Schema<IGameSession>(
       enum: [
         'transcription-station',
         'audio-jumble',
-        'image-instinct',
+
         'translation-matchup',
         'secret-word-solver',
         'word-drop-dash',

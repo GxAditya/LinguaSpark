@@ -1,89 +1,122 @@
 import React from 'react';
-import { ArrowRight, Zap } from 'lucide-react';
+import { ArrowRight, Shield, Clock, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 export default function CTA() {
+  const { ref, isVisible } = useScrollAnimation({ threshold: 0.3 });
+
   return (
-    <section id="pricing" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white border-t border-gray-100">
-      {/* Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f5f5f5_1px,transparent_1px),linear-gradient(to_bottom,#f5f5f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+    <section
+      id="pricing"
+      ref={ref}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-orange-50 to-pink-50 border-t border-gray-100"
+    >
+      {/* Animated background particles */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-orange-300 rounded-full opacity-20 animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 4}s`,
+              animationDuration: `${4 + Math.random() * 4}s`,
+            }}
+          ></div>
+        ))}
+      </div>
 
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-        {/* Floating Achievement Cards */}
-        <div className="absolute -top-20 -left-20 bg-white border border-gray-200 p-4 rounded-xl shadow-sm transform rotate-12 animate-float hidden lg:block">
-          <div className="text-2xl font-bold text-orange-600">50K+</div>
-          <div className="text-sm text-gray-600">Learners</div>
+        {/* Badge */}
+        <div
+          className={`inline-flex items-center gap-2 bg-white border border-orange-200 px-5 py-2.5 rounded-full text-sm font-medium text-orange-700 mb-8 shadow-sm transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+        >
+          <Shield className="w-4 h-4" />
+          <span>Start Your Journey Today</span>
         </div>
 
-        <div className="absolute -top-16 -right-16 bg-white border border-gray-200 p-4 rounded-xl shadow-sm transform -rotate-12 animate-float delay-1000 hidden lg:block">
-          <div className="text-2xl font-bold text-pink-600">4.9★</div>
-          <div className="text-sm text-gray-600">Rating</div>
-        </div>
-
-        <div className="absolute -bottom-20 left-10 bg-white border border-gray-200 p-4 rounded-xl shadow-sm transform rotate-6 animate-float delay-2000 hidden lg:block">
-          <div className="text-2xl font-bold text-purple-600">15+</div>
-          <div className="text-sm text-gray-600">Languages</div>
-        </div>
-
-        <div className="inline-flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 mb-8 shadow-sm">
-          <Zap className="w-4 h-4 text-orange-500" />
-          <span>Ready to Level Up?</span>
-        </div>
-
-        <h2 className="text-5xl md:text-7xl font-extrabold mb-6 text-gray-900 leading-tight tracking-tight">
+        {/* Main Headline */}
+        <h2
+          className={`text-5xl md:text-7xl font-extrabold mb-6 text-gray-900 leading-tight tracking-tight transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+        >
           Ready to Become
-          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-pink-600">Fluent?</span>
+          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-pink-600 to-purple-600">
+            Fluent?
+          </span>
         </h2>
 
-        <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-          Join thousands of learners achieving fluency faster with AI.
-          <span className="text-gray-900 font-medium block mt-2">Start your free trial today.</span>
+        {/* Subheadline */}
+        <p
+          className={`text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+        >
+          Experience the future of language learning with AI.
+          <span className="text-gray-900 font-medium block mt-2">
+            Start your free trial today—no credit card required.
+          </span>
         </p>
 
-        {/* Interactive CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-          <Link to="/signup" className="group bg-gray-900 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-800 transition-all duration-200 flex items-center gap-2 relative overflow-hidden justify-center">
+        {/* CTA Buttons */}
+        <div
+          className={`flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+        >
+          <Link
+            to="/signup"
+            className="group bg-gradient-to-r from-orange-600 to-pink-600 text-white px-10 py-5 rounded-xl font-bold text-lg hover:from-orange-700 hover:to-pink-700 transition-all duration-200 flex items-center gap-3 relative overflow-hidden justify-center shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+          >
             <span className="relative z-10">Get Started Free</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
+
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 group-hover:translate-x-full transition-all duration-1000"></div>
           </Link>
 
-          <Link to="/pricing" className="text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200 bg-white">
+          <Link
+            to="/pricing"
+            className="text-gray-700 px-10 py-5 rounded-xl font-semibold text-lg border-2 border-gray-300 hover:border-gray-400 hover:bg-white transition-all duration-200 bg-white/80 backdrop-blur-sm hover:scale-105 active:scale-95 shadow-sm"
+          >
             View Pricing
           </Link>
         </div>
 
-        {/* Trust Indicators */}
-        <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500 font-medium">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-sm"></div>
-            <span>No Credit Card Required</span>
+        {/* Trust Indicators - No fake statistics */}
+        <div
+          className={`flex flex-wrap justify-center items-center gap-8 text-base text-gray-600 font-medium transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+        >
+          <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm px-5 py-3 rounded-xl border border-gray-200 shadow-sm">
+            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <XCircle className="w-5 h-5 text-green-600" />
+            </div>
+            <span className="font-semibold text-gray-700">No Credit Card Required</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-orange-500 rounded-sm"></div>
-            <span>7-Day Free Trial</span>
+
+          <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm px-5 py-3 rounded-xl border border-gray-200 shadow-sm">
+            <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+              <Clock className="w-5 h-5 text-orange-600" />
+            </div>
+            <span className="font-semibold text-gray-700">7-Day Free Trial</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-purple-500 rounded-sm"></div>
-            <span>Cancel Anytime</span>
+
+          <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm px-5 py-3 rounded-xl border border-gray-200 shadow-sm">
+            <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+              <Shield className="w-5 h-5 text-purple-600" />
+            </div>
+            <span className="font-semibold text-gray-700">Cancel Anytime</span>
           </div>
         </div>
 
-        {/* Testimonial Snippet */}
-        <div className="mt-16 bg-white border border-gray-200 p-6 rounded-xl shadow-sm max-w-2xl mx-auto">
-          <p className="text-gray-700 italic mb-4">
-            "I went from zero Spanish to having actual conversations in 3 months. LinguaSpark doesn't feel like studying — it feels like playing."
-          </p>
-          <div className="flex items-center justify-center gap-3">
-            <img
-              src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop"
-              alt="Sarah Chen"
-              className="w-10 h-10 rounded-full object-cover"
-            />
-            <div className="text-left">
-              <div className="font-semibold text-gray-900">Sarah Chen</div>
-              <div className="text-sm text-gray-500">Marketing Manager</div>
-            </div>
-          </div>
+        {/* Subtle gradient animation */}
+        <div
+          className={`mt-16 transition-all duration-700 delay-500 ${isVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+        >
+          <div className="h-1 w-64 mx-auto bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 rounded-full animate-gradient-x"></div>
         </div>
       </div>
     </section>
