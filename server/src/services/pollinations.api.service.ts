@@ -1,5 +1,7 @@
 import config from '../config/index.js';
 import { PollinationsAuth, ApiError, ApiErrorType } from './pollinations.auth.service.js';
+import { requestCache } from './request.cache.service.js';
+import { requestOptimizer } from './request.optimizer.service.js';
 
 export interface TextGenerationOptions {
   model?: string;
@@ -124,87 +126,131 @@ export class PollinationsApiService {
   }
 
   /**
-   * Generate text using nova-fast model
+   * Generate text using nova-fast model with caching and optimization
    * @param prompt - Text prompt
    * @param options - Generation options
    * @returns Promise with generated text
    */
   async generateText(prompt: string, options: TextGenerationOptions = {}): Promise<TextResponse> {
-    const {
-      model = config.pollinations.textModel,
-      temperature = 0.7,
-      max_tokens = 2000,
-      seed
-    } = options;
-
-    const messages = [
-      { role: 'user', content: prompt }
-    ];
-
-    const requestBody: any = {
-      model,
-      messages,
-      temperature,
-      max_tokens
+    // Optimize prompt and parameters
+    const optimizedPrompt = requestOptimizer.optimizePrompt(prompt, 'text');
+    const optimizedOptions = requestOptimizer.optimizeParameters(options, 'text') as TextGenerationOptions;
+    
+    const cacheKey = {
+      type: 'text' as const,
+      prompt: optimizedPrompt,
+      options: optimizedOptions
     };
 
-    if (seed !== undefined) {
-      requestBody.seed = seed;
-    }
+    // Use request deduplication
+    const requestKey = requestOptimizer.generateRequestKey('text', optimizedPrompt, optimizedOptions);
+    
+    return requestOptimizer.deduplicateRequest(
+      requestKey,
+      () => requestCache.getOrGenerate(
+        cacheKey,
+        async () => {
+          const {
+            model = config.pollinations.textModel,
+            temperature = 0.7,
+            max_tokens = 2000,
+            seed
+          } = optimizedOptions;
 
-    const response = await this.authenticatedRequest<any>('/v1/chat/completions', {
-      method: 'POST',
-      body: JSON.stringify(requestBody)
-    });
+          const messages = [
+            { role: 'user', content: optimizedPrompt }
+          ];
 
-    return {
-      content: response.choices[0].message.content,
-      model: response.model,
-      usage: response.usage
-    };
+          const requestBody: any = {
+            model,
+            messages,
+            temperature,
+            max_tokens
+          };
+
+          if (seed !== undefined) {
+            requestBody.seed = seed;
+          }
+
+          const response = await this.authenticatedRequest<any>('/v1/chat/completions', {
+            method: 'POST',
+            body: JSON.stringify(requestBody)
+          });
+
+          return {
+            content: response.choices[0].message.content,
+            model: response.model,
+            usage: response.usage
+          };
+        },
+        1800000 // 30 minutes TTL for text generation
+      ).then(result => result.data)
+    );
   }
 
   /**
-   * Generate image using zimage model
+   * Generate image using zimage model with caching and optimization
    * @param prompt - Image prompt
    * @param options - Generation options
    * @returns Promise with image data
    */
   async generateImage(prompt: string, options: ImageGenerationOptions = {}): Promise<ImageResponse> {
-    const {
-      model = config.pollinations.imageModel,
-      width = 256,
-      height = 256,
-      seed = -1,
-      enhance = false
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams({
-      model,
-      width: width.toString(),
-      height: height.toString(),
-      seed: seed.toString(),
-      enhance: enhance.toString()
-    });
-
-    const endpoint = `/image/${encodeURIComponent(prompt)}?${params}`;
+    // Optimize prompt and parameters
+    const optimizedPrompt = requestOptimizer.optimizePrompt(prompt, 'image');
+    const optimizedOptions = requestOptimizer.optimizeParameters(options, 'image') as ImageGenerationOptions;
     
-    const blob = await this.authenticatedRequest<Blob>(endpoint, {
-      method: 'GET'
-    });
-
-    // Convert blob to data URL
-    const arrayBuffer = await blob.arrayBuffer();
-    const base64 = Buffer.from(arrayBuffer).toString('base64');
-    const mimeType = blob.type || 'image/png';
-    const imageUrl = `data:${mimeType};base64,${base64}`;
-
-    return {
-      imageUrl,
-      model,
-      parameters: { model, width, height, seed, enhance }
+    const cacheKey = {
+      type: 'image' as const,
+      prompt: optimizedPrompt,
+      options: optimizedOptions
     };
+
+    // Use request deduplication
+    const requestKey = requestOptimizer.generateRequestKey('image', optimizedPrompt, optimizedOptions);
+    
+    return requestOptimizer.deduplicateRequest(
+      requestKey,
+      () => requestCache.getOrGenerate(
+        cacheKey,
+        async () => {
+          const {
+            model = config.pollinations.imageModel,
+            width = 256,
+            height = 256,
+            seed = -1,
+            enhance = false
+          } = optimizedOptions;
+
+          // Build query parameters
+          const params = new URLSearchParams({
+            model,
+            width: width.toString(),
+            height: height.toString(),
+            seed: seed.toString(),
+            enhance: enhance.toString()
+          });
+
+          const endpoint = `/image/${encodeURIComponent(optimizedPrompt)}?${params}`;
+          
+          const blob = await this.authenticatedRequest<Blob>(endpoint, {
+            method: 'GET'
+          });
+
+          // Convert blob to data URL
+          const arrayBuffer = await blob.arrayBuffer();
+          const base64 = Buffer.from(arrayBuffer).toString('base64');
+          const mimeType = blob.type || 'image/png';
+          const imageUrl = `data:${mimeType};base64,${base64}`;
+
+          return {
+            imageUrl,
+            model,
+            parameters: { model, width, height, seed, enhance }
+          };
+        },
+        3600000 // 1 hour TTL for image generation
+      ).then(result => result.data)
+    );
   }
 
   /**

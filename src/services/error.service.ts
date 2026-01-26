@@ -345,82 +345,7 @@ const ERROR_TEMPLATES: Record<ApiErrorType, {
     baseDelay: 10000
   },
 
-  // Legacy compatibility
-  [ApiErrorType.NETWORK_ERROR]: {
-    userMessage: "We're having trouble connecting to our servers. Please check your internet connection.",
-    suggestions: [
-      "Check your internet connection",
-      "Try refreshing the page",
-      "Wait a moment and try again"
-    ],
-    retryable: true,
-    maxRetries: 3,
-    baseDelay: 2000
-  },
-  [ApiErrorType.API_ERROR]: {
-    userMessage: "Our content generation service is temporarily unavailable.",
-    suggestions: [
-      "Try again in a few moments",
-      "Use a different game type if available",
-      "Contact support if the problem persists"
-    ],
-    retryable: true,
-    maxRetries: 3,
-    baseDelay: 5000
-  },
-  [ApiErrorType.VALIDATION_ERROR]: {
-    userMessage: "The generated content didn't meet our quality standards. We're trying again.",
-    suggestions: [
-      "This usually resolves automatically",
-      "Try a different difficulty level",
-      "Try a different topic if you specified one"
-    ],
-    retryable: true,
-    maxRetries: 3,
-    baseDelay: 500
-  },
-  [ApiErrorType.QUALITY_ERROR]: {
-    userMessage: "We couldn't generate high-quality content for your request. Using our backup content instead.",
-    suggestions: [
-      "The backup content is still great for learning",
-      "Try different settings for fresh content",
-      "This helps us improve our content generation"
-    ],
-    retryable: true,
-    maxRetries: 2,
-    baseDelay: 1000
-  },
-  [ApiErrorType.TIMEOUT_ERROR]: {
-    userMessage: "Content generation is taking longer than expected.",
-    suggestions: [
-      "Try again with a simpler request",
-      "Check your internet connection",
-      "Our servers might be busy - try again shortly"
-    ],
-    retryable: true,
-    maxRetries: 2,
-    baseDelay: 3000
-  },
-  [ApiErrorType.RATE_LIMIT_ERROR]: {
-    userMessage: "You've reached the limit for content generation. Please wait before trying again.",
-    suggestions: [
-      "Wait a few minutes before generating new content",
-      "Play existing games while you wait",
-      "Consider upgrading for unlimited generation"
-    ],
-    retryable: true,
-    maxRetries: 3,
-    baseDelay: 60000
-  },
-  [ApiErrorType.AUTHENTICATION_ERROR]: {
-    userMessage: "There's an issue with your account authentication.",
-    suggestions: [
-      "Try signing out and signing back in",
-      "Clear your browser cache and cookies",
-      "Contact support if the problem continues"
-    ],
-    retryable: false
-  },
+  // UNKNOWN_ERROR - only one that doesn't duplicate
   [ApiErrorType.UNKNOWN_ERROR]: {
     userMessage: "Something unexpected happened. We're working to fix it.",
     suggestions: [
@@ -473,11 +398,11 @@ export class ErrorService {
     }
     // Classify by error message content
     else if (error.message) {
-      errorType = this.classifyByMessage(error.message, error);
+      errorType = this.classifyByMessage(error.message);
     }
     // Classify by error name/type
     else if (error.name || error.type) {
-      errorType = this.classifyByName(error.name || error.type, error);
+      errorType = this.classifyByName(error.name || error.type);
     }
     // Classify by network conditions
     else {
@@ -563,7 +488,7 @@ export class ErrorService {
   /**
    * Classify error by message content
    */
-  private static classifyByMessage(message: string, error: any): ApiErrorType {
+  private static classifyByMessage(message: string): ApiErrorType {
     const lowerMessage = message.toLowerCase();
 
     // Authentication
@@ -627,7 +552,7 @@ export class ErrorService {
   /**
    * Classify error by error name or type
    */
-  private static classifyByName(name: string, error: any): ApiErrorType {
+  private static classifyByName(name: string): ApiErrorType {
     switch (name) {
       case 'TimeoutError':
       case 'TIMEOUT':
