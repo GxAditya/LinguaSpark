@@ -38,9 +38,13 @@ export default function Header() {
             className="flex items-center gap-2 group"
           >
             <div className="relative">
-              <Sparkles className={`w-6 h-6 text-orange-500 transition-all duration-300 ${isScrolled ? 'rotate-0' : 'rotate-12'
-                } group-hover:rotate-180 group-hover:scale-110`} />
-              <div className="absolute inset-0 bg-orange-500 blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+              <img
+                src="/Linguaspark-logo.png"
+                alt="LinguaSpark Logo"
+                className={`w-16 h-32 object-contain transition-all duration-300 ${isScrolled ? 'rotate-0' : 'rotate-12'
+                  } group-hover:scale-110`}
+              />
+              <div className="absolute inset-0 bg-orange-500/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 via-pink-600 to-purple-600 bg-clip-text text-transparent group-hover:from-orange-500 group-hover:via-pink-500 group-hover:to-purple-500 transition-all duration-300">
               LinguaSpark

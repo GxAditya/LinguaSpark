@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, User, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, ArrowRight, AlertCircle } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
 import { useAuth } from '../context';
 
@@ -71,9 +71,11 @@ export default function SignUp() {
       <div className="bg-white px-6 py-5 md:px-8 md:py-6 border border-gray-200 rounded-xl shadow-sm w-full max-w-sm mx-auto">
         <div className="mb-4 text-center">
           <Link to="/" className="inline-flex items-center gap-2 mb-2 group">
-            <div className="p-1.5 bg-orange-100 rounded-lg group-hover:bg-orange-200 transition-colors">
-              <Sparkles className="w-4 h-4 text-orange-600" />
-            </div>
+            <img
+              src="/Linguaspark-logo.png"
+              alt="LinguaSpark Logo"
+              className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300"
+            />
             <span className="text-xl font-bold text-gray-900 tracking-tight">
               LinguaSpark
             </span>

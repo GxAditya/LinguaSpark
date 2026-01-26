@@ -75,7 +75,12 @@ export default function DashboardHeader({ activeTab, userName = 'User', userAvat
     >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <Link to="/" className="inline-block">
+          <Link to="/" className="flex items-center gap-2">
+            <img
+              src="/Linguaspark-logo.png"
+              alt="LinguaSpark Logo"
+              className="w-10 h-10 object-contain"
+            />
             <span className="text-2xl font-bold text-content-primary tracking-tight">
               LinguaSpark
             </span>
