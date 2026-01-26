@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, Check } from 'lucide-react';
 import GameLayout from '../components/GameLayout';
 import { useGameSession } from '../hooks/useGameSession';
@@ -18,23 +18,35 @@ interface WordDropDashContent {
 export default function WordDropDash() {
   const {
     session,
+    content,
     loading,
     error,
+    currentRound,
+    totalRounds,
+    score,
     showExitConfirm,
     submitAnswer,
+    updateScore,
+    nextRound,
     completeGame,
     confirmExit,
     cancelExit,
-    startNewGame
+    startNewGame,
+    gameState: { feedback, setFeedback, resetRoundState },
+    isComplete,
   } = useGameSession('word-drop-dash');
 
-  const [currentRound, setCurrentRound] = useState(0);
-  const [score, setScore] = useState(0);
   const [roundComplete, setRoundComplete] = useState(false);
 
-  const content = session?.content as WordDropDashContent | undefined;
-  const rounds = content?.rounds || [];
-  const isComplete = currentRound >= rounds.length;
+  // Cast content to the expected type
+  const wordDropContent = content as WordDropDashContent | undefined;
+  const rounds = wordDropContent?.rounds || [];
+
+  // Reset round state when round changes
+  useEffect(() => {
+    resetRoundState();
+    setRoundComplete(false);
+  }, [currentRound, resetRoundState]);
 
   if (loading) return <GameLoading gameName="Word Drop Dash" />;
   if (error) return <GameError error={error} onRetry={startNewGame} />;
@@ -62,7 +74,7 @@ export default function WordDropDash() {
 
   const handleScore = async () => {
     const points = 10;
-    setScore(score + points);
+    updateScore(score + points);
     setRoundComplete(true);
 
     await submitAnswer({
@@ -73,15 +85,15 @@ export default function WordDropDash() {
   };
 
   const handleNext = async () => {
-    if (currentRound + 1 >= rounds.length) {
+    if (currentRound + 1 >= totalRounds) {
       await completeGame();
+    } else {
+      nextRound();
     }
-    setCurrentRound(currentRound + 1);
-    setRoundComplete(false);
   };
 
   return (
-    <GameLayout title="Word Drop Dash" score={score} progress={`${currentRound + 1}/${rounds.length}`}>
+    <GameLayout title="Word Drop Dash" score={score} progress={`${currentRound + 1}/${totalRounds}`}>
       <ExitConfirmModal
         isOpen={showExitConfirm}
         onConfirm={confirmExit}

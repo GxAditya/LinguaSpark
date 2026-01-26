@@ -24,13 +24,13 @@ export default function TranslationMatchUp() {
     score,
     loading,
     error,
-    isComplete,
     showExitConfirm,
     setShowExitConfirm,
     confirmExit,
     updateScore,
     completeGame,
     startNewGame,
+    gameState: { feedback, setFeedback },
   } = useGameSession({
     gameType: 'translation-matchup',
     difficulty: 'beginner',
@@ -38,7 +38,6 @@ export default function TranslationMatchUp() {
 
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [matchedCards, setMatchedCards] = useState<number[]>([]);
-  const [feedback, setFeedback] = useState<'match' | 'mismatch' | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pairs: TranslationPair[] = useMemo(() => (content as any)?.pairs || [], [content]);
@@ -55,6 +54,7 @@ export default function TranslationMatchUp() {
 
   const allMatched = matchedCards.length === cards.length && cards.length > 0;
   const maxScore = pairs.length * 10;
+  const isComplete = allMatched;
 
   useEffect(() => {
     if (flippedCards.length === 2) {
@@ -62,11 +62,11 @@ export default function TranslationMatchUp() {
       const card2 = cards.find((c) => c.id === flippedCards[1]);
 
       if (card1 && card2 && card1.pairId === card2.pairId && card1.isOriginal !== card2.isOriginal) {
-        setFeedback('match');
+        setFeedback('correct'); // Use standardized feedback
         setMatchedCards([...matchedCards, ...flippedCards]);
         updateScore(score + 10);
       } else {
-        setFeedback('mismatch');
+        setFeedback('incorrect'); // Use standardized feedback
       }
 
       setTimeout(() => {
@@ -76,7 +76,7 @@ export default function TranslationMatchUp() {
         setFeedback(null);
       }, 1000);
     }
-  }, [flippedCards, cards, matchedCards, score, updateScore]);
+  }, [flippedCards, cards, matchedCards, score, updateScore, setFeedback]);
 
   const handleCardClick = (cardId: number) => {
     if (flippedCards.length < 2 && !flippedCards.includes(cardId) && !matchedCards.includes(cardId)) {
@@ -166,12 +166,12 @@ export default function TranslationMatchUp() {
 
             {feedback && (
               <div
-                className={`p-4 rounded-xl mb-6 flex items-center justify-center ${feedback === 'match'
+                className={`p-4 rounded-xl mb-6 flex items-center justify-center ${feedback === 'correct'
                   ? 'bg-green-50 border border-green-200'
                   : 'bg-red-50 border border-red-200'
                   }`}
               >
-                {feedback === 'match' ? (
+                {feedback === 'correct' ? (
                   <p className="font-semibold text-green-900">Match found! +10 points</p>
                 ) : (
                   <p className="font-semibold text-red-900">No match, try again!</p>

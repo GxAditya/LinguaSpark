@@ -26,6 +26,12 @@ interface Config {
   groq: {
     apiKey: string;
   };
+  pollinations: {
+    apiKey: string;
+    baseUrl: string;
+    textModel: string;
+    imageModel: string;
+  };
 }
 
 const config: Config = {
@@ -46,6 +52,53 @@ const config: Config = {
   groq: {
     apiKey: process.env.GROQ_API_KEY || '',
   },
+  pollinations: {
+    apiKey: process.env.POLLINATIONS_API_KEY || '',
+    baseUrl: 'https://gen.pollinations.ai',
+    textModel: 'nova-fast',
+    imageModel: 'zimage',
+  },
 };
+
+// Configuration validation
+export function validateConfig(): void {
+  const errors: string[] = [];
+
+  // Critical configuration checks
+  if (!config.jwtSecret || config.jwtSecret === 'default-secret-key') {
+    errors.push('JWT_SECRET must be set to a secure value in production');
+  }
+
+  if (!config.mongodbUri) {
+    errors.push('MONGODB_URI is required');
+  }
+
+  // API key validations
+  if (!config.pollinations.apiKey) {
+    errors.push('POLLINATIONS_API_KEY is required for AI content generation');
+  }
+
+  if (!config.groq.apiKey) {
+    console.warn('⚠️  GROQ_API_KEY not found - TTS functionality will be limited');
+  }
+
+  // OAuth configuration warnings (not critical for basic functionality)
+  if (!config.google.clientId || !config.google.clientSecret) {
+    console.warn('⚠️  Google OAuth not configured - Google sign-in will be unavailable');
+  }
+
+  if (!config.github.clientId || !config.github.clientSecret) {
+    console.warn('⚠️  GitHub OAuth not configured - GitHub sign-in will be unavailable');
+  }
+
+  // Throw error if critical configuration is missing
+  if (errors.length > 0) {
+    console.error('❌ Configuration validation failed:');
+    errors.forEach(error => console.error(`   - ${error}`));
+    throw new Error('Invalid configuration. Please check your environment variables.');
+  }
+
+  console.log('✅ Configuration validation passed');
+}
 
 export default config;

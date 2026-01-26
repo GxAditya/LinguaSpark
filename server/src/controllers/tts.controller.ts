@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { generateTTS, getTTSUrl, availableVoices, TTSProvider } from '../services/tts.service.js';
+import { generateTTS, availableVoices, TTSProvider } from '../services/tts.service.js';
 import { sendSuccess, sendError } from '../utils/response.utils.js';
 
 // @desc    Generate TTS audio
@@ -7,7 +7,7 @@ import { sendSuccess, sendError } from '../utils/response.utils.js';
 // @access  Private
 export const generateAudio = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { text, voice = 'alloy', provider = 'pollinations' } = req.body;
+    const { text, voice = 'alloy', provider = 'groq' } = req.body;
 
     if (!text || typeof text !== 'string' || text.trim().length === 0) {
       sendError(res, 400, 'Text is required');
@@ -33,27 +33,6 @@ export const generateAudio = async (req: Request, res: Response): Promise<void> 
   } catch (error) {
     console.error('Generate TTS error:', error);
     sendError(res, 500, 'Failed to generate audio');
-  }
-};
-
-// @desc    Get TTS URL for client-side playback
-// @route   GET /api/tts/url
-// @access  Private
-export const getAudioUrl = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { text, voice = 'alloy' } = req.query;
-
-    if (!text || typeof text !== 'string' || text.trim().length === 0) {
-      sendError(res, 400, 'Text is required');
-      return;
-    }
-
-    const audioUrl = getTTSUrl(text.trim(), voice as string);
-
-    sendSuccess(res, 200, undefined, { audioUrl });
-  } catch (error) {
-    console.error('Get TTS URL error:', error);
-    sendError(res, 500, 'Failed to get audio URL');
   }
 };
 

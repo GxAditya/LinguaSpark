@@ -25,6 +25,16 @@ export const RATE_LIMITS = {
     maxRequests: 10, // 10 AI calls per minute
     action: 'ai_api_call',
   },
+  TEXT_GENERATION: {
+    windowMs: 60 * 1000, // 1 minute
+    maxRequests: 15, // 15 text generations per minute
+    action: 'text_generation',
+  },
+  IMAGE_GENERATION: {
+    windowMs: 60 * 1000, // 1 minute
+    maxRequests: 10, // 10 image generations per minute
+    action: 'image_generation',
+  },
 } as const;
 
 interface RateLimitResult {

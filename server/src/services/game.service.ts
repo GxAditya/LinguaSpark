@@ -1,4 +1,5 @@
 import config from '../config/index.js';
+import { pollinationsApi } from './pollinations.api.service.js';
 import type { 
   GameType, 
   GameContent,
@@ -31,16 +32,22 @@ interface ChatMessage {
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama-3.1-8b-instant';
-// Pollinations OpenAI-compatible endpoint: https://text.pollinations.ai/openai
-const POLLINATIONS_CHAT_URL = 'https://text.pollinations.ai/openai';
-// Pollinations Image Generation: https://image.pollinations.ai/prompt/{prompt}
-const POLLINATIONS_IMAGE_URL = 'https://image.pollinations.ai/prompt';
 
-// Helper function to generate Pollinations image URL
-function generatePollinationsImageUrl(prompt: string, seed?: number): string {
-  const encodedPrompt = encodeURIComponent(prompt);
-  const seedParam = seed !== undefined ? `&seed=${seed}` : '';
-  return `${POLLINATIONS_IMAGE_URL}/${encodedPrompt}?width=256&height=256&model=flux${seedParam}&nologo=true`;
+// Helper function to generate Pollinations image URL using new API
+async function generatePollinationsImageUrl(prompt: string, seed?: number): Promise<string> {
+  try {
+    const imageResponse = await pollinationsApi.generateImage(prompt, {
+      width: 256,
+      height: 256,
+      seed: seed || -1,
+      enhance: false
+    });
+    return imageResponse.imageUrl;
+  } catch (error) {
+    console.error('Image generation failed:', error);
+    // Return empty string to trigger emoji fallback
+    return '';
+  }
 }
 
 // Helper function to enhance image prompt for better image generation
@@ -49,7 +56,7 @@ function enhanceImagePrompt(word: string, translation: string): string {
 }
 
 // Fallback game content for each game type
-const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => GameContent> = {
+const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<GameContent> | GameContent> = {
   'transcription-station': (opts) => ({
     type: 'transcription-station',
     difficulty: opts.difficulty,
@@ -74,21 +81,18 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => GameConten
       { sentence: 'Nosotros vamos a la playa', words: ['playa', 'a', 'la', 'vamos', 'Nosotros'], correctOrder: [4, 3, 1, 2, 0] },
     ],
   }),
-  'image-instinct': (opts) => ({
-    type: 'image-instinct',
-    difficulty: opts.difficulty,
-    language: opts.language,
-    targetLanguage: opts.targetLanguage,
-    rounds: [
+  'image-instinct': async (opts) => {
+    // Generate images asynchronously for fallback content
+    const rounds = [
       { 
         word: 'Perro', 
         translation: 'Dog', 
-        correctImage: generatePollinationsImageUrl('simple icon of dog, minimalist, cute illustration', 1), 
+        correctImage: await generatePollinationsImageUrl('simple icon of dog, minimalist, cute illustration', 1), 
         options: [
-          generatePollinationsImageUrl('simple icon of dog, minimalist, cute illustration', 1),
-          generatePollinationsImageUrl('simple icon of cat, minimalist, cute illustration', 2),
-          generatePollinationsImageUrl('simple icon of bird, minimalist, cute illustration', 3),
-          generatePollinationsImageUrl('simple icon of fish, minimalist, cute illustration', 4)
+          await generatePollinationsImageUrl('simple icon of dog, minimalist, cute illustration', 1),
+          await generatePollinationsImageUrl('simple icon of cat, minimalist, cute illustration', 2),
+          await generatePollinationsImageUrl('simple icon of bird, minimalist, cute illustration', 3),
+          await generatePollinationsImageUrl('simple icon of fish, minimalist, cute illustration', 4)
         ],
         isImageUrl: true,
         fallbackEmojis: ['🐕', '🐱', '🐦', '🐠']
@@ -96,12 +100,12 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => GameConten
       { 
         word: 'Casa', 
         translation: 'House', 
-        correctImage: generatePollinationsImageUrl('simple icon of house, minimalist, cute illustration', 5),
+        correctImage: await generatePollinationsImageUrl('simple icon of house, minimalist, cute illustration', 5),
         options: [
-          generatePollinationsImageUrl('simple icon of house, minimalist, cute illustration', 5),
-          generatePollinationsImageUrl('simple icon of office building, minimalist, cute illustration', 6),
-          generatePollinationsImageUrl('simple icon of school, minimalist, cute illustration', 7),
-          generatePollinationsImageUrl('simple icon of hospital, minimalist, cute illustration', 8)
+          await generatePollinationsImageUrl('simple icon of house, minimalist, cute illustration', 5),
+          await generatePollinationsImageUrl('simple icon of office building, minimalist, cute illustration', 6),
+          await generatePollinationsImageUrl('simple icon of school, minimalist, cute illustration', 7),
+          await generatePollinationsImageUrl('simple icon of hospital, minimalist, cute illustration', 8)
         ],
         isImageUrl: true,
         fallbackEmojis: ['🏠', '🏢', '🏫', '🏥']
@@ -109,12 +113,12 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => GameConten
       { 
         word: 'Sol', 
         translation: 'Sun', 
-        correctImage: generatePollinationsImageUrl('simple icon of sun, minimalist, bright yellow', 9),
+        correctImage: await generatePollinationsImageUrl('simple icon of sun, minimalist, bright yellow', 9),
         options: [
-          generatePollinationsImageUrl('simple icon of sun, minimalist, bright yellow', 9),
-          generatePollinationsImageUrl('simple icon of moon, minimalist, illustration', 10),
-          generatePollinationsImageUrl('simple icon of star, minimalist, illustration', 11),
-          generatePollinationsImageUrl('simple icon of rain cloud, minimalist, illustration', 12)
+          await generatePollinationsImageUrl('simple icon of sun, minimalist, bright yellow', 9),
+          await generatePollinationsImageUrl('simple icon of moon, minimalist, illustration', 10),
+          await generatePollinationsImageUrl('simple icon of star, minimalist, illustration', 11),
+          await generatePollinationsImageUrl('simple icon of rain cloud, minimalist, illustration', 12)
         ],
         isImageUrl: true,
         fallbackEmojis: ['☀️', '🌙', '⭐', '🌧️']
@@ -122,18 +126,26 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => GameConten
       { 
         word: 'Árbol', 
         translation: 'Tree', 
-        correctImage: generatePollinationsImageUrl('simple icon of green tree, minimalist, cute illustration', 13),
+        correctImage: await generatePollinationsImageUrl('simple icon of green tree, minimalist, cute illustration', 13),
         options: [
-          generatePollinationsImageUrl('simple icon of green tree, minimalist, cute illustration', 13),
-          generatePollinationsImageUrl('simple icon of pink flower, minimalist, cute illustration', 14),
-          generatePollinationsImageUrl('simple icon of cactus, minimalist, cute illustration', 15),
-          generatePollinationsImageUrl('simple icon of mushroom, minimalist, cute illustration', 16)
+          await generatePollinationsImageUrl('simple icon of green tree, minimalist, cute illustration', 13),
+          await generatePollinationsImageUrl('simple icon of pink flower, minimalist, cute illustration', 14),
+          await generatePollinationsImageUrl('simple icon of cactus, minimalist, cute illustration', 15),
+          await generatePollinationsImageUrl('simple icon of mushroom, minimalist, cute illustration', 16)
         ],
         isImageUrl: true,
         fallbackEmojis: ['🌳', '🌸', '🌵', '🍄']
       },
-    ],
-  }),
+    ];
+
+    return {
+      type: 'image-instinct',
+      difficulty: opts.difficulty,
+      language: opts.language,
+      targetLanguage: opts.targetLanguage,
+      rounds
+    };
+  },
   'translation-matchup': (opts) => ({
     type: 'translation-matchup',
     difficulty: opts.difficulty,
@@ -223,161 +235,310 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => GameConten
 
 function getGamePrompt(gameType: GameType, difficulty: Difficulty, language: string, targetLanguage: string, topic?: string): string {
   const difficultyGuidelines = {
-    beginner: 'Use simple, common vocabulary and short sentences. Focus on everyday words and basic grammar.',
-    intermediate: 'Use moderate vocabulary with some complex sentences. Include common idioms and varied grammar.',
-    advanced: 'Use sophisticated vocabulary, complex grammar structures, and nuanced expressions.',
+    beginner: 'Use simple, common vocabulary (A1-A2 level) and short sentences. Focus on everyday words, basic grammar, and high-frequency vocabulary. Avoid complex tenses or abstract concepts.',
+    intermediate: 'Use moderate vocabulary (B1-B2 level) with some complex sentences. Include common idioms, varied grammar structures, and practical expressions. Mix simple and compound sentences.',
+    advanced: 'Use sophisticated vocabulary (C1-C2 level), complex grammar structures, and nuanced expressions. Include idiomatic expressions, subjunctive mood, and advanced linguistic concepts.',
   };
 
-  const topicContext = topic ? `Focus the content around the topic: "${topic}".` : 'Choose varied topics like daily life, travel, food, nature, or culture.';
+  const topicContext = topic ? `Focus the content around the topic: "${topic}". Ensure all vocabulary and examples relate to this theme.` : 'Choose varied topics like daily life, travel, food, nature, culture, work, or family. Mix themes for variety.';
 
-  const basePrompt = `You are a language learning game content generator. Generate content for a "${gameType}" game.
-Target language: ${targetLanguage}
-User's native language: ${language}
-Difficulty: ${difficulty}
-${difficultyGuidelines[difficulty]}
-${topicContext}
+  // Enhanced base prompt optimized for nova-fast model
+  const basePrompt = `You are an expert language learning content generator specializing in ${targetLanguage} education. Create engaging, pedagogically sound content for a "${gameType}" game.
 
-IMPORTANT: Return ONLY valid JSON, no markdown, no explanations, no code blocks.`;
+CONTEXT:
+- Target language: ${targetLanguage}
+- User's native language: ${language}
+- Difficulty level: ${difficulty}
+- Learning guidelines: ${difficultyGuidelines[difficulty]}
+- Content theme: ${topicContext}
+
+QUALITY REQUIREMENTS:
+- Ensure cultural authenticity and natural language usage
+- Use age-appropriate and inclusive content
+- Provide clear, unambiguous correct answers
+- Create engaging, memorable examples
+- Maintain consistent difficulty throughout
+- Include practical, real-world vocabulary
+
+OUTPUT FORMAT: Return ONLY valid JSON without markdown formatting, explanations, or code blocks. Ensure proper JSON syntax with correct quotes and brackets.`;
 
   const gameSpecificPrompts: Record<GameType, string> = {
     'transcription-station': `${basePrompt}
 
-Generate 5 transcription exercises where users listen to audio and type what they hear.
+TASK: Generate 5 transcription exercises where users listen to audio and type what they hear.
 
-Return JSON in this exact format:
+CONTENT GUIDELINES:
+- Use natural, conversational phrases that native speakers would actually say
+- Include common greetings, questions, statements, and expressions
+- Vary sentence length and complexity based on difficulty level
+- Ensure phrases are phonetically clear and distinct
+- Include helpful context hints that guide without giving away the answer
+
+JSON STRUCTURE:
 {
   "rounds": [
-    { "audioText": "${targetLanguage} phrase here", "correctAnswer": "${targetLanguage} phrase here", "hint": "English hint about the phrase" }
-  ]
-}`,
-    'audio-jumble': `${basePrompt}
-
-Generate 4 sentences where users must arrange scrambled words in correct order.
-
-Return JSON in this exact format:
-{
-  "rounds": [
-    { "sentence": "Correct complete sentence in ${targetLanguage}", "words": ["array", "of", "scrambled", "words"], "correctOrder": [2, 0, 3, 1] }
+    { 
+      "audioText": "Natural ${targetLanguage} phrase", 
+      "correctAnswer": "Exact same phrase for validation", 
+      "hint": "Contextual hint in English (e.g., 'A common greeting', 'Asking about location')" 
+    }
   ]
 }
-Note: correctOrder is the indices that rearrange words array into the correct sentence.`,
+
+EXAMPLE QUALITY:
+- Good: "¿Dónde está la biblioteca?" (Where is the library?)
+- Avoid: "La biblioteca está ubicada en el centro" (too formal/complex for beginners)`,
+
+    'audio-jumble': `${basePrompt}
+
+TASK: Generate 4 sentences where users arrange scrambled words in correct order.
+
+CONTENT GUIDELINES:
+- Create grammatically correct, natural-sounding sentences
+- Use proper word order rules for ${targetLanguage}
+- Include a mix of sentence types (statements, questions, commands)
+- Ensure scrambled words can only form one logical sentence
+- Test understanding of syntax, not just vocabulary
+
+JSON STRUCTURE:
+{
+  "rounds": [
+    { 
+      "sentence": "Complete grammatically correct sentence in ${targetLanguage}", 
+      "words": ["individual", "words", "from", "sentence"], 
+      "correctOrder": [2, 0, 3, 1] 
+    }
+  ]
+}
+
+VALIDATION: The correctOrder array indices must rearrange the words array to form the exact sentence.`,
+
     'image-instinct': `${basePrompt}
 
-Generate 5 vocabulary items for a visual word matching game. Each item needs a word, its translation, and 4 emoji options where one is the correct match.
+TASK: Generate 5 vocabulary items for visual word matching. Each needs a word, translation, and 4 emoji options.
 
-Return JSON in this exact format:
+CONTENT GUIDELINES:
+- Choose concrete nouns that have clear visual representations
+- Use high-frequency vocabulary appropriate for the difficulty level
+- Select emojis that are universally recognizable and unambiguous
+- Create logical distractors (similar category items)
+- Ensure one emoji clearly represents the correct word
+
+JSON STRUCTURE:
 {
   "rounds": [
     { 
       "word": "${targetLanguage} word", 
       "translation": "English translation", 
-      "correctEmoji": "correct emoji that represents the word",
-      "emojiOptions": ["emoji1", "emoji2", "emoji3", "emoji4"]
+      "correctEmoji": "🎯",
+      "emojiOptions": ["🎯", "🏀", "⚽", "🎾"]
     }
   ]
 }
-Rules:
-- Use common, easily recognizable emojis
-- The correctEmoji must be included in emojiOptions
-- Choose words that have clear visual representations
-- Make the distractors similar but distinguishable (e.g., for "dog" use other animals)`,
+
+EMOJI SELECTION RULES:
+- Use common, widely-supported emojis
+- Avoid ambiguous or culturally-specific symbols
+- Group distractors logically (animals, food, objects, etc.)
+- Ensure the correct emoji is included in emojiOptions array`,
+
     'translation-matchup': `${basePrompt}
 
-Generate 8 word pairs for a memory matching game.
+TASK: Generate 8 word pairs for a memory matching game.
 
-Return JSON in this exact format:
+CONTENT GUIDELINES:
+- Use high-frequency vocabulary that learners encounter regularly
+- Include a mix of word types: nouns, verbs, adjectives, common phrases
+- Ensure translations are the most common/standard equivalents
+- Avoid words with multiple meanings unless context is clear
+- Create thematically related groups for better learning
+
+JSON STRUCTURE:
 {
   "pairs": [
-    { "original": "${targetLanguage} word", "translation": "English word" }
-  ]
-}`,
-    'secret-word-solver': `${basePrompt}
-
-Generate 5 words for a hangman-style guessing game.
-
-Return JSON in this exact format:
-{
-  "words": [
-    { "word": "${targetLanguage.toUpperCase()} WORD IN CAPS", "hint": "English hint to help guess", "category": "Category name" }
+    { "original": "${targetLanguage} word/phrase", "translation": "Most common English equivalent" }
   ]
 }
-Use words that are 6-12 letters long.`,
+
+WORD SELECTION:
+- Prioritize practical, everyday vocabulary
+- Include words from different semantic fields
+- Ensure cultural appropriateness and inclusivity`,
+
+    'secret-word-solver': `${basePrompt}
+
+TASK: Generate 5 words for a hangman-style guessing game.
+
+CONTENT GUIDELINES:
+- Use words 6-12 letters long for optimal gameplay
+- Choose vocabulary that's challenging but fair for the difficulty level
+- Create helpful but not obvious hints
+- Include words from various categories (animals, objects, actions, etc.)
+- Ensure words use common letter patterns in ${targetLanguage}
+
+JSON STRUCTURE:
+{
+  "words": [
+    { 
+      "word": "${targetLanguage.toUpperCase()} WORD IN CAPITALS", 
+      "hint": "Descriptive hint that helps without being too obvious", 
+      "category": "Semantic category (Animals, Food, Actions, etc.)" 
+    }
+  ]
+}
+
+HINT QUALITY:
+- Provide functional or descriptive clues
+- Avoid direct translations
+- Use context or usage examples when helpful`,
+
     'word-drop-dash': `${basePrompt}
 
-Generate 3 rounds of word-dropping game with 3-4 words each.
+TASK: Generate 3 rounds of fast-paced vocabulary matching with 3-4 words each.
 
-Return JSON in this exact format:
+CONTENT GUIDELINES:
+- Use vocabulary that can be quickly recognized and processed
+- Include relevant emojis that clearly represent each word
+- Vary time limits based on difficulty (30s for beginners, 20s for advanced)
+- Group words thematically within each round for coherence
+- Ensure rapid visual-linguistic association
+
+JSON STRUCTURE:
 {
   "rounds": [
     { 
       "words": [
-        { "word": "${targetLanguage} word", "translation": "English", "emoji": "relevant emoji" }
+        { "word": "${targetLanguage} word", "translation": "English", "emoji": "🎯" }
       ],
       "timeLimit": 30
     }
   ]
-}`,
+}
+
+TIMING GUIDELINES:
+- Beginner: 30-35 seconds per round
+- Intermediate: 25-30 seconds per round  
+- Advanced: 20-25 seconds per round`,
+
     'conjugation-coach': `${basePrompt}
 
-Generate 5 verb conjugation questions with context clues.
+TASK: Generate 5 verb conjugation questions with contextual clues.
 
-Return JSON in this exact format:
+CONTENT GUIDELINES:
+- Include clear temporal markers (ayer, mañana, ahora, etc.)
+- Use common, irregular verbs that learners need to master
+- Provide context that naturally requires the target tense
+- Create plausible distractors from different tenses of the same verb
+- Include brief explanations that reinforce the grammar rule
+
+JSON STRUCTURE:
 {
   "questions": [
     { 
-      "sentence": "${targetLanguage} sentence with _____ for blank", 
+      "sentence": "${targetLanguage} sentence with _____ blank and temporal context", 
       "verb": "infinitive form", 
-      "tense": "tense name",
+      "tense": "specific tense name",
       "subject": "subject pronoun",
-      "options": ["option1", "option2", "option3", "option4"],
+      "options": ["correct_form", "distractor1", "distractor2", "distractor3"],
       "correctIndex": 0,
-      "explanation": "Brief explanation why this is correct"
+      "explanation": "Brief rule explanation (e.g., 'Preterite tense for completed past actions')"
     }
   ]
 }
-Include time markers in sentences as context clues.`,
+
+CONTEXT CLUES:
+- Use time expressions that clearly indicate the required tense
+- Include situational context that supports the grammar choice`,
+
     'context-connect': `${basePrompt}
 
-Generate 2 short passages with 2-3 blanks each for fill-in-the-blank exercises.
+TASK: Generate 2 short passages with 2-3 blanks each for contextual fill-in-the-blank.
 
-Return JSON in this exact format:
+CONTENT GUIDELINES:
+- Create coherent, realistic scenarios (shopping, travel, daily routines)
+- Use context clues that help determine the correct answers
+- Ensure blanks test vocabulary in meaningful contexts
+- Create logical distractors that are grammatically possible but contextually wrong
+- Make passages engaging and relatable
+
+JSON STRUCTURE:
 {
   "passages": [
     {
-      "text": "Passage text with _____ for each blank",
+      "text": "Coherent passage with _____ blanks that tell a story",
       "blanks": [
-        { "position": 0, "correctWord": "correct answer", "options": ["option1", "option2", "option3", "option4"] }
+        { 
+          "position": 0, 
+          "correctWord": "contextually appropriate word", 
+          "options": ["correct", "plausible_wrong1", "plausible_wrong2", "clearly_wrong"] 
+        }
       ]
     }
   ]
-}`,
+}
+
+PASSAGE QUALITY:
+- Tell mini-stories that learners can relate to
+- Use vocabulary and grammar appropriate for the level
+- Ensure logical flow and coherence`,
+
     'syntax-scrambler': `${basePrompt}
 
-Generate 4 sentences that users must unscramble.
+TASK: Generate 4 sentences that users must unscramble to practice word order.
 
-Return JSON in this exact format:
+CONTENT GUIDELINES:
+- Focus on common word order patterns in ${targetLanguage}
+- Include various sentence types (declarative, interrogative, imperative)
+- Test understanding of syntax rules, not just vocabulary
+- Use natural, conversational language
+- Ensure only one logical arrangement is possible
+
+JSON STRUCTURE:
 {
   "sentences": [
-    { "scrambled": ["array", "of", "scrambled", "words"], "correct": "Correct sentence in ${targetLanguage}", "translation": "English translation" }
+    { 
+      "scrambled": ["array", "of", "individual", "words"], 
+      "correct": "Properly ordered sentence in ${targetLanguage}", 
+      "translation": "Natural English translation" 
+    }
   ]
-}`,
+}
+
+SYNTAX FOCUS:
+- Subject-verb-object order
+- Adjective placement rules
+- Question formation patterns
+- Prepositional phrase positioning`,
+
     'time-warp-tagger': `${basePrompt}
 
-Generate 5 sentences testing verb tense based on time references.
+TASK: Generate 5 sentences testing verb tense recognition based on temporal context.
 
-Return JSON in this exact format:
+CONTENT GUIDELINES:
+- Include clear time markers that indicate the required tense
+- Use common verbs in realistic contexts
+- Test understanding of tense-time relationships
+- Provide options that represent different tenses of the same verb
+- Include explanations that reinforce temporal-grammatical connections
+
+JSON STRUCTURE:
 {
   "questions": [
     {
-      "sentence": "${targetLanguage} sentence with _____ for blank and clear time reference",
-      "timeReference": "the time word/phrase",
-      "verb": "infinitive form",
-      "options": ["option1", "option2", "option3", "option4"],
+      "sentence": "${targetLanguage} sentence with _____ and clear time reference",
+      "timeReference": "specific time expression in the sentence",
+      "verb": "infinitive form of the verb",
+      "options": ["correct_tense", "wrong_tense1", "wrong_tense2", "wrong_tense3"],
       "correctIndex": 0,
-      "explanation": "Brief explanation of the tense rule"
+      "explanation": "Rule connecting time reference to tense choice"
     }
   ]
-}`,
+}
+
+TIME MARKERS:
+- Past: ayer, la semana pasada, hace dos años
+- Present: ahora, hoy, en este momento  
+- Future: mañana, la próxima semana, en el futuro`,
   };
 
   return gameSpecificPrompts[gameType];
@@ -417,31 +578,17 @@ async function callGroq(messages: ChatMessage[]): Promise<string> {
 }
 
 async function callPollinations(messages: ChatMessage[]): Promise<string> {
-  const response = await fetch(POLLINATIONS_CHAT_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'openai',
+  try {
+    const response = await pollinationsApi.generateText(messages[1].content, {
       temperature: 0.7,
-      max_tokens: 2000,
-      messages,
-    }),
-  });
-
-  const data = await response.json() as any;
-
-  if (!response.ok) {
-    throw new Error(data?.error?.message || 'Pollinations API error');
+      max_tokens: 2000
+    });
+    
+    return response.content;
+  } catch (error: any) {
+    console.error('Pollinations API error:', error);
+    throw new Error(error.message || 'Pollinations API error');
   }
-
-  const content = data?.choices?.[0]?.message?.content;
-  if (!content) {
-    throw new Error('Empty response from Pollinations');
-  }
-
-  return content.trim();
 }
 
 function parseGameContent(content: string, gameType: GameType): any {
@@ -461,7 +608,7 @@ function parseGameContent(content: string, gameType: GameType): any {
 }
 
 // Transform image-instinct content to add Pollinations image URLs with emoji fallbacks
-function transformImageInstinctContent(parsed: any): any {
+async function transformImageInstinctContent(parsed: any): Promise<any> {
   if (!parsed.rounds || !Array.isArray(parsed.rounds)) {
     return parsed;
   }
@@ -469,33 +616,38 @@ function transformImageInstinctContent(parsed: any): any {
   // Generate a base seed from current timestamp for consistent images within a game
   const baseSeed = Date.now() % 10000;
 
-  parsed.rounds = parsed.rounds.map((round: any, roundIndex: number) => {
-    // Handle both new format (correctEmoji/emojiOptions) and old format (correctImage/options)
-    const emojis = round.emojiOptions || round.options || [];
-    const correctEmoji = round.correctEmoji || round.correctImage;
+  const transformedRounds = await Promise.all(
+    parsed.rounds.map(async (round: any, roundIndex: number) => {
+      // Handle both new format (correctEmoji/emojiOptions) and old format (correctImage/options)
+      const emojis = round.emojiOptions || round.options || [];
+      const correctEmoji = round.correctEmoji || round.correctImage;
 
-    // Generate image URLs for each option
-    const imageOptions = emojis.map((emoji: string, optionIndex: number) => {
-      // Create a descriptive prompt based on what the emoji represents
-      const emojiDescription = getEmojiDescription(emoji);
-      const seed = baseSeed + (roundIndex * 10) + optionIndex;
-      return generatePollinationsImageUrl(enhanceImagePrompt(emoji, emojiDescription), seed);
-    });
+      // Generate image URLs for each option
+      const imageOptions = await Promise.all(
+        emojis.map(async (emoji: string, optionIndex: number) => {
+          // Create a descriptive prompt based on what the emoji represents
+          const emojiDescription = getEmojiDescription(emoji);
+          const seed = baseSeed + (roundIndex * 10) + optionIndex;
+          return await generatePollinationsImageUrl(enhanceImagePrompt(emoji, emojiDescription), seed);
+        })
+      );
 
-    // Find the correct image URL
-    const correctIndex = emojis.indexOf(correctEmoji);
-    const correctImageUrl = correctIndex >= 0 ? imageOptions[correctIndex] : imageOptions[0];
+      // Find the correct image URL
+      const correctIndex = emojis.indexOf(correctEmoji);
+      const correctImageUrl = correctIndex >= 0 ? imageOptions[correctIndex] : imageOptions[0];
 
-    return {
-      word: round.word,
-      translation: round.translation,
-      correctImage: correctImageUrl,
-      options: imageOptions,
-      isImageUrl: true,
-      fallbackEmojis: emojis,
-    };
-  });
+      return {
+        word: round.word,
+        translation: round.translation,
+        correctImage: correctImageUrl,
+        options: imageOptions,
+        isImageUrl: true,
+        fallbackEmojis: emojis,
+      };
+    })
+  );
 
+  parsed.rounds = transformedRounds;
   return parsed;
 }
 
@@ -555,43 +707,302 @@ function getEmojiDescription(emoji: string): string {
 }
 
 function validateGameContent(parsed: any, gameType: GameType): boolean {
-  switch (gameType) {
-    case 'transcription-station':
-      return Array.isArray(parsed.rounds) && parsed.rounds.length > 0 &&
-        parsed.rounds.every((r: any) => r.audioText && r.correctAnswer);
-    case 'audio-jumble':
-      return Array.isArray(parsed.rounds) && parsed.rounds.length > 0 &&
-        parsed.rounds.every((r: any) => r.sentence && Array.isArray(r.words) && Array.isArray(r.correctOrder));
-    case 'image-instinct':
-      return Array.isArray(parsed.rounds) && parsed.rounds.length > 0 &&
-        parsed.rounds.every((r: any) => 
-          r.word && r.translation && 
+  // Basic structure validation
+  if (!parsed || typeof parsed !== 'object') {
+    console.warn('Content validation failed: Invalid or missing content object');
+    return false;
+  }
+
+  try {
+    switch (gameType) {
+      case 'transcription-station':
+        if (!Array.isArray(parsed.rounds) || parsed.rounds.length === 0) {
+          console.warn('Transcription validation failed: Missing or empty rounds array');
+          return false;
+        }
+        return parsed.rounds.every((r: any, index: number) => {
+          const isValid = r.audioText && typeof r.audioText === 'string' && 
+                          r.correctAnswer && typeof r.correctAnswer === 'string' &&
+                          r.audioText.trim().length > 0 && r.correctAnswer.trim().length > 0 &&
+                          r.audioText === r.correctAnswer; // Must match exactly for transcription
+          if (!isValid) {
+            console.warn(`Transcription round ${index} validation failed:`, r);
+          }
+          return isValid;
+        });
+
+      case 'audio-jumble':
+        if (!Array.isArray(parsed.rounds) || parsed.rounds.length === 0) {
+          console.warn('Audio jumble validation failed: Missing or empty rounds array');
+          return false;
+        }
+        return parsed.rounds.every((r: any, index: number) => {
+          const hasValidStructure = r.sentence && typeof r.sentence === 'string' && 
+                                   Array.isArray(r.words) && Array.isArray(r.correctOrder) &&
+                                   r.words.length > 0 && r.correctOrder.length === r.words.length;
+          
+          if (!hasValidStructure) {
+            console.warn(`Audio jumble round ${index} structure validation failed:`, r);
+            return false;
+          }
+
+          // Validate that correctOrder indices are valid and unique
+          const validIndices = r.correctOrder.every((idx: number) => 
+            Number.isInteger(idx) && idx >= 0 && idx < r.words.length
+          );
+          const uniqueIndices = new Set(r.correctOrder).size === r.correctOrder.length;
+          
+          if (!validIndices || !uniqueIndices) {
+            console.warn(`Audio jumble round ${index} indices validation failed:`, r);
+            return false;
+          }
+
+          // Validate that reordered words form the sentence
+          const reorderedWords = r.correctOrder.map((idx: number) => r.words[idx]);
+          const reconstructed = reorderedWords.join(' ');
+          const isValidReconstruction = reconstructed === r.sentence;
+          
+          if (!isValidReconstruction) {
+            console.warn(`Audio jumble round ${index} reconstruction failed. Expected: "${r.sentence}", Got: "${reconstructed}"`);
+            return false;
+          }
+
+          return true;
+        });
+
+      case 'image-instinct':
+        if (!Array.isArray(parsed.rounds) || parsed.rounds.length === 0) {
+          console.warn('Image instinct validation failed: Missing or empty rounds array');
+          return false;
+        }
+        return parsed.rounds.every((r: any, index: number) => {
+          const hasBasicFields = r.word && typeof r.word === 'string' && 
+                                 r.translation && typeof r.translation === 'string';
+          
+          if (!hasBasicFields) {
+            console.warn(`Image instinct round ${index} basic fields validation failed:`, r);
+            return false;
+          }
+
           // Support both new format (correctEmoji/emojiOptions) and old format (correctImage/options)
-          ((r.correctEmoji && Array.isArray(r.emojiOptions)) || (r.correctImage && Array.isArray(r.options)))
-        );
-    case 'translation-matchup':
-      return Array.isArray(parsed.pairs) && parsed.pairs.length > 0 &&
-        parsed.pairs.every((p: any) => p.original && p.translation);
-    case 'secret-word-solver':
-      return Array.isArray(parsed.words) && parsed.words.length > 0 &&
-        parsed.words.every((w: any) => w.word && w.hint);
-    case 'word-drop-dash':
-      return Array.isArray(parsed.rounds) && parsed.rounds.length > 0 &&
-        parsed.rounds.every((r: any) => Array.isArray(r.words) && r.words.length > 0);
-    case 'conjugation-coach':
-      return Array.isArray(parsed.questions) && parsed.questions.length > 0 &&
-        parsed.questions.every((q: any) => q.sentence && Array.isArray(q.options) && typeof q.correctIndex === 'number');
-    case 'context-connect':
-      return Array.isArray(parsed.passages) && parsed.passages.length > 0 &&
-        parsed.passages.every((p: any) => p.text && Array.isArray(p.blanks));
-    case 'syntax-scrambler':
-      return Array.isArray(parsed.sentences) && parsed.sentences.length > 0 &&
-        parsed.sentences.every((s: any) => Array.isArray(s.scrambled) && s.correct);
-    case 'time-warp-tagger':
-      return Array.isArray(parsed.questions) && parsed.questions.length > 0 &&
-        parsed.questions.every((q: any) => q.sentence && q.timeReference && Array.isArray(q.options));
-    default:
-      return false;
+          const hasNewFormat = r.correctEmoji && Array.isArray(r.emojiOptions) && r.emojiOptions.length >= 2;
+          const hasOldFormat = r.correctImage && Array.isArray(r.options) && r.options.length >= 2;
+          
+          if (!hasNewFormat && !hasOldFormat) {
+            console.warn(`Image instinct round ${index} format validation failed:`, r);
+            return false;
+          }
+
+          // Validate that correct option is included in options array
+          if (hasNewFormat) {
+            const correctIncluded = r.emojiOptions.includes(r.correctEmoji);
+            if (!correctIncluded) {
+              console.warn(`Image instinct round ${index} correct emoji not in options:`, r);
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+      case 'translation-matchup':
+        if (!Array.isArray(parsed.pairs) || parsed.pairs.length === 0) {
+          console.warn('Translation matchup validation failed: Missing or empty pairs array');
+          return false;
+        }
+        return parsed.pairs.every((p: any, index: number) => {
+          const isValid = p.original && typeof p.original === 'string' && 
+                          p.translation && typeof p.translation === 'string' &&
+                          p.original.trim().length > 0 && p.translation.trim().length > 0;
+          if (!isValid) {
+            console.warn(`Translation pair ${index} validation failed:`, p);
+          }
+          return isValid;
+        });
+
+      case 'secret-word-solver':
+        if (!Array.isArray(parsed.words) || parsed.words.length === 0) {
+          console.warn('Secret word solver validation failed: Missing or empty words array');
+          return false;
+        }
+        return parsed.words.every((w: any, index: number) => {
+          const isValid = w.word && typeof w.word === 'string' && 
+                          w.hint && typeof w.hint === 'string' &&
+                          w.word.trim().length >= 4 && w.word.trim().length <= 15 && // Reasonable word length
+                          w.hint.trim().length > 0;
+          if (!isValid) {
+            console.warn(`Secret word ${index} validation failed:`, w);
+          }
+          return isValid;
+        });
+
+      case 'word-drop-dash':
+        if (!Array.isArray(parsed.rounds) || parsed.rounds.length === 0) {
+          console.warn('Word drop dash validation failed: Missing or empty rounds array');
+          return false;
+        }
+        return parsed.rounds.every((r: any, index: number) => {
+          const hasValidStructure = Array.isArray(r.words) && r.words.length > 0 && 
+                                   typeof r.timeLimit === 'number' && r.timeLimit > 0;
+          
+          if (!hasValidStructure) {
+            console.warn(`Word drop round ${index} structure validation failed:`, r);
+            return false;
+          }
+
+          const wordsValid = r.words.every((w: any, wordIndex: number) => {
+            const isValid = w.word && typeof w.word === 'string' && 
+                           w.translation && typeof w.translation === 'string' &&
+                           w.emoji && typeof w.emoji === 'string';
+            if (!isValid) {
+              console.warn(`Word drop round ${index}, word ${wordIndex} validation failed:`, w);
+            }
+            return isValid;
+          });
+
+          return wordsValid;
+        });
+
+      case 'conjugation-coach':
+        if (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {
+          console.warn('Conjugation coach validation failed: Missing or empty questions array');
+          return false;
+        }
+        return parsed.questions.every((q: any, index: number) => {
+          const hasValidStructure = q.sentence && typeof q.sentence === 'string' && 
+                                   Array.isArray(q.options) && q.options.length >= 2 && 
+                                   typeof q.correctIndex === 'number' &&
+                                   q.correctIndex >= 0 && q.correctIndex < q.options.length;
+          
+          if (!hasValidStructure) {
+            console.warn(`Conjugation question ${index} structure validation failed:`, q);
+            return false;
+          }
+
+          // Validate that sentence contains a blank
+          const hasBlank = q.sentence.includes('_____') || q.sentence.includes('___');
+          if (!hasBlank) {
+            console.warn(`Conjugation question ${index} missing blank:`, q);
+            return false;
+          }
+
+          // Validate that all options are strings
+          const optionsValid = q.options.every((opt: any) => typeof opt === 'string' && opt.trim().length > 0);
+          if (!optionsValid) {
+            console.warn(`Conjugation question ${index} invalid options:`, q);
+            return false;
+          }
+
+          return true;
+        });
+
+      case 'context-connect':
+        if (!Array.isArray(parsed.passages) || parsed.passages.length === 0) {
+          console.warn('Context connect validation failed: Missing or empty passages array');
+          return false;
+        }
+        return parsed.passages.every((p: any, index: number) => {
+          const hasValidStructure = p.text && typeof p.text === 'string' && 
+                                   Array.isArray(p.blanks) && p.blanks.length > 0;
+          
+          if (!hasValidStructure) {
+            console.warn(`Context passage ${index} structure validation failed:`, p);
+            return false;
+          }
+
+          // Count blanks in text
+          const blankCount = (p.text.match(/_____/g) || []).length;
+          if (blankCount !== p.blanks.length) {
+            console.warn(`Context passage ${index} blank count mismatch. Text has ${blankCount}, blanks array has ${p.blanks.length}`);
+            return false;
+          }
+
+          // Validate each blank
+          const blanksValid = p.blanks.every((b: any, blankIndex: number) => {
+            const isValid = typeof b.position === 'number' && b.position >= 0 &&
+                           b.correctWord && typeof b.correctWord === 'string' &&
+                           Array.isArray(b.options) && b.options.length >= 2 &&
+                           b.options.includes(b.correctWord);
+            if (!isValid) {
+              console.warn(`Context passage ${index}, blank ${blankIndex} validation failed:`, b);
+            }
+            return isValid;
+          });
+
+          return blanksValid;
+        });
+
+      case 'syntax-scrambler':
+        if (!Array.isArray(parsed.sentences) || parsed.sentences.length === 0) {
+          console.warn('Syntax scrambler validation failed: Missing or empty sentences array');
+          return false;
+        }
+        return parsed.sentences.every((s: any, index: number) => {
+          const hasValidStructure = Array.isArray(s.scrambled) && s.scrambled.length > 0 && 
+                                   s.correct && typeof s.correct === 'string';
+          
+          if (!hasValidStructure) {
+            console.warn(`Syntax sentence ${index} structure validation failed:`, s);
+            return false;
+          }
+
+          // Validate that scrambled words can form the correct sentence
+          const scrambledSet = new Set(s.scrambled.map((w: string) => w.toLowerCase().trim()));
+          const correctWords = s.correct.split(/\s+/).map((w: string) => w.toLowerCase().trim());
+          const correctSet = new Set(correctWords);
+          
+          const wordsMatch = scrambledSet.size === correctSet.size && 
+                            [...scrambledSet].every(word => correctSet.has(word));
+          
+          if (!wordsMatch) {
+            console.warn(`Syntax sentence ${index} word mismatch. Scrambled:`, s.scrambled, 'Correct:', correctWords);
+            return false;
+          }
+
+          return true;
+        });
+
+      case 'time-warp-tagger':
+        if (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {
+          console.warn('Time warp tagger validation failed: Missing or empty questions array');
+          return false;
+        }
+        return parsed.questions.every((q: any, index: number) => {
+          const hasValidStructure = q.sentence && typeof q.sentence === 'string' && 
+                                   q.timeReference && typeof q.timeReference === 'string' &&
+                                   Array.isArray(q.options) && q.options.length >= 2 && 
+                                   typeof q.correctIndex === 'number' &&
+                                   q.correctIndex >= 0 && q.correctIndex < q.options.length;
+          
+          if (!hasValidStructure) {
+            console.warn(`Time warp question ${index} structure validation failed:`, q);
+            return false;
+          }
+
+          // Validate that sentence contains the time reference
+          const containsTimeRef = q.sentence.toLowerCase().includes(q.timeReference.toLowerCase());
+          if (!containsTimeRef) {
+            console.warn(`Time warp question ${index} time reference not found in sentence:`, q);
+            return false;
+          }
+
+          // Validate that sentence contains a blank
+          const hasBlank = q.sentence.includes('_____') || q.sentence.includes('___');
+          if (!hasBlank) {
+            console.warn(`Time warp question ${index} missing blank:`, q);
+            return false;
+          }
+
+          return true;
+        });
+
+      default:
+        console.warn(`Unknown game type for validation: ${gameType}`);
+        return false;
+    }
+  } catch (error) {
+    console.error(`Content validation error for ${gameType}:`, error);
+    return false;
   }
 }
 
@@ -636,7 +1047,7 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
 
     // Transform image-instinct content to add Pollinations image URLs
     if (gameType === 'image-instinct') {
-      parsed = transformImageInstinctContent(parsed);
+      parsed = await transformImageInstinctContent(parsed);
     }
 
     // Construct the full GameContent object
@@ -653,8 +1064,13 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
     };
   } catch (error) {
     console.error('Game generation failed, using fallback:', error);
+    
+    // Handle async fallback for image-instinct
+    const fallbackGenerator = FALLBACK_GAMES[gameType];
+    const fallbackContent = await fallbackGenerator(options);
+    
     return {
-      content: FALLBACK_GAMES[gameType](options),
+      content: fallbackContent,
       usedFallback: true,
     };
   }

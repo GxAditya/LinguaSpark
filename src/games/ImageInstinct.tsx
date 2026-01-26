@@ -70,29 +70,33 @@ export default function ImageInstinct() {
     content,
     loading,
     error,
+    currentRound,
+    totalRounds,
+    score,
     showExitConfirm,
     setShowExitConfirm,
     confirmExit,
     completeGame,
     startNewGame,
     submitAnswer,
+    updateScore,
+    nextRound,
+    gameState: { feedback, setFeedback, selectedAnswer, setSelectedAnswer, resetRoundState },
+    isComplete,
   } = useGameSession('image-instinct');
 
-  const [currentRound, setCurrentRound] = useState(0);
-  const [score, setScore] = useState(0);
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // Cast content to the expected type
   const rounds: ImageRound[] = (content as any)?.rounds || [];
-  const totalRounds = rounds.length;
-  const isComplete = currentRound >= totalRounds && totalRounds > 0;
+  
+  // Use selectedAnswer from hook state as selectedImage
+  const selectedImage = selectedAnswer as number | null;
+  const setSelectedImage = (index: number | null) => setSelectedAnswer(index);
 
   // Reset local state when round changes
   useEffect(() => {
+    resetRoundState();
     setSelectedImage(null);
-    setFeedback(null);
-  }, [currentRound]);
+  }, [currentRound, resetRoundState]);
 
   if (loading) {
     return <GameLoading gameName="Image Instinct" />;
@@ -117,7 +121,7 @@ export default function ImageInstinct() {
 
       const points = isCorrect ? 10 : 0;
       if (isCorrect) {
-        setScore(score + points);
+        updateScore(score + points);
       }
 
       await submitAnswer({
@@ -132,8 +136,9 @@ export default function ImageInstinct() {
   const handleNext = async () => {
     if (currentRound + 1 >= totalRounds) {
       await completeGame();
+    } else {
+      nextRound();
     }
-    setCurrentRound(currentRound + 1);
   };
 
   if (isComplete) {

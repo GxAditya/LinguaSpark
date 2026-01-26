@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
-import { Check, X, ChevronRight } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Check, X, ChevronRight, Volume2, Loader2 } from 'lucide-react';
 import GameLayout from '../components/GameLayout';
 import { useGameSession } from '../hooks/useGameSession';
+import { useAudio } from '../hooks/useAudio';
 import { GameLoading, GameError } from '../components/GameStates';
 import ExitConfirmModal from '../components/ExitConfirmModal';
 
@@ -21,21 +22,37 @@ export default function AudioJumble() {
     session,
     loading,
     error,
+    content,
+    currentRound,
+    totalRounds,
+    score,
     showExitConfirm,
     submitAnswer,
+    updateScore,
+    nextRound,
     completeGame,
     confirmExit,
     cancelExit,
-    startNewGame
+    startNewGame,
+    gameState: { feedback, setFeedback, selectedAnswer, setSelectedAnswer, resetRoundState },
+    isComplete,
   } = useGameSession('audio-jumble');
 
-  const [currentRound, setCurrentRound] = useState(0);
-  const [selectedOrder, setSelectedOrder] = useState<number[]>([]);
-  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [score, setScore] = useState(0);
+  // Audio functionality
+  const {
+    playText,
+    stopAudio,
+    isLoading: audioLoading,
+    isPlaying: audioPlaying,
+    error: audioError,
+    currentText: currentAudioText,
+    clearError: clearAudioError,
+    preloadTexts
+  } = useAudio();
 
-  const content = session?.content as AudioJumbleContent | undefined;
-  const sentences = content?.sentences || [];
+  // Cast content to the expected type
+  const audioContent = content as AudioJumbleContent | undefined;
+  const sentences = audioContent?.sentences || [];
   const currentSentence = sentences[currentRound];
 
   const shuffledIndices = useMemo(() => {
@@ -44,16 +61,43 @@ export default function AudioJumble() {
     return indices.sort(() => Math.random() - 0.5);
   }, [currentSentence]);
 
-  const isComplete = currentRound >= sentences.length;
+  // Use selectedAnswer from hook state as selectedOrder
+  const selectedOrder = (selectedAnswer as number[]) || [];
+  const setSelectedOrder = (order: number[]) => setSelectedAnswer(order);
+
+  // Reset selected order when round changes
+  useEffect(() => {
+    resetRoundState();
+    setSelectedOrder([]);
+    
+    // Preload audio for current sentence words
+    if (currentSentence?.words) {
+      preloadTexts(currentSentence.words).catch(console.warn);
+    }
+  }, [currentRound, resetRoundState, currentSentence, preloadTexts]);
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      stopAudio();
+    };
+  }, [stopAudio]);
 
   if (loading) return <GameLoading gameName="Audio Jumble" />;
   if (error) return <GameError error={error} onRetry={startNewGame} />;
   if (!session || !content) return <GameLoading gameName="Audio Jumble" />;
 
-  const handlePlayWord = (index: number) => {
-    const utterance = new SpeechSynthesisUtterance(currentSentence.words[index]);
-    utterance.rate = 0.8;
-    window.speechSynthesis.speak(utterance);
+  const handlePlayWord = async (index: number) => {
+    const word = currentSentence.words[index];
+    try {
+      clearAudioError();
+      await playText(word, 'alloy', {
+        volume: 0.8,
+        playbackRate: 0.8
+      });
+    } catch (error) {
+      console.error('Failed to play word audio:', error);
+    }
   };
 
   const handleToggleWord = (index: number) => {
@@ -70,7 +114,7 @@ export default function AudioJumble() {
 
     const points = isCorrect ? 10 : 0;
     if (isCorrect) {
-      setScore(score + points);
+      updateScore(score + points);
     }
 
     await submitAnswer({
@@ -82,12 +126,11 @@ export default function AudioJumble() {
   };
 
   const handleNext = async () => {
-    setSelectedOrder([]);
-    setFeedback(null);
     if (currentRound + 1 >= sentences.length) {
       await completeGame();
+    } else {
+      nextRound();
     }
-    setCurrentRound(currentRound + 1);
   };
 
   if (isComplete) {
@@ -98,7 +141,7 @@ export default function AudioJumble() {
             <Check className="w-12 h-12 text-green-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Game Complete!</h2>
-          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score} / {sentences.length * 10}</span></p>
+          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score} / {totalRounds * 10}</span></p>
           <button
             onClick={startNewGame}
             className="btn-primary"
@@ -111,7 +154,7 @@ export default function AudioJumble() {
   }
 
   return (
-    <GameLayout title="Audio Jumble" score={score} progress={`${currentRound + 1}/${sentences.length}`}>
+    <GameLayout title="Audio Jumble" score={score} progress={`${currentRound + 1}/${totalRounds}`}>
       <ExitConfirmModal
         isOpen={showExitConfirm}
         onConfirm={confirmExit}
@@ -128,25 +171,66 @@ export default function AudioJumble() {
 
           <div className="mb-8">
             <label className="block text-sm font-medium text-gray-700 mb-3">Click words to arrange them:</label>
+            
+            {/* Audio error display */}
+            {audioError && (
+              <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  Audio issue: {audioError}
+                  <button 
+                    onClick={clearAudioError}
+                    className="ml-2 text-yellow-600 hover:text-yellow-800 underline"
+                  >
+                    Dismiss
+                  </button>
+                </p>
+              </div>
+            )}
+            
             <div className="flex flex-wrap gap-2 mb-4">
-              {shuffledIndices.map((wordIndex) => (
-                <button
-                  key={wordIndex}
-                  onClick={() => handleToggleWord(wordIndex)}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    handlePlayWord(wordIndex);
-                  }}
-                  className={`px-4 py-2 rounded-lg font-semibold transition-all ${selectedOrder.includes(wordIndex)
-                    ? 'bg-purple-500 text-white'
-                    : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                    }`}
-                >
-                  {currentSentence.words[wordIndex]} <span className="text-xs ml-1 opacity-75">(tap audio)</span>
-                </button>
-              ))}
+              {shuffledIndices.map((wordIndex) => {
+                const word = currentSentence.words[wordIndex];
+                const isCurrentlyPlaying = audioPlaying && currentAudioText === word;
+                const isLoadingThisWord = audioLoading && currentAudioText === word;
+                
+                return (
+                  <div key={wordIndex} className="relative">
+                    <button
+                      onClick={() => handleToggleWord(wordIndex)}
+                      className={`px-4 py-2 rounded-lg font-semibold transition-all ${selectedOrder.includes(wordIndex)
+                        ? 'bg-purple-500 text-white'
+                        : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                        }`}
+                    >
+                      {word}
+                    </button>
+                    
+                    {/* Audio control button */}
+                    <button
+                      onClick={() => handlePlayWord(wordIndex)}
+                      disabled={audioLoading}
+                      className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs transition-all ${
+                        isCurrentlyPlaying 
+                          ? 'bg-green-500 text-white' 
+                          : isLoadingThisWord
+                          ? 'bg-yellow-500 text-white'
+                          : 'bg-blue-500 text-white hover:bg-blue-600'
+                      } ${audioLoading && currentAudioText !== word ? 'opacity-50' : ''}`}
+                      title={isLoadingThisWord ? 'Loading audio...' : isCurrentlyPlaying ? 'Playing...' : 'Play audio'}
+                    >
+                      {isLoadingThisWord ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : isCurrentlyPlaying ? (
+                        <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                      ) : (
+                        <Volume2 className="w-3 h-3" />
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
-            <p className="text-xs text-gray-500">Right-click a word to hear it</p>
+            <p className="text-xs text-gray-500">Click the audio button (🔊) on each word to hear it</p>
           </div>
 
           {selectedOrder.length > 0 && (
