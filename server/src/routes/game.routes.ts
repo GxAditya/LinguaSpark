@@ -4,6 +4,12 @@ import { protect } from '../middleware/auth.middleware.js';
 import { rateLimitMiddleware, RATE_LIMITS } from '../middleware/rateLimit.middleware.js';
 import { handleValidation } from '../middleware/validation.middleware.js';
 import {
+  costAwareGameGenerationLimit,
+  recordGameGenerationUsage,
+  modelOptimizationMiddleware,
+  costAnalyticsMiddleware
+} from '../middleware/cost.optimization.middleware.js';
+import {
   startGame,
   getActiveSession,
   updateProgress,
@@ -39,7 +45,9 @@ router.use(protect);
  */
 router.post(
   '/start',
-  rateLimitMiddleware(RATE_LIMITS.GAME_GENERATION),
+  costAwareGameGenerationLimit(), // Cost-aware rate limiting
+  modelOptimizationMiddleware(), // Model optimization
+  recordGameGenerationUsage(), // Usage recording
   [
     body('gameType')
       .isIn(gameTypes)
@@ -64,6 +72,10 @@ router.post(
       .trim()
       .isLength({ max: 100 })
       .withMessage('Topic must be less than 100 characters'),
+    body('optimization')
+      .optional()
+      .isIn(['speed', 'quality', 'cost'])
+      .withMessage('Invalid optimization preference'),
   ],
   handleValidation,
   startGame
@@ -170,5 +182,12 @@ router.get('/stats', getGameStats);
  * @access Private
  */
 router.get('/rate-limit', getRateLimitStatus);
+
+/**
+ * @route GET /api/games/cost-analytics
+ * @desc Get user's cost analytics
+ * @access Private
+ */
+router.get('/cost-analytics', costAnalyticsMiddleware);
 
 export default router;

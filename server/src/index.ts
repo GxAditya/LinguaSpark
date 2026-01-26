@@ -9,6 +9,7 @@ import ttsRoutes from './routes/tts.routes.js';
 import practiceRoutes from './routes/practice.routes.js';
 import gameRoutes from './routes/game.routes.js';
 import pollinationsRoutes from './routes/pollinations.routes.js';
+import costAnalyticsRoutes from './routes/cost.analytics.routes.js';
 import { errorHandler, notFound } from './middleware/error.middleware.js';
 import { seedLessons } from './data/lessons.seed.js';
 import { pollinationsApi } from './services/pollinations.api.service.js';
@@ -74,6 +75,7 @@ app.use('/api/tts', ttsRoutes);
 app.use('/api/practice', practiceRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/pollinations', pollinationsRoutes);
+app.use('/api/cost-analytics', costAnalyticsRoutes);
 
 // Error handling
 app.use(notFound);
