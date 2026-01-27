@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Features from './components/Features';
+import Languages from './components/Languages';
 import InteractiveDemo from './components/InteractiveDemo';
 import AppShowcase from './components/AppShowcase';
 import Footer from './components/Footer';
@@ -75,6 +76,7 @@ function AppRoutes() {
             <Header />
             <Hero />
             <Features />
+            <Languages />
             <InteractiveDemo />
             <AppShowcase />
             <Footer />
