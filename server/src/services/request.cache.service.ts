@@ -375,7 +375,8 @@ export class RequestCacheService {
    */
   private calculateSize(data: any): number {
     try {
-      return new Blob([JSON.stringify(data)]).size;
+      const jsonString = JSON.stringify(data);
+      return Buffer.byteLength(jsonString, 'utf8');
     } catch (error) {
       // Fallback estimation
       return JSON.stringify(data).length * 2; // Rough estimate for UTF-16
