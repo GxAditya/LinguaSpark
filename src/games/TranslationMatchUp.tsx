@@ -56,14 +56,28 @@ export default function TranslationMatchUp() {
   const maxScore = pairs.length * 10;
   const isComplete = allMatched;
 
+  // Track if we've already processed the current flip pair to prevent double scoring
+  const [processedFlip, setProcessedFlip] = useState(false);
+
   useEffect(() => {
-    if (flippedCards.length === 2) {
+    // Reset processedFlip when flippedCards changes to a new pair or is cleared
+    if (flippedCards.length !== 2) {
+      setProcessedFlip(false);
+    }
+  }, [flippedCards]);
+
+  useEffect(() => {
+    // Guard: only process if we have 2 cards and haven't already processed this flip
+    if (flippedCards.length === 2 && !processedFlip) {
       const card1 = cards.find((c) => c.id === flippedCards[0]);
       const card2 = cards.find((c) => c.id === flippedCards[1]);
 
+      // Mark as processed immediately to prevent re-running
+      setProcessedFlip(true);
+
       if (card1 && card2 && card1.pairId === card2.pairId && card1.isOriginal !== card2.isOriginal) {
         setFeedback('correct'); // Use standardized feedback
-        setMatchedCards([...matchedCards, ...flippedCards]);
+        setMatchedCards((prev) => [...prev, ...flippedCards]);
         updateScore(score + 10);
       } else {
         setFeedback('incorrect'); // Use standardized feedback
@@ -76,7 +90,7 @@ export default function TranslationMatchUp() {
         setFeedback(null);
       }, 1000);
     }
-  }, [flippedCards, cards, matchedCards, score, updateScore, setFeedback]);
+  }, [flippedCards, cards, processedFlip, score, updateScore, setFeedback]);
 
   const handleCardClick = (cardId: number) => {
     if (flippedCards.length < 2 && !flippedCards.includes(cardId) && !matchedCards.includes(cardId)) {
