@@ -69,8 +69,8 @@ export default function SignUp() {
   return (
     <AuthLayout>
       <div className="bg-white px-6 py-5 md:px-8 md:py-6 border border-gray-200 rounded-xl shadow-sm w-full max-w-sm mx-auto">
-        <div className="mb-4 text-center">
-          <Link to="/" className="inline-flex items-center justify-center gap-2 mb-2 group">
+        <div className="mb-4">
+          <Link to="/" className="inline-flex items-center gap-2 mb-2 group">
             <img
               src="/Linguaspark-logo.png"
               alt="LinguaSpark Logo"
