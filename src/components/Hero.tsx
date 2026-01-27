@@ -106,8 +106,14 @@ export default function Hero() {
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
 
-          <button className="text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 bg-white hover:scale-105 active:scale-95">
-            Watch Demo
+          <button 
+            onClick={() => {
+              const featuresSection = document.getElementById('features');
+              featuresSection?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 bg-white hover:scale-105 active:scale-95"
+          >
+            Know More
           </button>
         </div>
 

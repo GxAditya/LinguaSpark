@@ -18,9 +18,7 @@ export default function Header() {
 
   const navItems = [
     { name: 'Features', href: '#features', isHash: true },
-    { name: 'Languages', href: '#languages', isHash: true },
-    { name: 'Pricing', href: '/pricing', isHash: false },
-    { name: 'About', href: '#about', isHash: true }
+    { name: 'Languages', href: '#languages', isHash: true }
   ];
 
   return (
