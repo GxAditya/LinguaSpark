@@ -30,39 +30,39 @@ export default function ExitConfirmModal({
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="relative bg-surface rounded-2xl shadow-float max-w-md w-full mx-4 overflow-hidden animate-in zoom-in-95 duration-200 border border-default">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+        <div className="flex items-center justify-between p-6 border-b border-default">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-100 rounded-xl">
-              <AlertTriangle className="w-6 h-6 text-amber-600" />
+            <div className="p-2 bg-warning-soft rounded-xl border border-warning">
+              <AlertTriangle className="w-6 h-6 text-warning" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+            <h2 className="text-xl font-bold text-primary">{title}</h2>
           </div>
           <button
             onClick={handleClose}
-            className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            className="p-2 hover:bg-surface-2 rounded-xl transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-soft" />
           </button>
         </div>
 
         {/* Content */}
         <div className="p-6">
-          <p className="text-gray-600">{message}</p>
+          <p className="text-muted">{message}</p>
         </div>
 
         {/* Actions */}
         <div className="flex gap-3 p-6 pt-0">
           <button
             onClick={handleClose}
-            className="flex-1 px-4 py-3 border border-gray-200 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            className="flex-1 px-4 py-3 btn-secondary rounded-xl"
           >
             Keep Playing
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl font-semibold hover:from-red-600 hover:to-orange-600 transition-all"
+            className="flex-1 px-4 py-3 bg-warning text-white rounded-xl font-semibold hover:opacity-90 transition-all"
           >
             Exit Game
           </button>

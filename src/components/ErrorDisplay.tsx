@@ -73,28 +73,28 @@ export default function ErrorDisplay({
   const color = getErrorColor();
   const colorClasses = {
     red: {
-      bg: 'bg-red-50',
-      border: 'border-red-200',
-      icon: 'text-red-400',
-      title: 'text-red-800',
-      text: 'text-red-700',
-      button: 'bg-red-100 text-red-800 hover:bg-red-200'
+      bg: 'bg-warning-soft',
+      border: 'border-warning',
+      icon: 'text-warning',
+      title: 'text-warning',
+      text: 'text-warning',
+      button: 'bg-warning-soft text-warning hover:opacity-90'
     },
     yellow: {
-      bg: 'bg-yellow-50',
-      border: 'border-yellow-200',
-      icon: 'text-yellow-400',
-      title: 'text-yellow-800',
-      text: 'text-yellow-700',
-      button: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+      bg: 'bg-warning-soft',
+      border: 'border-warning',
+      icon: 'text-warning',
+      title: 'text-warning',
+      text: 'text-warning',
+      button: 'bg-warning-soft text-warning hover:opacity-90'
     },
     blue: {
-      bg: 'bg-blue-50',
-      border: 'border-blue-200',
-      icon: 'text-blue-400',
-      title: 'text-blue-800',
-      text: 'text-blue-700',
-      button: 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+      bg: 'bg-info-soft',
+      border: 'border-info',
+      icon: 'text-info',
+      title: 'text-info',
+      text: 'text-info',
+      button: 'bg-info-soft text-info hover:opacity-90'
     }
   };
 
@@ -134,7 +134,7 @@ export default function ErrorDisplay({
             {error.retryable && onRetry && (
               <button
                 onClick={onRetry}
-                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${classes.button} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors`}
+                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${classes.button} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[rgba(var(--color-accent-rgb),0.2)] transition-colors`}
               >
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -146,7 +146,7 @@ export default function ErrorDisplay({
             {suggestions.length > 3 && (
               <button
                 onClick={() => setShowRecoveryPlan(!showRecoveryPlan)}
-                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${classes.button} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors`}
+                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${classes.button} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[rgba(var(--color-accent-rgb),0.2)] transition-colors`}
               >
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -158,7 +158,7 @@ export default function ErrorDisplay({
             {showTechnicalDetails && (
               <button
                 onClick={() => setShowDetails(!showDetails)}
-                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${classes.button} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors`}
+                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${classes.button} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[rgba(var(--color-accent-rgb),0.2)] transition-colors`}
               >
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
@@ -170,7 +170,7 @@ export default function ErrorDisplay({
             {onDismiss && (
               <button
                 onClick={onDismiss}
-                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${classes.button} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors`}
+                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${classes.button} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[rgba(var(--color-accent-rgb),0.2)] transition-colors`}
               >
                 Dismiss
               </button>
@@ -230,9 +230,9 @@ export default function ErrorDisplay({
 
           {/* Technical details */}
           {showDetails && error.technicalDetails && (
-            <div className={`mt-4 p-3 rounded-md bg-gray-50 border border-gray-200`}>
-              <h4 className="text-sm font-medium text-gray-800 mb-2">Technical Details</h4>
-              <pre className="text-xs text-gray-600 whitespace-pre-wrap font-mono">
+            <div className={`mt-4 p-3 rounded-md bg-surface-2 border border-default`}>
+              <h4 className="text-sm font-medium text-primary mb-2">Technical Details</h4>
+              <pre className="text-xs text-muted whitespace-pre-wrap font-mono">
                 {error.technicalDetails}
               </pre>
             </div>
@@ -254,7 +254,7 @@ export function InlineError({
   className?: string; 
 }) {
   return (
-    <div className={`flex items-center text-red-600 text-sm ${className}`}>
+    <div className={`flex items-center text-warning text-sm ${className}`}>
       <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
       </svg>
