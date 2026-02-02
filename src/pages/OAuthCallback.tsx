@@ -53,15 +53,15 @@ export default function OAuthCallback() {
   }, [provider, searchParams, handleOAuthCallback, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 flex items-center justify-center">
-      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full mx-4 text-center">
+    <div className="min-h-screen bg-page hero-grid flex items-center justify-center">
+      <div className="bg-surface rounded-2xl shadow-float p-8 max-w-md w-full mx-4 text-center border border-default">
         {status === 'loading' && (
           <>
-            <Loader2 className="w-16 h-16 text-orange-500 animate-spin mx-auto mb-6" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <Loader2 className="w-16 h-16 text-accent animate-spin mx-auto mb-6" />
+            <h2 className="text-2xl font-bold text-primary mb-2">
               Signing you in...
             </h2>
-            <p className="text-gray-600">
+            <p className="text-muted">
               Please wait while we complete your {provider === 'google' ? 'Google' : 'GitHub'} sign in.
             </p>
           </>
@@ -69,13 +69,13 @@ export default function OAuthCallback() {
 
         {status === 'success' && (
           <>
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-10 h-10 text-green-500" />
+            <div className="w-16 h-16 bg-success-soft rounded-full flex items-center justify-center mx-auto mb-6 border border-success">
+              <CheckCircle2 className="w-10 h-10 text-success" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-primary mb-2">
               Welcome to LinguaSpark!
             </h2>
-            <p className="text-gray-600">
+            <p className="text-muted">
               Redirecting you to your dashboard...
             </p>
           </>
@@ -83,23 +83,23 @@ export default function OAuthCallback() {
 
         {status === 'error' && (
           <>
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <AlertCircle className="w-10 h-10 text-red-500" />
+            <div className="w-16 h-16 bg-warning-soft rounded-full flex items-center justify-center mx-auto mb-6 border border-warning">
+              <AlertCircle className="w-10 h-10 text-warning" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-primary mb-2">
               Authentication Failed
             </h2>
-            <p className="text-gray-600 mb-6">{error}</p>
+            <p className="text-muted mb-6">{error}</p>
             <div className="flex gap-3 justify-center">
               <button
                 onClick={() => navigate('/signin')}
-                className="px-6 py-2 bg-orange-500 text-white rounded-xl font-medium hover:bg-orange-600 transition-colors"
+                className="btn-primary px-6 py-2 rounded-xl"
               >
                 Try Again
               </button>
               <button
                 onClick={() => navigate('/')}
-                className="px-6 py-2 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                className="btn-secondary px-6 py-2 rounded-xl"
               >
                 Go Home
               </button>
