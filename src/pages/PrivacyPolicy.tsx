@@ -5,34 +5,34 @@ import Footer from '../components/Footer';
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
       <Header />
       
       <div className="pt-32 pb-24 px-6">
         <div className="max-w-4xl mx-auto">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-orange-600 mb-8 transition-colors"
+            className="inline-flex items-center gap-2 text-muted hover:text-accent mb-8 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Link>
           
           <div className="mb-12">
-            <div className="inline-flex p-3 rounded-lg bg-purple-50 border border-purple-100 mb-6">
-              <Shield className="w-8 h-8 text-purple-600" />
+            <div className="inline-flex p-3 rounded-lg tone-iris border border-accent mb-6">
+              <Shield className="w-8 h-8 text-accent-3" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4">
               Privacy Policy
             </h1>
-            <p className="text-gray-600">
+            <p className="text-muted">
               Last updated: January 14, 2026
             </p>
           </div>
 
           <div className="prose prose-lg max-w-none">
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-6 mb-8">
-              <p className="text-gray-700 mb-0">
+            <div className="tone-iris border border-accent rounded-xl p-6 mb-8">
+              <p className="text-primary mb-0">
                 At LinguaSpark, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our language learning platform.
               </p>
             </div>
