@@ -18,8 +18,8 @@ export default function ProgressCard({ currentLevel = 3, targetLevel = 10, langu
     <div className="bg-surface-base rounded-xl shadow-sm p-8 border border-border-base hover:shadow-md transition-shadow duration-300">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-content-primary">Current Progress</h3>
-        <div className="w-12 h-12 bg-brand-primary-light border border-brand-primary-border rounded-lg flex items-center justify-center">
-          <TrendingUp className="w-6 h-6 text-brand-primary" />
+        <div className="w-12 h-12 tone-brand border rounded-lg flex items-center justify-center">
+          <TrendingUp className="w-6 h-6 text-accent" />
         </div>
       </div>
 
@@ -30,7 +30,7 @@ export default function ProgressCard({ currentLevel = 3, targetLevel = 10, langu
         </div>
         <div className="w-full bg-surface-muted rounded-full h-3">
           <div
-            className="bg-brand-primary h-full rounded-full transition-all duration-500 ease-out"
+            className="bg-accent h-full rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           ></div>
         </div>

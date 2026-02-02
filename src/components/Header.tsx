@@ -25,8 +25,8 @@ export default function Header() {
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[min(94%,980px)]">
       <div className={`${isScrolled ? 'glass-header-solid' : 'glass-header'} rounded-2xl px-4 md:px-6`}> 
         <div className="flex items-center justify-between h-14">
-          {/* Logo/Brand */}
-          <Link to="/" className="text-xl font-bold hover:text-accent transition-colors duration-300" style={{ color: 'var(--color-primary)' }}>
+          {/* Logo/Brand - Desktop only */}
+          <Link to="/" className="hidden md:block text-xl font-bold hover:text-accent transition-colors duration-300" style={{ color: 'var(--color-primary)' }}>
             LinguaSpark
           </Link>
 
