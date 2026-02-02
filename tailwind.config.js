@@ -4,42 +4,42 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Semantic Color System
+        // Semantic Color System (LinguaSpark Design System)
         surface: {
-          base: '#ffffff',
-          subtle: '#fafafa', // zinc-50
-          muted: '#f4f4f5',  // zinc-100
+          base: 'var(--color-surface)',
+          subtle: 'var(--color-surface-2)',
+          muted: 'var(--color-surface-3)',
         },
         border: {
-          base: '#e4e4e7',   // zinc-200
-          subtle: '#f4f4f5', // zinc-100
-          strong: '#d4d4d8', // zinc-300
+          base: 'var(--color-border)',
+          subtle: 'var(--color-border)',
+          strong: 'var(--color-border-strong)',
         },
         content: {
-          primary: '#18181b',   // zinc-900
-          secondary: '#71717a', // zinc-500
-          tertiary: '#a1a1aa',  // zinc-400
-          inverse: '#ffffff',
+          primary: 'var(--color-text)',
+          secondary: 'var(--color-text-muted)',
+          tertiary: 'var(--color-text-soft)',
+          inverse: 'var(--color-surface)',
         },
         action: {
-          primary: '#18181b',
-          'primary-hover': '#27272a',
-          'primary-fg': '#ffffff',
-          secondary: '#ffffff',
-          'secondary-hover': '#fafafa',
-          'secondary-border': '#e4e4e7',
-          'secondary-fg': '#18181b',
+          primary: 'var(--color-accent)',
+          'primary-hover': 'var(--color-accent-strong)',
+          'primary-fg': 'var(--color-surface)',
+          secondary: 'var(--color-surface)',
+          'secondary-hover': 'var(--color-surface-2)',
+          'secondary-border': 'var(--color-border)',
+          'secondary-fg': 'var(--color-text)',
         },
         brand: {
-          primary: '#ea580c',        // Orange - main brand color
-          'primary-hover': '#c2410c',
-          'primary-light': '#fff7ed',
-          'primary-border': '#ffedd5',
-          secondary: '#18181b',      // Black/dark - secondary brand color
-          'secondary-light': '#fafafa',
-          'secondary-border': '#e4e4e7',
-          accent: '#f97316',         // Lighter orange for accents
-          'accent-light': '#fed7aa',
+          primary: 'var(--color-accent)',
+          'primary-hover': 'var(--color-accent-strong)',
+          'primary-light': 'rgba(var(--color-accent-rgb), 0.12)',
+          'primary-border': 'rgba(var(--color-accent-rgb), 0.3)',
+          secondary: 'var(--color-ink)',
+          'secondary-light': 'var(--color-surface-2)',
+          'secondary-border': 'var(--color-border)',
+          accent: 'var(--color-accent-2)',
+          'accent-light': 'rgba(var(--color-accent-2-rgb), 0.18)',
         },
         // Keep utility scales for specific needs
         zinc: {
@@ -55,42 +55,42 @@ export default {
           900: '#18181b',
         },
         orange: {
-          50: '#fff7ed',
-          100: '#ffedd5',
-          200: '#fed7aa',
-          300: '#fdba74',
-          400: '#fb923c',
-          500: '#f97316',
-          600: '#ea580c',
-          700: '#c2410c',
-          800: '#9a3412',
-          900: '#7c2d12',
+          50: 'rgba(var(--color-accent-rgb), 0.08)',
+          100: 'rgba(var(--color-accent-rgb), 0.12)',
+          200: 'rgba(var(--color-accent-rgb), 0.18)',
+          300: 'rgba(var(--color-accent-rgb), 0.28)',
+          400: 'rgba(var(--color-accent-rgb), 0.45)',
+          500: 'var(--color-accent)',
+          600: 'var(--color-accent-2)',
+          700: 'var(--color-accent-strong)',
+          800: 'rgba(var(--color-accent-rgb), 0.95)',
+          900: 'rgba(var(--color-accent-rgb), 1)',
         },
       },
       backgroundImage: {
-        // Page backgrounds - orange/amber based
-        'gradient-page': 'linear-gradient(to bottom right, rgb(255, 247, 237), rgb(254, 243, 199), rgb(255, 251, 235))',
-        'gradient-hero': 'linear-gradient(to bottom right, rgb(255, 247, 237), rgb(254, 243, 199), rgb(255, 251, 235))',
-        // Button gradients - orange based
-        'gradient-primary': 'linear-gradient(to right, #f97316, #ea580c)',
-        'gradient-primary-hover': 'linear-gradient(to right, #ea580c, #c2410c)',
-        'gradient-text': 'linear-gradient(to right, #1f2937, #f97316, #ea580c)',
-        // Card accents - orange/amber based
-        'gradient-card-orange': 'linear-gradient(to bottom right, #ffedd5, #fef3c7)',
-        'gradient-card-amber': 'linear-gradient(to bottom right, #fef3c7, #fffbeb)',
-        'gradient-card-warm': 'linear-gradient(to bottom right, #fff7ed, #fef3c7)',
-        'gradient-card-blue': 'linear-gradient(to bottom right, #dbeafe, #e0f2fe)',
-        'gradient-card-green': 'linear-gradient(to bottom right, #dcfce7, #d1fae5)',
-        // CTA gradient - orange based
-        'gradient-cta': 'linear-gradient(to bottom right, #f97316, #ea580c, #c2410c)',
+        // Page backgrounds
+        'gradient-page': 'linear-gradient(to bottom right, rgba(var(--color-accent-rgb), 0.08), rgba(var(--color-accent-2-rgb), 0.08), rgba(var(--color-accent-3-rgb), 0.06))',
+        'gradient-hero': 'linear-gradient(to bottom right, rgba(var(--color-accent-rgb), 0.08), rgba(var(--color-accent-2-rgb), 0.08), rgba(var(--color-accent-3-rgb), 0.06))',
+        // Button gradients
+        'gradient-primary': 'linear-gradient(to right, var(--color-accent), var(--color-accent-2))',
+        'gradient-primary-hover': 'linear-gradient(to right, var(--color-accent-2), var(--color-accent-strong))',
+        'gradient-text': 'linear-gradient(to right, var(--color-ink), var(--color-accent), var(--color-accent-2))',
+        // Card accents
+        'gradient-card-orange': 'linear-gradient(to bottom right, rgba(var(--color-accent-rgb), 0.14), rgba(var(--color-accent-2-rgb), 0.12))',
+        'gradient-card-amber': 'linear-gradient(to bottom right, rgba(var(--color-accent-2-rgb), 0.12), rgba(var(--color-accent-3-rgb), 0.1))',
+        'gradient-card-warm': 'linear-gradient(to bottom right, rgba(var(--color-accent-rgb), 0.08), rgba(var(--color-accent-3-rgb), 0.1))',
+        'gradient-card-blue': 'linear-gradient(to bottom right, rgba(var(--color-accent-2-rgb), 0.14), rgba(var(--color-accent-3-rgb), 0.12))',
+        'gradient-card-green': 'linear-gradient(to bottom right, rgba(var(--color-accent-3-rgb), 0.12), rgba(var(--color-accent-4-rgb), 0.12))',
+        // CTA gradient
+        'gradient-cta': 'linear-gradient(to bottom right, var(--color-accent), var(--color-accent-2), var(--color-accent-strong))',
       },
       boxShadow: {
-        'card': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-        'card-hover': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-        'button': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-        'button-hover': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
-        'glow-orange': '0 0 40px rgb(249 115 22 / 0.3)',
-        'glow-amber': '0 0 40px rgb(245 158 11 / 0.3)',
+        'card': '0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08)',
+        'card-hover': '0 20px 25px -5px rgb(0 0 0 / 0.12), 0 8px 10px -6px rgb(0 0 0 / 0.12)',
+        'button': '0 10px 15px -3px rgb(0 0 0 / 0.12), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+        'button-hover': '0 25px 50px -12px rgb(0 0 0 / 0.22)',
+        'glow-orange': '0 0 40px rgba(var(--color-accent-rgb), 0.3)',
+        'glow-amber': '0 0 40px rgba(var(--color-accent-2-rgb), 0.3)',
       },
       borderRadius: {
         '2xl': '0.75rem', // Reduced from 1rem
