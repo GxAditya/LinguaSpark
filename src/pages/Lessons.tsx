@@ -237,9 +237,9 @@ export default function Lessons() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-50 text-green-700 border border-green-100';
+        return 'bg-success-soft text-success border border-success';
       case 'in-progress':
-        return 'bg-blue-50 text-blue-700 border border-blue-100';
+        return 'tone-brand border border-accent';
       default:
         return 'bg-surface-subtle text-content-secondary border border-border-subtle';
     }
@@ -272,7 +272,7 @@ export default function Lessons() {
           id={id}
           value={selectedLanguage}
           onChange={(event) => handleLanguageChange(event.target.value)}
-          className="appearance-none w-52 rounded-xl border-2 border-orange-100 bg-white py-3 pl-4 pr-10 text-sm font-semibold text-content-primary shadow-sm cursor-pointer transition-all duration-200 hover:border-orange-300 hover:shadow-md focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200"
+          className="appearance-none w-52 rounded-xl border-2 border-border-base bg-surface py-3 pl-4 pr-10 text-sm font-semibold text-content-primary shadow-sm cursor-pointer transition-all duration-200 hover:border-border-strong hover:shadow-md focus:border-accent focus:outline-none focus:ring-2 focus:ring-[rgba(var(--color-accent-rgb),0.2)]"
         >
           {LANGUAGE_OPTIONS.map((option) => (
             <option key={option.value} value={option.value} className="py-2">
@@ -280,8 +280,8 @@ export default function Lessons() {
             </option>
           ))}
         </select>
-        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-          <ChevronDown className="h-4 w-4 text-orange-600" />
+        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md bg-surface-2 flex items-center justify-center group-hover:bg-surface-3 transition-colors">
+          <ChevronDown className="h-4 w-4 text-accent" />
         </div>
       </div>
     </div>
@@ -290,11 +290,11 @@ export default function Lessons() {
   const getLevelColor = (level: string) => {
     switch (level) {
       case 'beginner':
-        return 'bg-green-50 text-green-700 border border-green-100';
+        return 'tone-mint border border-accent';
       case 'intermediate':
-        return 'bg-blue-50 text-blue-700 border border-blue-100';
+        return 'tone-iris border border-accent';
       case 'advanced':
-        return 'bg-purple-50 text-purple-700 border border-purple-100';
+        return 'tone-ember border border-accent';
       default:
         return 'bg-surface-subtle text-content-secondary border border-border-subtle';
     }
@@ -306,11 +306,11 @@ export default function Lessons() {
       <div className="min-h-screen bg-surface-base">
         <DashboardHeader userName={user.name} userAvatar={user.avatar} />
         <main className="max-w-7xl mx-auto px-6 py-12">
-          <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex items-center gap-4">
-            <AlertCircle className="w-8 h-8 text-red-500" />
+          <div className="bg-warning-soft border border-warning rounded-xl p-6 flex items-center gap-4">
+            <AlertCircle className="w-8 h-8 text-warning" />
             <div>
-              <h3 className="font-semibold text-red-800">Error loading lessons</h3>
-              <p className="text-red-600">{error}</p>
+              <h3 className="font-semibold text-warning">Error loading lessons</h3>
+              <p className="text-warning">{error}</p>
             </div>
           </div>
         </main>
@@ -373,7 +373,7 @@ export default function Lessons() {
               <ul className="space-y-2">
                 {selectedLesson.objectives.map((obj, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-content-secondary">
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
                     {obj}
                   </li>
                 ))}
@@ -388,7 +388,7 @@ export default function Lessons() {
               </div>
               <div className="progress-bar h-4">
                 <div
-                  className="bg-orange-500 h-full rounded-full transition-all duration-500 ease-out"
+                  className="bg-accent h-full rounded-full transition-all duration-500 ease-out"
                   style={{ width: `${lessonProgress.progress}%` }}
                 ></div>
               </div>
@@ -407,7 +407,7 @@ export default function Lessons() {
                     className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all border ${idx === activeContentIndex
                       ? 'bg-action-primary text-action-primary-fg border-action-primary'
                       : lessonProgress.contentProgress[idx]?.completed
-                        ? 'bg-green-50 text-green-700 border-green-100'
+                        ? 'bg-success-soft text-success border-success'
                         : 'bg-surface-base text-content-secondary border-border-base hover:bg-surface-subtle'
                       }`}
                   >
@@ -423,7 +423,7 @@ export default function Lessons() {
                   {currentContent.audioText && (
                     <button
                       onClick={() => isPlayingAudio ? handlePauseAudio() : handlePlayAudio(currentContent.audioText!)}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-100 rounded-lg font-medium hover:bg-blue-100 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 tone-brand border border-accent rounded-lg font-medium hover:bg-surface-2 transition-colors"
                     >
                       {isPlayingAudio ? <Pause className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                       {isPlayingAudio ? 'Pause' : 'Listen'}
@@ -434,26 +434,26 @@ export default function Lessons() {
                 {/* Content based on type */}
                 <div className="prose max-w-none">
                   {currentContent.type === 'dialogue' ? (
-                    <div className="bg-purple-50 border border-purple-100 rounded-lg p-6 space-y-3">
+                    <div className="tone-iris border border-accent rounded-lg p-6 space-y-3">
                       {currentContent.content.split('\n').map((line, idx) => {
                         const [speaker, ...text] = line.split(':');
                         return (
                           <div key={idx} className="flex gap-3">
-                            <span className="font-semibold text-purple-700 min-w-[80px]">{speaker}:</span>
+                            <span className="font-semibold text-accent-3 min-w-[80px]">{speaker}:</span>
                             <span className="text-content-primary">{text.join(':')}</span>
                           </div>
                         );
                       })}
                     </div>
                   ) : currentContent.type === 'grammar' ? (
-                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-6">
+                    <div className="tone-brand border border-accent rounded-lg p-6">
                       <pre className="whitespace-pre-wrap text-content-primary font-mono text-sm">{currentContent.content}</pre>
                       {currentContent.grammarPoints && (
-                        <div className="mt-4 pt-4 border-t border-blue-200">
-                          <h4 className="font-semibold text-blue-800 mb-2">Key Points:</h4>
+                        <div className="mt-4 pt-4 border-t border-accent">
+                          <h4 className="font-semibold text-accent mb-2">Key Points:</h4>
                           <ul className="list-disc list-inside space-y-1">
                             {currentContent.grammarPoints.map((point, idx) => (
-                              <li key={idx} className="text-blue-700">{point}</li>
+                              <li key={idx} className="text-accent">{point}</li>
                             ))}
                           </ul>
                         </div>
@@ -464,24 +464,24 @@ export default function Lessons() {
                       <p className="text-content-primary">{currentContent.content}</p>
                       <div className="grid gap-4">
                         {currentContent.vocabulary?.map((vocab, idx) => (
-                          <div key={idx} className="bg-green-50 border border-green-100 rounded-lg p-4">
+                          <div key={idx} className="bg-success-soft border border-success rounded-lg p-4">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-3">
                                 <span className="text-xl font-bold text-content-primary">{vocab.word}</span>
                                 <span className="text-content-tertiary">→</span>
-                                <span className="text-lg text-green-700">{vocab.translation}</span>
+                                <span className="text-lg text-success">{vocab.translation}</span>
                               </div>
                               <button
                                 onClick={() => handlePlayAudio(vocab.word)}
-                                className="p-2 bg-white border border-green-200 rounded-md hover:bg-green-100 transition-colors"
+                                className="p-2 bg-surface border border-success rounded-md hover:bg-success-soft transition-colors"
                               >
-                                <Volume2 className="w-4 h-4 text-green-700" />
+                                <Volume2 className="w-4 h-4 text-success" />
                               </button>
                             </div>
                             {vocab.pronunciation && (
                               <p className="text-sm text-content-secondary mb-2">/{vocab.pronunciation}/</p>
                             )}
-                            <div className="bg-surface-base border border-green-200 rounded-md p-3">
+                            <div className="bg-surface-base border border-success rounded-md p-3">
                               <p className="text-content-primary italic">"{vocab.example}"</p>
                               <p className="text-content-secondary text-sm mt-1">{vocab.exampleTranslation}</p>
                             </div>
@@ -537,13 +537,13 @@ export default function Lessons() {
 
               {/* Exercise */}
               <div className="mb-8">
-                <div className="bg-purple-50 border border-purple-100 rounded-lg p-6 mb-6">
+                <div className="tone-iris border border-accent rounded-lg p-6 mb-6">
                   <p className="text-lg font-medium text-content-primary mb-4">{currentExercise.question}</p>
 
                   {currentExercise.audioText && (
                     <button
                       onClick={() => handlePlayAudio(currentExercise.audioText!)}
-                      className="flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg font-medium hover:bg-purple-200 transition-colors mb-4"
+                      className="flex items-center gap-2 px-4 py-2 tone-iris border border-accent rounded-lg font-medium hover:bg-surface-2 transition-colors mb-4"
                     >
                       <Volume2 className="w-5 h-5" /> Listen to Audio
                     </button>
@@ -559,11 +559,11 @@ export default function Lessons() {
                           className={`w-full text-left px-4 py-3 rounded-lg border transition-all ${exerciseAnswer === option
                             ? exerciseResult
                               ? exerciseResult.isCorrect
-                                ? 'border-green-500 bg-green-50'
-                                : 'border-red-500 bg-red-50'
+                                ? 'border-success bg-success-soft'
+                                : 'border-warning bg-warning-soft'
                               : 'border-action-primary bg-surface-subtle'
                             : exerciseResult && option === exerciseResult.correctAnswer
-                              ? 'border-green-500 bg-green-50'
+                              ? 'border-success bg-success-soft'
                               : 'border-border-base hover:border-border-strong'
                             } ${exerciseResult ? 'cursor-default' : 'cursor-pointer'}`}
                         >
@@ -585,14 +585,14 @@ export default function Lessons() {
 
                 {/* Result */}
                 {exerciseResult && (
-                  <div className={`rounded-lg p-6 mb-6 ${exerciseResult.isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                  <div className={`rounded-lg p-6 mb-6 ${exerciseResult.isCorrect ? 'bg-success-soft border border-success' : 'bg-warning-soft border border-warning'}`}>
                     <div className="flex items-center gap-3 mb-2">
                       {exerciseResult.isCorrect ? (
-                        <CheckCircle className="w-6 h-6 text-green-600" />
+                        <CheckCircle className="w-6 h-6 text-success" />
                       ) : (
-                        <AlertCircle className="w-6 h-6 text-red-600" />
+                        <AlertCircle className="w-6 h-6 text-warning" />
                       )}
-                      <span className={`font-semibold ${exerciseResult.isCorrect ? 'text-green-700' : 'text-red-700'}`}>
+                      <span className={`font-semibold ${exerciseResult.isCorrect ? 'text-success' : 'text-warning'}`}>
                         {exerciseResult.isCorrect ? 'Correct!' : 'Incorrect'}
                       </span>
                     </div>
@@ -628,7 +628,7 @@ export default function Lessons() {
                 ) : activeExerciseIndex === selectedLesson.exercises.length - 1 ? (
                   <button
                     onClick={handleCompleteLesson}
-                    className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 bg-success text-white rounded-lg font-medium hover:opacity-90 transition-colors"
                   >
                     Complete Lesson <CheckCircle className="w-5 h-5" />
                   </button>
@@ -652,11 +652,11 @@ export default function Lessons() {
   return (
     <div className="min-h-screen bg-surface-base relative overflow-hidden">
       {/* Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+      <div className="absolute inset-0 hero-grid"></div>
 
       <DashboardHeader userName={user.name} userAvatar={user.avatar} />
 
-      <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-12">
         <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold text-content-primary mb-3">
@@ -705,7 +705,7 @@ export default function Lessons() {
                 <div className="mb-4">
                   <div className="progress-bar h-2 bg-surface-muted rounded-full overflow-hidden">
                     <div
-                      className="bg-orange-500 h-full rounded-full"
+                      className="bg-accent h-full rounded-full"
                       style={{ width: `${lesson.progress}%` }}
                     ></div>
                   </div>

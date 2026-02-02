@@ -73,11 +73,11 @@ const getIconForTopic = (topic: string) => {
 const getDifficultyColor = (difficulty: string) => {
   switch (difficulty.toLowerCase()) {
     case 'easy':
-      return 'bg-green-50 text-green-700 border border-green-100';
+      return 'bg-success-soft text-success border border-success';
     case 'medium':
-      return 'bg-blue-50 text-blue-700 border border-blue-100';
+      return 'tone-brand border border-accent';
     case 'hard':
-      return 'bg-purple-50 text-purple-700 border border-purple-100';
+      return 'tone-iris border border-accent';
     default:
       return 'bg-surface-subtle text-content-secondary border border-border-subtle';
   }
@@ -163,7 +163,7 @@ export default function Practice() {
           id={id}
           value={selectedLanguage}
           onChange={(event) => handleLanguageChange(event.target.value as PracticeLanguage)}
-          className="appearance-none w-52 rounded-xl border-2 border-orange-100 bg-white py-3 pl-4 pr-10 text-sm font-semibold text-content-primary shadow-sm cursor-pointer transition-all duration-200 hover:border-orange-300 hover:shadow-md focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200"
+          className="appearance-none w-52 rounded-xl border-2 border-border-base bg-surface py-3 pl-4 pr-10 text-sm font-semibold text-content-primary shadow-sm cursor-pointer transition-all duration-200 hover:border-border-strong hover:shadow-md focus:border-accent focus:outline-none focus:ring-2 focus:ring-[rgba(var(--color-accent-rgb),0.2)]"
         >
           {LANGUAGE_OPTIONS.map((option) => (
             <option key={option.value} value={option.value} className="py-2">
@@ -171,8 +171,8 @@ export default function Practice() {
             </option>
           ))}
         </select>
-        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-          <ChevronDown className="h-4 w-4 text-orange-600" />
+        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md bg-surface-2 flex items-center justify-center group-hover:bg-surface-3 transition-colors">
+          <ChevronDown className="h-4 w-4 text-accent" />
         </div>
       </div>
     </div>
@@ -241,14 +241,14 @@ export default function Practice() {
     if (scenariosLoading) {
       return (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-accent animate-spin" />
         </div>
       );
     }
 
     if (scenarioError) {
       return (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-700">
+        <div className="bg-warning-soft border border-warning rounded-xl p-6 text-warning">
           <p>{scenarioError}</p>
         </div>
       );
@@ -273,7 +273,7 @@ export default function Practice() {
             className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm hover:shadow-md hover:border-border-strong transition-all duration-200 text-left group"
           >
             <div className="flex items-start justify-between mb-4">
-              <div className="w-12 h-12 bg-brand-primary-light border border-brand-primary-border rounded-lg flex items-center justify-center text-brand-primary group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 tone-brand border rounded-lg flex items-center justify-center text-accent group-hover:scale-105 transition-transform">
                 {getIconForTopic(scenario.topic)}
               </div>
               <span className={`px-2 py-1 rounded-md text-xs font-medium ${getDifficultyColor(scenario.difficulty)}`}>
@@ -309,11 +309,11 @@ export default function Practice() {
     return (
       <div className="min-h-screen bg-surface-base flex flex-col relative overflow-hidden">
         {/* Grid Background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+        <div className="absolute inset-0 hero-grid"></div>
 
         <DashboardHeader userName={userName} activeTab="practice" />
 
-        <main className="relative z-10 flex-1 max-w-5xl mx-auto w-full px-6 py-10 flex flex-col gap-6">
+        <main className="relative z-10 flex-1 max-w-5xl mx-auto w-full px-6 pt-24 pb-10 flex flex-col gap-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <button
               onClick={handleExitScenario}
@@ -387,7 +387,7 @@ export default function Practice() {
               {conversationReady && (
                 <div className="space-y-4">
                   {chatMessages.length === 0 && (
-                    <div className="text-center text-gray-600">
+                    <div className="text-center text-muted">
                       <p>Say hola to kick off the conversation.</p>
                     </div>
                   )}
@@ -402,7 +402,7 @@ export default function Practice() {
                       >
                         <p>{message.content}</p>
                         {message.feedback && (
-                          <p className="text-xs text-orange-300 mt-2 border-t border-white/20 pt-2">Feedback: {message.feedback}</p>
+                          <p className="text-xs text-accent-3 mt-2 border-t border-white/20 pt-2">Feedback: {message.feedback}</p>
                         )}
                       </div>
                     </div>
@@ -412,7 +412,7 @@ export default function Practice() {
             </div>
 
             {sessionError && (
-              <div className="mx-4 mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
+              <div className="mx-4 mb-4 px-4 py-3 rounded-xl bg-warning-soft border border-warning text-sm text-warning">
                 {sessionError}
               </div>
             )}
@@ -421,12 +421,12 @@ export default function Practice() {
               <button
                 onClick={() => setIsRecording((prev) => !prev)}
                 disabled={!sessionActive}
-                className={`p-3 rounded-full transition-all border ${isRecording ? 'bg-red-500 text-white border-red-500 animate-pulse' : 'bg-surface-base text-content-secondary border-border-base hover:bg-surface-subtle'
+                className={`p-3 rounded-full transition-all border ${isRecording ? 'bg-warning text-white border-warning animate-pulse' : 'bg-surface-base text-content-secondary border-border-base hover:bg-surface-subtle'
                   } ${sessionActive ? '' : 'opacity-50 cursor-not-allowed'}`}
               >
                 <Mic className="w-5 h-5" />
               </button>
-              {isRecording && sessionActive && <span className="text-sm text-red-600 font-semibold">Recording...</span>}
+              {isRecording && sessionActive && <span className="text-sm text-warning font-semibold">Recording...</span>}
             </div>
 
             <form
@@ -466,7 +466,7 @@ export default function Practice() {
               {activeSession?.status === 'completed' && (
                 <button
                   onClick={() => handleStartScenario(selectedScenario)}
-                  className="px-4 py-2 rounded-lg border border-green-200 text-green-700 font-semibold hover:bg-green-50 transition"
+                  className="px-4 py-2 rounded-lg border border-success text-success font-semibold hover:bg-success-soft transition"
                 >
                   Start new session
                 </button>
@@ -482,9 +482,9 @@ export default function Practice() {
 
         </main>
         <div className="relative z-10 max-w-5xl mx-auto w-full px-6 pb-10">
-          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-            <h4 className="font-semibold text-blue-900 mb-2">Pro tip</h4>
-            <p className="text-sm text-blue-800">
+          <div className="tone-brand border border-accent rounded-lg p-4">
+            <h4 className="font-semibold text-accent mb-2">Pro tip</h4>
+            <p className="text-sm text-accent">
               Mix text and speech responses to get richer pronunciation feedback from your AI tutor. When you complete a session, we&apos;ll rate how ready you are for a similar real-world interaction.
             </p>
           </div>
@@ -500,11 +500,11 @@ export default function Practice() {
   return (
     <div className="min-h-screen bg-surface-base relative overflow-hidden">
       {/* Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+      <div className="absolute inset-0 hero-grid"></div>
 
       <DashboardHeader userName={userName} activeTab="practice" />
 
-      <main className="relative z-10 max-w-7xl mx-auto px-6 py-12 space-y-10">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-12 space-y-10">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-sm uppercase tracking-wide text-content-tertiary font-semibold mb-2">AI conversation lab</p>
@@ -520,17 +520,17 @@ export default function Practice() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm">
-            <span className="inline-block bg-orange-50 text-orange-700 px-2 py-1 rounded-md text-xs font-bold mb-3 border border-orange-100">01</span>
+            <span className="inline-block tone-brand border px-2 py-1 rounded-md text-xs font-bold mb-3">01</span>
             <h3 className="text-lg font-semibold text-content-primary mb-2">Pick a scenario</h3>
             <p className="text-sm text-content-secondary">Choose a real-world challenge crafted for your current skill level.</p>
           </div>
           <div className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm">
-            <span className="inline-block bg-pink-50 text-pink-700 px-2 py-1 rounded-md text-xs font-bold mb-3 border border-pink-100">02</span>
+            <span className="inline-block tone-iris border px-2 py-1 rounded-md text-xs font-bold mb-3">02</span>
             <h3 className="text-lg font-semibold text-content-primary mb-2">Chat with AI tutor</h3>
             <p className="text-sm text-content-secondary">Type or speak replies. The AI keeps the dialogue flowing naturally.</p>
           </div>
           <div className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm">
-            <span className="inline-block bg-purple-50 text-purple-700 px-2 py-1 rounded-md text-xs font-bold mb-3 border border-purple-100">03</span>
+            <span className="inline-block tone-ember border px-2 py-1 rounded-md text-xs font-bold mb-3">03</span>
             <h3 className="text-lg font-semibold text-content-primary mb-2">Get smart feedback</h3>
             <p className="text-sm text-content-secondary">Instant corrections, suggestions, and a session summary when you finish.</p>
           </div>
