@@ -1,23 +1,8 @@
-import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
-import { Headphones, BookOpen, Shuffle, Award, Zap, RotateCcw, FileText, BarChart3, Clock, ChevronRight, Loader2, Globe, ChevronDown } from 'lucide-react';
+import { Award, BarChart3, BookOpen, ChevronRight, Clock, FileText, Headphones, Loader2, RotateCcw, Shuffle, Zap } from 'lucide-react';
 import { useAuth } from '../context';
-
-const languages = [
-  { code: 'spanish', name: 'Spanish' },
-  { code: 'french', name: 'French' },
-  { code: 'german', name: 'German' },
-  { code: 'italian', name: 'Italian' },
-  { code: 'portuguese', name: 'Portuguese' },
-  { code: 'japanese', name: 'Japanese' },
-  { code: 'korean', name: 'Korean' },
-  { code: 'chinese', name: 'Chinese' },
-  { code: 'arabic', name: 'Arabic' },
-  { code: 'hindi', name: 'Hindi' },
-  { code: 'russian', name: 'Russian' },
-  { code: 'dutch', name: 'Dutch' },
-];
+import { getLearningLanguageLabel, resolveLearningLanguage } from '../utils/languages';
 
 const games = [
   {
@@ -106,10 +91,8 @@ const games = [
 
 export default function Games() {
   const { user, isLoading, isAuthenticated } = useAuth();
-  const [selectedLanguage, setSelectedLanguage] = useState('spanish');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const currentLanguage = languages.find(l => l.code === selectedLanguage) || languages[0];
+  const selectedLanguage = resolveLearningLanguage(user?.currentLanguage);
+  const currentLanguageName = getLearningLanguageLabel(selectedLanguage);
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -136,54 +119,15 @@ export default function Games() {
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-12">
         <div className="mb-12">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3">
+          <div className="flex flex-col gap-4 mb-3">
             <h1 className="text-4xl md:text-5xl font-bold text-content-primary">
               Language Learning <span className="text-content-primary">Games</span>
             </h1>
-
-            {/* Language Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-3 px-4 py-2.5 bg-surface-base border border-border-base rounded-xl shadow-sm hover:shadow-md hover:border-border-strong transition-all duration-200"
-              >
-                <Globe className="w-5 h-5 text-accent" />
-                <span className="font-medium text-content-primary">{currentLanguage.name}</span>
-                <ChevronDown className={`w-4 h-4 text-content-secondary transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {isDropdownOpen && (
-                <>
-                  {/* Backdrop to close dropdown */}
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setIsDropdownOpen(false)}
-                  />
-
-                  {/* Dropdown menu */}
-                  <div className="absolute right-0 mt-2 w-56 bg-surface-base border border-border-base rounded-xl shadow-lg z-20 py-2 max-h-80 overflow-y-auto">
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => {
-                          setSelectedLanguage(lang.code);
-                          setIsDropdownOpen(false);
-                        }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-surface-2 transition-colors ${selectedLanguage === lang.code ? 'tone-brand border border-accent' : 'text-content-primary'
-                          }`}
-                      >
-                        <span className="font-medium">{lang.name}</span>
-                        {selectedLanguage === lang.code && (
-                          <span className="ml-auto text-accent">✓</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
           </div>
-          <p className="text-lg text-content-secondary">Master your skills through fun, interactive games • Learning <span className="font-semibold text-accent">{currentLanguage.name}</span></p>
+          <p className="text-lg text-content-secondary">
+            Master your skills through fun, interactive games • Learning{' '}
+            <span className="font-semibold text-accent">{currentLanguageName}</span>
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

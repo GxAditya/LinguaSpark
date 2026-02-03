@@ -6,51 +6,20 @@ import {
   Send,
   ChevronRight,
   ChevronLeft,
-  ChevronDown,
   Users,
   Target,
   Brain,
   Loader2,
 } from 'lucide-react';
 import { useAuth } from '../context';
-import {
-  practiceService,
-  PracticeScenarioSummary,
-  PracticeSession,
-  PracticeLanguage,
-} from '../services';
-
-const LANGUAGE_OPTIONS: Array<{ value: PracticeLanguage; label: string }> = [
-  { value: 'spanish', label: 'Spanish' },
-  { value: 'french', label: 'French' },
-  { value: 'hindi', label: 'Hindi' },
-  { value: 'mandarin', label: 'Mandarin Chinese' },
-  { value: 'arabic', label: 'Arabic' },
-  { value: 'bengali', label: 'Bengali' },
-  { value: 'portuguese', label: 'Portuguese' },
-  { value: 'russian', label: 'Russian' },
-  { value: 'japanese', label: 'Japanese' },
-];
+import { practiceService, PracticeScenarioSummary, PracticeSession } from '../services';
+import { getLearningLanguageLabel, resolveLearningLanguage } from '../utils/languages';
 
 const ICON_MAP: Record<'users' | 'target' | 'message' | 'brain', React.ReactNode> = {
   users: <Users className="w-6 h-6" />,
   target: <Target className="w-6 h-6" />,
   message: <MessageCircle className="w-6 h-6" />,
   brain: <Brain className="w-6 h-6" />,
-};
-
-const resolveLanguage = (value?: string): PracticeLanguage => {
-  const validLanguages: PracticeLanguage[] = ['spanish', 'french', 'hindi', 'mandarin', 'arabic', 'bengali', 'portuguese', 'russian', 'japanese'];
-  if (value && validLanguages.includes(value as PracticeLanguage)) {
-    return value as PracticeLanguage;
-  }
-  return 'spanish';
-};
-
-const getLanguageLabel = (code: string) => {
-  const option = LANGUAGE_OPTIONS.find((lang) => lang.value === code);
-  if (option) return option.label;
-  return code ? code.charAt(0).toUpperCase() + code.slice(1) : 'Spanish';
 };
 
 const getIconForTopic = (topic: string) => {
@@ -87,9 +56,7 @@ const formatDifficultyLabel = (difficulty: string) => difficulty.charAt(0).toUpp
 
 export default function Practice() {
   const { user } = useAuth();
-  const defaultLanguage = resolveLanguage(user?.currentLanguage);
-  const [selectedLanguage, setSelectedLanguage] = useState<PracticeLanguage>(defaultLanguage);
-  const [isLanguageManuallySelected, setIsLanguageManuallySelected] = useState(false);
+  const selectedLanguage = resolveLearningLanguage(user?.currentLanguage);
   const [scenarios, setScenarios] = useState<PracticeScenarioSummary[]>([]);
   const [scenariosLoading, setScenariosLoading] = useState(true);
   const [scenarioError, setScenarioError] = useState<string | null>(null);
@@ -132,50 +99,16 @@ export default function Practice() {
   }, []);
 
   useEffect(() => {
-    if (user?.currentLanguage && !isLanguageManuallySelected) {
-      setSelectedLanguage(resolveLanguage(user.currentLanguage));
-    }
-  }, [user?.currentLanguage, isLanguageManuallySelected]);
-
-  const filteredScenarios = useMemo(
-    () => scenarios.filter((scenario) => scenario.language === selectedLanguage),
-    [scenarios, selectedLanguage]
-  );
-
-  const handleLanguageChange = (value: PracticeLanguage) => {
-    if (value === selectedLanguage) return;
-    setIsLanguageManuallySelected(true);
-    setSelectedLanguage(value);
     setSelectedScenario(null);
     setActiveSession(null);
     setSessionError(null);
     setInputValue('');
     setIsRecording(false);
-  };
+  }, [selectedLanguage]);
 
-  const LanguageSelector = ({ id, className = '' }: { id: string; className?: string }) => (
-    <div className={`flex flex-col text-sm ${className}`}>
-      <label htmlFor={id} className="font-semibold text-content-primary mb-2">
-        Learning language
-      </label>
-      <div className="relative group">
-        <select
-          id={id}
-          value={selectedLanguage}
-          onChange={(event) => handleLanguageChange(event.target.value as PracticeLanguage)}
-          className="appearance-none w-52 rounded-xl border-2 border-border-base bg-surface py-3 pl-4 pr-10 text-sm font-semibold text-content-primary shadow-sm cursor-pointer transition-all duration-200 hover:border-border-strong hover:shadow-md focus:border-accent focus:outline-none focus:ring-2 focus:ring-[rgba(var(--color-accent-rgb),0.2)]"
-        >
-          {LANGUAGE_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value} className="py-2">
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md bg-surface-2 flex items-center justify-center group-hover:bg-surface-3 transition-colors">
-          <ChevronDown className="h-4 w-4 text-accent" />
-        </div>
-      </div>
-    </div>
+  const filteredScenarios = useMemo(
+    () => scenarios.filter((scenario) => scenario.language === selectedLanguage),
+    [scenarios, selectedLanguage]
   );
 
   const handleStartScenario = async (scenario: PracticeScenarioSummary) => {
@@ -258,7 +191,7 @@ export default function Practice() {
       return (
         <div className="bg-surface-base p-8 rounded-xl border border-border-base shadow-sm text-center text-content-secondary">
           <p>
-            We&apos;re still preparing {getLanguageLabel(selectedLanguage)} practice scenarios. Try another language for now!
+            We&apos;re still preparing {getLearningLanguageLabel(selectedLanguage)} practice scenarios. Try another language for now!
           </p>
         </div>
       );
@@ -288,7 +221,7 @@ export default function Practice() {
               <span>~{scenario.durationMinutes} minutes</span>
               <span className="bg-surface-subtle border border-border-subtle px-2 py-1 rounded-md text-content-secondary">{scenario.topic}</span>
             </div>
-            <div className="text-xs text-content-secondary mt-2">{getLanguageLabel(scenario.language)}</div>
+            <div className="text-xs text-content-secondary mt-2">{getLearningLanguageLabel(scenario.language)}</div>
 
             <div className="flex items-center gap-2 text-content-primary font-semibold text-sm group-hover:gap-3 transition-all mt-4">
               Start Practice <ChevronRight className="w-4 h-4" />
@@ -304,7 +237,7 @@ export default function Practice() {
     const chatMessages = activeSession?.messages ?? [];
     const conversationReady = !isSessionLoading && !!activeSession;
     const sessionActive = activeSession?.status === 'active';
-    const placeholder = `Type your response in ${getLanguageLabel(selectedScenario.language)}...`;
+    const placeholder = `Type your response in ${getLearningLanguageLabel(selectedScenario.language)}...`;
 
     return (
       <div className="min-h-screen bg-surface-base flex flex-col relative overflow-hidden">
@@ -321,7 +254,6 @@ export default function Practice() {
             >
               <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back to scenarios
             </button>
-            <LanguageSelector id="scenario-language" />
           </div>
 
           <div className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm space-y-4">
@@ -346,7 +278,7 @@ export default function Practice() {
               </div>
               <div>
                 <p className="font-semibold text-content-primary">Language</p>
-                <p>{getLanguageLabel(selectedScenario.language)}</p>
+                <p>{getLearningLanguageLabel(selectedScenario.language)}</p>
               </div>
             </div>
 
@@ -505,17 +437,16 @@ export default function Practice() {
       <DashboardHeader userName={userName} activeTab="practice" />
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-12 space-y-10">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div>
           <div>
             <p className="text-sm uppercase tracking-wide text-content-tertiary font-semibold mb-2">AI conversation lab</p>
             <h1 className="text-4xl md:text-5xl font-bold text-content-primary mb-3">
               Scenario-based <span className="text-content-primary">practice</span>
             </h1>
             <p className="text-lg text-content-secondary">
-              Real-time {getLanguageLabel(selectedLanguage)} conversations guided entirely by our live AI tutors.
+              Real-time {getLearningLanguageLabel(selectedLanguage)} conversations guided entirely by our live AI tutors.
             </p>
           </div>
-          <LanguageSelector id="language-selector-hero" className="self-start" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

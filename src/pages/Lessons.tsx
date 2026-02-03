@@ -1,27 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
-import { BookOpen, Volume2, CheckCircle, Clock, Zap, ChevronRight, PlayCircle, ChevronLeft, Loader2, AlertCircle, Pause, ChevronDown } from 'lucide-react';
+import { AlertCircle, BookOpen, CheckCircle, ChevronLeft, ChevronRight, Clock, Loader2, Pause, PlayCircle, Volume2, Zap } from 'lucide-react';
 import { useAuth } from '../context';
 import { lessonService, ttsService, LessonSummary, LessonDetail, LessonProgress } from '../services';
-
-const LANGUAGE_OPTIONS = [
-  { value: 'spanish', label: 'Spanish' },
-  { value: 'french', label: 'French' },
-  { value: 'hindi', label: 'Hindi' },
-  { value: 'mandarin', label: 'Mandarin Chinese' },
-  { value: 'arabic', label: 'Arabic' },
-  { value: 'bengali', label: 'Bengali' },
-  { value: 'portuguese', label: 'Portuguese' },
-  { value: 'russian', label: 'Russian' },
-  { value: 'japanese', label: 'Japanese' },
-];
+import { getLearningLanguageLabel, resolveLearningLanguage } from '../utils/languages';
 
 export default function Lessons() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   const [lessons, setLessons] = useState<LessonSummary[]>([]);
-  const [selectedLanguage, setSelectedLanguage] = useState<string>(user?.currentLanguage || 'spanish');
-  const [isLanguageManuallySelected, setIsLanguageManuallySelected] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<LessonDetail | null>(null);
   const [lessonProgress, setLessonProgress] = useState<LessonProgress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,6 +24,7 @@ export default function Lessons() {
   } | null>(null);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const selectedLanguage = resolveLearningLanguage(user?.currentLanguage);
 
   // Fetch lessons on mount
   useEffect(() => {
@@ -57,12 +45,6 @@ export default function Lessons() {
       fetchLessons();
     }
   }, [isAuthenticated, selectedLanguage]);
-
-  useEffect(() => {
-    if (user?.currentLanguage && !isLanguageManuallySelected) {
-      setSelectedLanguage(user.currentLanguage);
-    }
-  }, [user?.currentLanguage, isLanguageManuallySelected]);
 
   // Auth loading state
   if (authLoading) {
@@ -144,15 +126,6 @@ export default function Lessons() {
     setExerciseAnswer('');
     setExerciseResult(null);
     handlePauseAudio();
-  };
-
-  const handleLanguageChange = (value: string) => {
-    if (value === selectedLanguage) {
-      return;
-    }
-    setIsLanguageManuallySelected(true);
-    resetLessonState();
-    setSelectedLanguage(value);
   };
 
   const handleContentComplete = async (contentIndex: number) => {
@@ -256,36 +229,6 @@ export default function Lessons() {
     }
   };
 
-  const getLanguageLabel = (code: string) => {
-    const option = LANGUAGE_OPTIONS.find((lang) => lang.value === code);
-    if (option) return option.label;
-    return code ? code.charAt(0).toUpperCase() + code.slice(1) : 'Spanish';
-  };
-
-  const LanguageSelector = ({ id, className = '' }: { id: string; className?: string }) => (
-    <div className={`flex flex-col text-sm ${className}`}>
-      <label htmlFor={id} className="font-semibold text-content-primary mb-2">
-        Learning language
-      </label>
-      <div className="relative group">
-        <select
-          id={id}
-          value={selectedLanguage}
-          onChange={(event) => handleLanguageChange(event.target.value)}
-          className="appearance-none w-52 rounded-xl border-2 border-border-base bg-surface py-3 pl-4 pr-10 text-sm font-semibold text-content-primary shadow-sm cursor-pointer transition-all duration-200 hover:border-border-strong hover:shadow-md focus:border-accent focus:outline-none focus:ring-2 focus:ring-[rgba(var(--color-accent-rgb),0.2)]"
-        >
-          {LANGUAGE_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value} className="py-2">
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md bg-surface-2 flex items-center justify-center group-hover:bg-surface-3 transition-colors">
-          <ChevronDown className="h-4 w-4 text-accent" />
-        </div>
-      </div>
-    </div>
-  );
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -338,9 +281,6 @@ export default function Lessons() {
             >
               <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back to Lessons
             </button>
-            <div className="sm:ml-auto">
-              <LanguageSelector id="lesson-language-selector-active" />
-            </div>
           </div>
 
           {/* Lesson Header */}
@@ -356,7 +296,7 @@ export default function Lessons() {
                     <Clock className="w-4 h-4" /> {selectedLesson.duration} minutes
                   </span>
                   <span className="text-content-primary flex items-center gap-2 text-sm bg-surface-subtle rounded-full px-3 py-1 font-medium">
-                    {getLanguageLabel(selectedLesson.language)}
+                    {getLearningLanguageLabel(selectedLesson.language)}
                   </span>
                 </div>
               </div>
@@ -663,9 +603,8 @@ export default function Lessons() {
               AI-Generated <span className="text-content-primary">Lessons</span>
             </h1>
             <p className="text-lg text-content-secondary">Personalized lessons created by our AI to match your learning pace</p>
-            <p className="text-sm text-content-tertiary mt-2">Showing content for {getLanguageLabel(selectedLanguage)}</p>
+            <p className="text-sm text-content-tertiary mt-2">Showing content for {getLearningLanguageLabel(selectedLanguage)}</p>
           </div>
-          <LanguageSelector id="lesson-language-selector" />
         </div>
 
         {isLoading ? (
@@ -687,7 +626,7 @@ export default function Lessons() {
                 </div>
 
                 <p className="text-xs font-semibold uppercase tracking-wide text-content-tertiary mb-2">
-                  {getLanguageLabel(lesson.language)}
+                  {getLearningLanguageLabel(lesson.language)}
                 </p>
 
                 <h3 className="text-lg font-bold text-content-primary mb-2">{lesson.title}</h3>
