@@ -40,7 +40,7 @@ export default function Pricing() {
       ],
       cta: 'Start Free Trial',
       popular: true,
-      color: 'orange'
+      color: 'blue'
     },
     {
       name: 'Lifetime',
@@ -71,13 +71,13 @@ export default function Pricing() {
       <section className="pt-32 pb-16 px-6">
         <div className="max-w-7xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 mb-8 shadow-sm">
-            <Zap className="w-4 h-4 text-orange-500" />
+            <Zap className="w-4 h-4 text-blue-500" />
             <span>Simple, Transparent Pricing</span>
           </div>
           
           <h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-gray-900 leading-tight tracking-tight">
             Choose Your
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-pink-600">Learning Journey</span>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600">Learning Journey</span>
           </h1>
           
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
@@ -98,24 +98,24 @@ export default function Pricing() {
                   key={plan.name}
                   className={`relative bg-white border-2 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl ${
                     plan.popular
-                      ? 'border-orange-500 shadow-lg scale-105'
+                      ? 'border-blue-500 shadow-lg scale-105'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   {plan.popular && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-orange-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
                       Most Popular
                     </div>
                   )}
                   
                   <div className="mb-6">
                     <div className={`inline-flex p-3 rounded-lg mb-4 ${
-                      plan.color === 'orange' ? 'bg-orange-50 border border-orange-100' :
+                      plan.color === 'blue' ? 'bg-blue-50 border border-blue-100' :
                       plan.color === 'purple' ? 'bg-purple-50 border border-purple-100' :
                       'bg-gray-50 border border-gray-100'
                     }`}>
                       <Icon className={`w-8 h-8 ${
-                        plan.color === 'orange' ? 'text-orange-600' :
+                        plan.color === 'blue' ? 'text-blue-600' :
                         plan.color === 'purple' ? 'text-purple-600' :
                         'text-gray-600'
                       }`} />

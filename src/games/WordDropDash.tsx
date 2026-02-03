@@ -60,7 +60,7 @@ export default function WordDropDash() {
             <Check className="w-12 h-12 text-green-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Game Complete!</h2>
-          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score}</span></p>
+          <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">{score}</span></p>
           <button
             onClick={startNewGame}
             className="btn-primary"

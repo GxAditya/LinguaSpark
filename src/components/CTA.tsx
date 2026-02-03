@@ -10,14 +10,14 @@ export default function CTA() {
     <section
       id="pricing"
       ref={ref}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-orange-50 to-pink-50 border-t border-gray-100"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-blue-50 to-cyan-50 border-t border-gray-100"
     >
       {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-2 h-2 bg-orange-300 rounded-full opacity-20 animate-float"
+            className="absolute w-2 h-2 bg-blue-300 rounded-full opacity-20 animate-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -31,7 +31,7 @@ export default function CTA() {
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
         {/* Badge */}
         <div
-          className={`inline-flex items-center gap-2 bg-white border border-orange-200 px-5 py-2.5 rounded-full text-sm font-medium text-orange-700 mb-8 shadow-sm transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          className={`inline-flex items-center gap-2 bg-white border border-blue-200 px-5 py-2.5 rounded-full text-sm font-medium text-blue-700 mb-8 shadow-sm transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
         >
           <Shield className="w-4 h-4" />
@@ -44,7 +44,7 @@ export default function CTA() {
             }`}
         >
           Ready to Become
-          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-pink-600 to-purple-600">
+          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-600">
             Fluent?
           </span>
         </h2>
@@ -67,7 +67,7 @@ export default function CTA() {
         >
           <Link
             to="/signup"
-            className="group bg-gradient-to-r from-orange-600 to-pink-600 text-white px-10 py-5 rounded-xl font-bold text-lg hover:from-orange-700 hover:to-pink-700 transition-all duration-200 flex items-center gap-3 relative overflow-hidden justify-center shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+            className="group bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-10 py-5 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 flex items-center gap-3 relative overflow-hidden justify-center shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
           >
             <span className="relative z-10">Get Started Free</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
@@ -97,8 +97,8 @@ export default function CTA() {
           </div>
 
           <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm px-5 py-3 rounded-xl border border-gray-200 shadow-sm">
-            <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-              <Clock className="w-5 h-5 text-orange-600" />
+            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <Clock className="w-5 h-5 text-blue-600" />
             </div>
             <span className="font-semibold text-gray-700">7-Day Free Trial</span>
           </div>
@@ -116,7 +116,7 @@ export default function CTA() {
           className={`mt-16 transition-all duration-700 delay-500 ${isVisible ? 'opacity-100' : 'opacity-0'
             }`}
         >
-          <div className="h-1 w-64 mx-auto bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 rounded-full animate-gradient-x"></div>
+          <div className="h-1 w-64 mx-auto bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-500 rounded-full animate-gradient-x"></div>
         </div>
       </div>
     </section>

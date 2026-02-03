@@ -76,7 +76,7 @@ export default function SocialProof() {
                 ))}
               </div>
 
-              <Quote className="w-8 h-8 text-orange-400 mb-4 opacity-50" />
+              <Quote className="w-8 h-8 text-blue-400 mb-4 opacity-50" />
 
               <blockquote className="text-gray-700 mb-6 text-lg leading-relaxed">
                 "{testimonial.content}"
@@ -94,7 +94,7 @@ export default function SocialProof() {
                 </div>
               </div>
 
-              <div className="mt-4 bg-orange-50 border border-orange-100 px-4 py-2 rounded-lg text-sm font-medium text-orange-700">
+              <div className="mt-4 bg-blue-50 border border-blue-100 px-4 py-2 rounded-lg text-sm font-medium text-blue-700">
                 🎉 {testimonial.progress}
               </div>
             </div>

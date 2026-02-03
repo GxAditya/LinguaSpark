@@ -398,15 +398,15 @@
   }
 
   .glow-orb-orange {
-    @apply bg-gradient-to-r from-orange-200 to-amber-200;
+    @apply bg-gradient-to-r from-blue-200 to-cyan-200;
   }
 
   .glow-orb-purple {
-    @apply bg-gradient-to-r from-orange-300 to-amber-300;
+    @apply bg-gradient-to-r from-blue-300 to-cyan-300;
   }
 
   .glow-orb-yellow {
-    @apply bg-gradient-to-r from-yellow-200 to-orange-200;
+    @apply bg-gradient-to-r from-cyan-200 to-blue-200;
   }
 
   /* Page wrapper with gradient background */
@@ -574,7 +574,7 @@
   }
 
   .badge-gradient {
-    @apply badge bg-gradient-to-r from-orange-500 to-pink-500 text-white;
+    @apply badge bg-gradient-to-r from-blue-500 to-cyan-500 text-white;
   }
 
   /* Progress bar */
@@ -649,7 +649,7 @@
   }
 
   .dot-orange {
-    @apply dot-indicator bg-orange-500;
+    @apply dot-indicator bg-blue-500;
   }
 
   .dot-purple {

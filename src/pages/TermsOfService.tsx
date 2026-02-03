@@ -12,15 +12,15 @@ export default function TermsOfService() {
         <div className="max-w-4xl mx-auto">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-orange-600 mb-8 transition-colors"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 mb-8 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Link>
           
           <div className="mb-12">
-            <div className="inline-flex p-3 rounded-lg bg-orange-50 border border-orange-100 mb-6">
-              <FileText className="w-8 h-8 text-orange-600" />
+            <div className="inline-flex p-3 rounded-lg bg-blue-50 border border-blue-100 mb-6">
+              <FileText className="w-8 h-8 text-blue-600" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Terms of Service
