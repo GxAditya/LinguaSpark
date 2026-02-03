@@ -34,6 +34,86 @@ interface ChatMessage {
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama-3.1-8b-instant';
 
+const TRANSLATION_MATCHUP_FALLBACK_PAIRS: Record<string, Array<{ original: string; translation: string }>> = {
+  spanish: [
+    { original: 'Hola', translation: 'Hello' },
+    { original: 'Agua', translation: 'Water' },
+    { original: 'Pan', translation: 'Bread' },
+    { original: 'Libro', translation: 'Book' },
+    { original: 'Feliz', translation: 'Happy' },
+    { original: 'Amigo', translation: 'Friend' },
+  ],
+  french: [
+    { original: 'Bonjour', translation: 'Hello' },
+    { original: 'Eau', translation: 'Water' },
+    { original: 'Pain', translation: 'Bread' },
+    { original: 'Livre', translation: 'Book' },
+    { original: 'Heureux', translation: 'Happy' },
+    { original: 'Ami', translation: 'Friend' },
+  ],
+  hindi: [
+    { original: 'नमस्ते', translation: 'Hello' },
+    { original: 'पानी', translation: 'Water' },
+    { original: 'रोटी', translation: 'Bread' },
+    { original: 'किताब', translation: 'Book' },
+    { original: 'खुश', translation: 'Happy' },
+    { original: 'दोस्त', translation: 'Friend' },
+  ],
+  mandarin: [
+    { original: '你好', translation: 'Hello' },
+    { original: '水', translation: 'Water' },
+    { original: '面包', translation: 'Bread' },
+    { original: '书', translation: 'Book' },
+    { original: '高兴', translation: 'Happy' },
+    { original: '朋友', translation: 'Friend' },
+  ],
+  arabic: [
+    { original: 'مرحباً', translation: 'Hello' },
+    { original: 'ماء', translation: 'Water' },
+    { original: 'خبز', translation: 'Bread' },
+    { original: 'كتاب', translation: 'Book' },
+    { original: 'سعيد', translation: 'Happy' },
+    { original: 'صديق', translation: 'Friend' },
+  ],
+  bengali: [
+    { original: 'নমস্কার', translation: 'Hello' },
+    { original: 'পানি', translation: 'Water' },
+    { original: 'রুটি', translation: 'Bread' },
+    { original: 'বই', translation: 'Book' },
+    { original: 'খুশি', translation: 'Happy' },
+    { original: 'বন্ধু', translation: 'Friend' },
+  ],
+  portuguese: [
+    { original: 'Olá', translation: 'Hello' },
+    { original: 'Água', translation: 'Water' },
+    { original: 'Pão', translation: 'Bread' },
+    { original: 'Livro', translation: 'Book' },
+    { original: 'Feliz', translation: 'Happy' },
+    { original: 'Amigo', translation: 'Friend' },
+  ],
+  russian: [
+    { original: 'Привет', translation: 'Hello' },
+    { original: 'Вода', translation: 'Water' },
+    { original: 'Хлеб', translation: 'Bread' },
+    { original: 'Книга', translation: 'Book' },
+    { original: 'Счастливый', translation: 'Happy' },
+    { original: 'Друг', translation: 'Friend' },
+  ],
+  japanese: [
+    { original: 'こんにちは', translation: 'Hello' },
+    { original: '水', translation: 'Water' },
+    { original: 'パン', translation: 'Bread' },
+    { original: '本', translation: 'Book' },
+    { original: 'うれしい', translation: 'Happy' },
+    { original: '友達', translation: 'Friend' },
+  ],
+};
+
+function getTranslationMatchupFallbackPairs(targetLanguage: string): Array<{ original: string; translation: string }> {
+  const normalized = targetLanguage.trim().toLowerCase();
+  return TRANSLATION_MATCHUP_FALLBACK_PAIRS[normalized] ?? TRANSLATION_MATCHUP_FALLBACK_PAIRS.spanish;
+}
+
 
 
 // Fallback game content for each game type
@@ -68,14 +148,7 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<Ga
     difficulty: opts.difficulty,
     language: opts.language,
     targetLanguage: opts.targetLanguage,
-    pairs: [
-      { original: 'Hola', translation: 'Hello' },
-      { original: 'Agua', translation: 'Water' },
-      { original: 'Pan', translation: 'Bread' },
-      { original: 'Libro', translation: 'Book' },
-      { original: 'Feliz', translation: 'Happy' },
-      { original: 'Amigo', translation: 'Friend' },
-    ],
+    pairs: getTranslationMatchupFallbackPairs(opts.targetLanguage),
   }),
   'secret-word-solver': (opts) => ({
     type: 'secret-word-solver',
@@ -171,6 +244,7 @@ CONTEXT:
 
 QUALITY REQUIREMENTS:
 - Ensure cultural authenticity and natural language usage
+- Use the target language's standard writing system (no romanization/transliteration)
 - Use age-appropriate and inclusive content
 - Provide clear, unambiguous correct answers
 - Create engaging, memorable examples

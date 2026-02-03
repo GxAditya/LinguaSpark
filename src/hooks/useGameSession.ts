@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../context';
 import { gameService, GameType, Difficulty, GameSession } from '../services/game.service';
+import { resolveLearningLanguage } from '../utils/languages';
 
 interface UseGameSessionOptions {
   gameType: GameType;
@@ -63,16 +65,17 @@ interface UseGameSessionReturn {
 export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameType): UseGameSessionReturn {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
 
   // Support both string (gameType) and object (options) parameters
   const options: UseGameSessionOptions = typeof optionsOrGameType === 'string'
     ? { gameType: optionsOrGameType }
     : optionsOrGameType;
 
-  // Get language from URL query param, falling back to options or default
+  // Get language from Dashboard selection first, then URL query param, then options/default
   const urlLanguage = searchParams.get('language');
-  const { gameType, difficulty = 'beginner', targetLanguage: optionsLanguage = 'spanish', topic } = options;
-  const targetLanguage = urlLanguage || optionsLanguage;
+  const { gameType, difficulty = 'beginner', targetLanguage: optionsLanguage, topic } = options;
+  const targetLanguage = resolveLearningLanguage(user?.currentLanguage ?? urlLanguage ?? optionsLanguage);
 
   const [session, setSession] = useState<GameSession | null>(null);
   const [loading, setLoading] = useState(true);
@@ -108,8 +111,7 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
         await lastActionRef.current();
       } catch (err) {
         console.error('Retry failed:', err);
-        const error = err as any;
-        setError(error.message || 'Action failed. Please try again.');
+        setError(err instanceof Error ? err.message : 'Action failed. Please try again.');
       }
     }
   }, [clearError]);
@@ -194,6 +196,15 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
       try {
         const existingSession = await gameService.getActiveSession(gameType);
         if (existingSession) {
+          const existingTargetLanguage = (existingSession.content as { targetLanguage?: string } | null)?.targetLanguage;
+          const resolvedExistingTargetLanguage = resolveLearningLanguage(existingTargetLanguage);
+
+          // If the user changed their learning language on the dashboard, restart with the new language
+          if (resolvedExistingTargetLanguage !== targetLanguage) {
+            await startNewGame();
+            return;
+          }
+
           setSession(existingSession);
           sessionIdRef.current = existingSession.sessionId;
           setCurrentRound(existingSession.currentRound);
@@ -212,7 +223,7 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
     };
 
     checkExistingSession();
-  }, [gameType, startNewGame]);
+  }, [gameType, startNewGame, targetLanguage]);
 
   const completeGame = useCallback(async () => {
     if (!sessionIdRef.current) return;

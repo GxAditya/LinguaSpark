@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronRight, Check, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import GameLayout from '../components/GameLayout';
 import ExitConfirmModal from '../components/ExitConfirmModal';
 import { GameLoading, GameError } from '../components/GameStates';
 import { useGameSession } from '../hooks/useGameSession';
+import { getLearningLanguageLabel, getLearningLanguageMeta } from '../utils/languages';
 
 interface TranslationPair {
   original: string;
@@ -27,9 +28,11 @@ export default function TranslationMatchUp() {
     showExitConfirm,
     setShowExitConfirm,
     confirmExit,
+    cancelExit,
     updateScore,
     completeGame,
     startNewGame,
+    targetLanguage,
     gameState: { feedback, setFeedback },
   } = useGameSession({
     gameType: 'translation-matchup',
@@ -38,9 +41,14 @@ export default function TranslationMatchUp() {
 
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [matchedCards, setMatchedCards] = useState<number[]>([]);
+  const [hasSubmittedCompletion, setHasSubmittedCompletion] = useState(false);
+  const evaluateLockRef = useRef(false);
+  const flipBackTimeoutRef = useRef<number | null>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pairs: TranslationPair[] = useMemo(() => (content as any)?.pairs || [], [content]);
+  const pairs: TranslationPair[] = useMemo(() => {
+    const rawPairs = (content as { pairs?: TranslationPair[] } | null)?.pairs;
+    return Array.isArray(rawPairs) ? rawPairs : [];
+  }, [content]);
 
   // Shuffle cards for display
   const cards: Card[] = useMemo(() => {
@@ -54,58 +62,88 @@ export default function TranslationMatchUp() {
 
   const allMatched = matchedCards.length === cards.length && cards.length > 0;
   const maxScore = pairs.length * 10;
-  const isComplete = allMatched;
-
-  // Track if we've already processed the current flip pair to prevent double scoring
-  const [processedFlip, setProcessedFlip] = useState(false);
+  const learningLanguageLabel = getLearningLanguageLabel(targetLanguage);
+  const learningLanguageMeta = getLearningLanguageMeta(targetLanguage);
 
   useEffect(() => {
-    // Reset processedFlip when flippedCards changes to a new pair or is cleared
-    if (flippedCards.length !== 2) {
-      setProcessedFlip(false);
+    // Reset local state when new content loads
+    setFlippedCards([]);
+    setMatchedCards([]);
+    setHasSubmittedCompletion(false);
+    evaluateLockRef.current = false;
+
+    if (flipBackTimeoutRef.current) {
+      window.clearTimeout(flipBackTimeoutRef.current);
+      flipBackTimeoutRef.current = null;
     }
-  }, [flippedCards]);
+
+    setFeedback(null);
+  }, [pairs, setFeedback]);
 
   useEffect(() => {
-    // Guard: only process if we have 2 cards and haven't already processed this flip
-    if (flippedCards.length === 2 && !processedFlip) {
-      const card1 = cards.find((c) => c.id === flippedCards[0]);
-      const card2 = cards.find((c) => c.id === flippedCards[1]);
-
-      // Mark as processed immediately to prevent re-running
-      setProcessedFlip(true);
-
-      if (card1 && card2 && card1.pairId === card2.pairId && card1.isOriginal !== card2.isOriginal) {
-        setFeedback('correct'); // Use standardized feedback
-        setMatchedCards((prev) => [...prev, ...flippedCards]);
-        updateScore(score + 10);
-      } else {
-        setFeedback('incorrect'); // Use standardized feedback
+    // Cleanup any pending timeout on unmount
+    return () => {
+      if (flipBackTimeoutRef.current) {
+        window.clearTimeout(flipBackTimeoutRef.current);
+        flipBackTimeoutRef.current = null;
       }
+    };
+  }, []);
 
-      setTimeout(() => {
-        if (!card1 || !card2 || card1.pairId !== card2.pairId) {
-          setFlippedCards([]);
-        }
-        setFeedback(null);
-      }, 1000);
-    }
-  }, [flippedCards, cards, processedFlip, score, updateScore, setFeedback]);
+  useEffect(() => {
+    if (!allMatched || hasSubmittedCompletion) return;
+    setHasSubmittedCompletion(true);
+    void completeGame();
+  }, [allMatched, hasSubmittedCompletion, completeGame]);
 
   const handleCardClick = (cardId: number) => {
-    if (flippedCards.length < 2 && !flippedCards.includes(cardId) && !matchedCards.includes(cardId)) {
-      setFlippedCards([...flippedCards, cardId]);
-    }
-  };
+    if (evaluateLockRef.current) return;
+    if (matchedCards.includes(cardId)) return;
+    if (flippedCards.includes(cardId)) return;
+    if (flippedCards.length >= 2) return;
 
-  const handleComplete = async () => {
-    await completeGame();
+    const nextFlipped = [...flippedCards, cardId];
+    setFlippedCards(nextFlipped);
+
+    if (nextFlipped.length !== 2) return;
+    evaluateLockRef.current = true;
+
+    const [firstId, secondId] = nextFlipped;
+    const firstCard = cards.find((card) => card.id === firstId);
+    const secondCard = cards.find((card) => card.id === secondId);
+
+    const isMatch =
+      !!firstCard &&
+      !!secondCard &&
+      firstCard.pairId === secondCard.pairId &&
+      firstCard.isOriginal !== secondCard.isOriginal;
+
+    if (isMatch) {
+      setFeedback('correct');
+      setMatchedCards((prev) => [...prev, firstId, secondId]);
+      updateScore(score + 10);
+    } else {
+      setFeedback('incorrect');
+    }
+
+    flipBackTimeoutRef.current = window.setTimeout(() => {
+      setFlippedCards([]);
+      setFeedback(null);
+      evaluateLockRef.current = false;
+      flipBackTimeoutRef.current = null;
+    }, 900);
   };
 
   const handlePlayAgain = () => {
     setFlippedCards([]);
     setMatchedCards([]);
     setFeedback(null);
+    setHasSubmittedCompletion(false);
+    evaluateLockRef.current = false;
+    if (flipBackTimeoutRef.current) {
+      window.clearTimeout(flipBackTimeoutRef.current);
+      flipBackTimeoutRef.current = null;
+    }
     startNewGame();
   };
 
@@ -117,7 +155,7 @@ export default function TranslationMatchUp() {
     return <GameError error={error} onRetry={startNewGame} />;
   }
 
-  if (isComplete) {
+  if (allMatched) {
     return (
       <GameLayout title="Translation Match-Up">
         <div className="flex flex-col items-center justify-center py-16">
@@ -155,7 +193,7 @@ export default function TranslationMatchUp() {
         <div className="max-w-3xl mx-auto">
           <div className="card p-8 mb-8">
             <p className="text-sm text-gray-600 mb-8">
-              Match words with their translations!
+              Match words with their translations — learning <span className="font-semibold text-gray-900">{learningLanguageLabel}</span>.
             </p>
 
             <div className="grid grid-cols-4 gap-3 mb-8">
@@ -164,6 +202,8 @@ export default function TranslationMatchUp() {
                   key={card.id}
                   onClick={() => handleCardClick(card.id)}
                   disabled={matchedCards.includes(card.id)}
+                  lang={card.isOriginal ? learningLanguageMeta.bcp47 : 'en'}
+                  dir={card.isOriginal ? learningLanguageMeta.dir : 'ltr'}
                   className={`aspect-square rounded-xl font-semibold text-sm transition-all flex items-center justify-center p-2 ${matchedCards.includes(card.id)
                     ? 'bg-green-100 text-green-600 cursor-default'
                     : flippedCards.includes(card.id)
@@ -197,29 +237,22 @@ export default function TranslationMatchUp() {
               <p className="text-sm text-gray-600">
                 Matched: {matchedCards.length / 2} / {pairs.length}
               </p>
-              {allMatched && (
-                <button onClick={handleComplete} className="btn-primary flex items-center gap-2">
-                  Finish <ChevronRight className="w-4 h-4" />
-                </button>
-              )}
+              <button onClick={() => setShowExitConfirm(true)} className="btn-secondary flex items-center gap-2">
+                Finish <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
-          </div>
-
-          <div className="text-center">
-            <button
-              onClick={() => setShowExitConfirm(true)}
-              className="text-gray-500 hover:text-gray-700 text-sm underline"
-            >
-              Exit Game
-            </button>
           </div>
         </div>
       </GameLayout>
 
       <ExitConfirmModal
         isOpen={showExitConfirm}
-        onClose={() => setShowExitConfirm(false)}
+        onCancel={cancelExit}
         onConfirm={confirmExit}
+        title="Finish game early?"
+        message="You haven't matched all pairs yet. If you finish now, your progress will be lost."
+        confirmText="Yes, finish"
+        cancelText="Keep playing"
       />
     </>
   );

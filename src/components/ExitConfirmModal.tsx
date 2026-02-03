@@ -7,6 +7,8 @@ interface ExitConfirmModalProps {
   onConfirm: () => void;
   title?: string;
   message?: string;
+  cancelText?: string;
+  confirmText?: string;
 }
 
 export default function ExitConfirmModal({
@@ -16,6 +18,8 @@ export default function ExitConfirmModal({
   onConfirm,
   title = 'Leave Game?',
   message = 'Your progress will not be saved. Are you sure you want to exit?',
+  cancelText = 'Keep Playing',
+  confirmText = 'Exit Game',
 }: ExitConfirmModalProps) {
   const handleClose = onCancel || onClose;
   
@@ -58,13 +62,13 @@ export default function ExitConfirmModal({
             onClick={handleClose}
             className="flex-1 px-4 py-3 btn-secondary rounded-xl"
           >
-            Keep Playing
+            {cancelText}
           </button>
           <button
             onClick={onConfirm}
             className="flex-1 px-4 py-3 bg-warning text-white rounded-xl font-semibold hover:opacity-90 transition-all"
           >
-            Exit Game
+            {confirmText}
           </button>
         </div>
       </div>

@@ -26,6 +26,18 @@ export const LEARNING_LANGUAGE_OPTIONS: Array<{ value: LearningLanguage; label: 
   { value: 'japanese', label: 'Japanese' },
 ];
 
+export const LEARNING_LANGUAGE_META: Record<LearningLanguage, { bcp47: string; dir: 'ltr' | 'rtl' }> = {
+  spanish: { bcp47: 'es', dir: 'ltr' },
+  french: { bcp47: 'fr', dir: 'ltr' },
+  hindi: { bcp47: 'hi', dir: 'ltr' },
+  mandarin: { bcp47: 'zh', dir: 'ltr' },
+  arabic: { bcp47: 'ar', dir: 'rtl' },
+  bengali: { bcp47: 'bn', dir: 'ltr' },
+  portuguese: { bcp47: 'pt', dir: 'ltr' },
+  russian: { bcp47: 'ru', dir: 'ltr' },
+  japanese: { bcp47: 'ja', dir: 'ltr' },
+};
+
 export function isLearningLanguage(value: string): value is LearningLanguage {
   return (SUPPORTED_LEARNING_LANGUAGES as readonly string[]).includes(value);
 }
@@ -48,4 +60,13 @@ export function getLearningLanguageLabel(value: string | undefined | null): stri
   if (option) return option.label;
 
   return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+export function getLearningLanguageMeta(value: string | undefined | null): {
+  language: LearningLanguage;
+  bcp47: string;
+  dir: 'ltr' | 'rtl';
+} {
+  const language = resolveLearningLanguage(value);
+  return { language, ...LEARNING_LANGUAGE_META[language] };
 }
