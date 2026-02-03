@@ -34,6 +34,7 @@ export default {
           primary: 'var(--color-accent)',
           'primary-hover': 'var(--color-accent-strong)',
           'primary-light': 'rgba(var(--color-accent-rgb), 0.12)',
+          'primary-ring': 'rgba(var(--color-accent-rgb), 0.2)',
           'primary-border': 'rgba(var(--color-accent-rgb), 0.3)',
           secondary: 'var(--color-ink)',
           'secondary-light': 'var(--color-surface-2)',

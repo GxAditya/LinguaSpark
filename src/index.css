@@ -536,7 +536,7 @@
 
   /* Input styles */
   .input-primary {
-    @apply w-full px-4 py-3 border border-border-base rounded-lg bg-surface-subtle focus:bg-surface-base focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all outline-none placeholder:text-content-tertiary;
+    @apply w-full px-4 py-3 border border-border-base rounded-lg bg-surface-subtle focus:bg-surface-base focus:ring-2 focus:ring-brand-primary-ring focus:border-brand-primary transition-all outline-none placeholder:text-content-tertiary;
   }
 
   .input-with-icon {
