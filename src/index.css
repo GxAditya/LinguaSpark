@@ -536,7 +536,7 @@
 
   /* Input styles */
   .input-primary {
-    @apply w-full px-4 py-3 border border-border-base rounded-lg bg-surface-subtle focus:bg-surface-base focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all outline-none placeholder:text-content-tertiary;
+    @apply w-full px-4 py-3 border border-border-base rounded-lg bg-surface-subtle focus:bg-surface-base focus:ring-2 focus:ring-[rgba(var(--color-accent-rgb),0.2)] focus:border-accent transition-all outline-none placeholder:text-content-tertiary;
   }
 
   .input-with-icon {
@@ -550,7 +550,7 @@
   }
 
   .badge-brand {
-    @apply badge bg-brand-primary-light text-brand-primary border-brand-primary-border;
+    @apply badge bg-info-soft text-accent border-accent;
   }
 
   .badge-orange {
@@ -583,7 +583,7 @@
   }
 
   .progress-bar-fill {
-    @apply bg-brand-primary h-full rounded-full transition-all duration-500 ease-out;
+    @apply bg-accent h-full rounded-full transition-all duration-500 ease-out;
   }
 
   /* Icon container styles */
@@ -593,7 +593,7 @@
   }
 
   .icon-container-brand {
-    @apply icon-container bg-brand-primary-light border-brand-primary-border text-brand-primary;
+    @apply icon-container bg-info-soft border-accent text-accent;
   }
 
   .icon-container-purple {
