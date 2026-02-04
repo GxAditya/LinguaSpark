@@ -1,18 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
 import ProgressCard from '../components/ProgressCard';
 import DailyStreakCard from '../components/DailyStreakCard';
-import DailyGoalCard from '../components/DailyGoalCard';
 import { ArrowRight, BookOpen, ChevronDown, Gamepad2, Globe, Loader2, MessageCircle } from 'lucide-react';
 import { useAuth } from '../context';
 import { userService } from '../services';
 import { LEARNING_LANGUAGE_OPTIONS, type LearningLanguage, getLearningLanguageLabel, resolveLearningLanguage } from '../utils/languages';
+import type { DashboardStats } from '../services';
 
 export default function Dashboard() {
   const { user, isLoading, isAuthenticated, updateUser } = useAuth();
   const [isUpdatingLanguage, setIsUpdatingLanguage] = useState(false);
   const [languageError, setLanguageError] = useState<string | null>(null);
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
+  const [statsError, setStatsError] = useState<string | null>(null);
+  const [isStatsLoading, setIsStatsLoading] = useState(false);
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -35,11 +38,57 @@ export default function Dashboard() {
   const firstName = user.name.split(' ')[0];
   const learningLanguage = resolveLearningLanguage(user.currentLanguage);
   const learningLanguageLabel = getLearningLanguageLabel(learningLanguage);
+  const currentLevel = dashboardStats?.currentLevel ?? 1;
+  const targetLevel = dashboardStats?.targetLevel ?? 10;
+  const lessonsCompleted = dashboardStats?.lessonsCompleted ?? 0;
+  const practiceCompleted = dashboardStats?.practiceScenariosCompleted ?? 0;
 
-  // Calculate level progress (assuming 1000 XP per level)
-  const xpPerLevel = 1000;
-  const currentLevel = Math.floor(user.xp / xpPerLevel) + 1;
-  const lessonsCompleted = Math.floor(user.xp / 50); // Estimate based on XP
+  const streakInfo = useMemo(() => {
+    const lastActivity = dashboardStats?.lastActivityDate;
+    if (!lastActivity) {
+      return { label: 'Today' };
+    }
+    const lastDate = new Date(lastActivity);
+    if (Number.isNaN(lastDate.getTime())) {
+      return { label: 'Recently' };
+    }
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    const sameDay = lastDate.toDateString() === today.toDateString();
+    const wasYesterday = lastDate.toDateString() === yesterday.toDateString();
+    return {
+      label: sameDay ? 'Today' : wasYesterday ? 'Yesterday' : lastDate.toLocaleDateString(),
+    };
+  }, [dashboardStats?.lastActivityDate]);
+
+  useEffect(() => {
+    let ignore = false;
+    const loadStats = async () => {
+      if (!user) return;
+      setIsStatsLoading(true);
+      setStatsError(null);
+      try {
+        const stats = await userService.getDashboardStats(learningLanguage);
+        if (!ignore) {
+          setDashboardStats(stats);
+        }
+      } catch (err: unknown) {
+        if (!ignore) {
+          setStatsError(err instanceof Error ? err.message : 'Failed to load dashboard stats');
+        }
+      } finally {
+        if (!ignore) {
+          setIsStatsLoading(false);
+        }
+      }
+    };
+
+    loadStats();
+    return () => {
+      ignore = true;
+    };
+  }, [learningLanguage, user]);
 
   const handleLanguageChange = async (value: string) => {
     const nextLanguage = resolveLearningLanguage(value) as LearningLanguage;
@@ -74,19 +123,34 @@ export default function Dashboard() {
             </h1>
             <p className="text-lg text-content-secondary">Ready to continue your language journey?</p>
           </div>
+        </div>
 
-          {/* Language Selector */}
-          <div className="w-full max-w-md bg-surface-base p-5 rounded-xl border border-border-base shadow-sm">
-            <div className="flex items-center justify-between gap-3 mb-3">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <ProgressCard
+            currentLevel={currentLevel}
+            targetLevel={targetLevel}
+            language={learningLanguageLabel}
+            lessonsCompleted={lessonsCompleted}
+            practiceCompleted={practiceCompleted}
+          />
+          <DailyStreakCard
+            currentStreak={dashboardStats?.currentStreak ?? user.streak ?? 0}
+            longestStreak={dashboardStats?.longestStreak ?? user.streak ?? 0}
+            lastActivityDate={streakInfo.label}
+          />
+          <div className="bg-surface-base rounded-xl shadow-sm p-8 border border-border-base hover:shadow-md transition-shadow duration-300">
+            <div className="flex items-center justify-between gap-3 mb-6">
               <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-lg tone-brand border flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg tone-brand border flex items-center justify-center">
                   <Globe className="w-5 h-5 text-accent" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-content-primary">Language</p>
+                  <p className="text-sm font-semibold text-content-primary">Learning language</p>
+                  <p className="text-xs text-content-secondary">Switch your practice focus</p>
                 </div>
               </div>
-              {isUpdatingLanguage && <Loader2 className="w-4 h-4 text-content-secondary animate-spin" />}
+              {(isUpdatingLanguage || isStatsLoading) && <Loader2 className="w-4 h-4 text-content-secondary animate-spin" />}
             </div>
 
             <div className="relative group">
@@ -108,32 +172,12 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {languageError && (
+            {(languageError || statsError) && (
               <p className="mt-3 text-sm bg-warning-soft border border-warning rounded-lg px-3 py-2 text-warning">
-                {languageError}
+                {languageError || statsError}
               </p>
             )}
           </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          <ProgressCard
-            currentLevel={currentLevel}
-            targetLevel={10}
-            language={learningLanguageLabel}
-            lessonsCompleted={lessonsCompleted}
-          />
-          <DailyStreakCard
-            currentStreak={user.streak}
-            longestStreak={user.streak} // Could be a separate field
-            lastActivityDate={user.lastActiveDate ? new Date(user.lastActiveDate).toLocaleDateString() === new Date().toLocaleDateString() ? 'Today' : new Date(user.lastActiveDate).toLocaleDateString() : 'Today'}
-          />
-          <DailyGoalCard
-            goalMinutes={user.dailyGoal}
-            completedMinutes={Math.floor(user.dailyGoal * 0.6)} // Placeholder - would come from activity tracking
-            goalType="Learning Time"
-          />
         </div>
 
         {/* Quick Actions */}

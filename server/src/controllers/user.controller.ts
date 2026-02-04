@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { User } from '../models/index.js';
+import { Lesson, PracticeSession, User, UserLessonProgress } from '../models/index.js';
 import { sendSuccess, sendError } from '../utils/response.utils.js';
+import { practiceScenarios } from '../data/practice.scenarios.js';
+import { getLoginStreakStats } from '../services/login.activity.service.js';
 
 // @desc    Get user profile
 // @route   GET /api/users/profile
@@ -110,6 +112,64 @@ export const changePassword = async (req: Request, res: Response): Promise<void>
   } catch (error) {
     console.error('Change password error:', error);
     sendError(res, 500, 'Server error');
+  }
+};
+
+// @desc    Get dashboard stats for progress and streaks
+// @route   GET /api/users/dashboard-stats
+// @access  Private
+export const getDashboardStats = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = req.user;
+    if (!user) {
+      sendError(res, 404, 'User not found');
+      return;
+    }
+
+    const languageParam = typeof req.query.language === 'string' ? req.query.language.trim() : '';
+    const language = languageParam || user.currentLanguage || 'spanish';
+
+    const lessonIds = await Lesson.find({ language, isActive: true }).distinct('_id');
+    const totalLessons = lessonIds.length;
+    const lessonsCompleted = totalLessons === 0
+      ? 0
+      : await UserLessonProgress.countDocuments({
+        userId: user._id,
+        status: 'completed',
+        lessonId: { $in: lessonIds },
+      });
+
+    const practiceScenarioIds = await PracticeSession.distinct('scenarioId', {
+      userId: user._id,
+      status: 'completed',
+      language,
+    });
+    const practiceScenariosCompleted = practiceScenarioIds.length;
+
+    const totalPracticeScenarios = practiceScenarios.filter((scenario) => scenario.language === language).length;
+
+    const completedItems = lessonsCompleted + practiceScenariosCompleted;
+    const totalItems = totalLessons + totalPracticeScenarios;
+    const targetLevel = 10;
+    const progressRatio = totalItems > 0 ? completedItems / totalItems : 0;
+    const currentLevel = Math.max(1, Math.min(targetLevel, Math.ceil(progressRatio * targetLevel)));
+
+    const streakStats = await getLoginStreakStats(user._id);
+
+    sendSuccess(res, 200, undefined, {
+      lessonsCompleted,
+      practiceScenariosCompleted,
+      totalLessons,
+      totalPracticeScenarios,
+      currentLevel,
+      targetLevel,
+      currentStreak: streakStats.currentStreak,
+      longestStreak: streakStats.longestStreak,
+      lastActivityDate: streakStats.lastActivityDate,
+    });
+  } catch (error) {
+    console.error('Get dashboard stats error:', error);
+    sendError(res, 500, 'Failed to load dashboard stats');
   }
 };
 

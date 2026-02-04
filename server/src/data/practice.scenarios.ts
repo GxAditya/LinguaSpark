@@ -35,6 +35,11 @@ interface ScenarioBlueprint {
   legacyBase: number;
   difficulty: PracticeDifficulty;
   durationMinutes: number;
+  display: {
+    title: string;
+    description: string;
+    topic: string;
+  };
   variants: Record<LanguageCode, ScenarioVariant>;
 }
 
@@ -56,6 +61,11 @@ const scenarioBlueprints: ScenarioBlueprint[] = [
     legacyBase: 1,
     difficulty: 'easy',
     durationMinutes: 10,
+    display: {
+      title: 'Ordering at a Restaurant',
+      description: 'Practice ordering food and drinks, asking questions, and making special requests at a restaurant.',
+      topic: 'Food & Dining',
+    },
     variants: {
       spanish: {
         title: 'Ordering at a Restaurant',
@@ -235,6 +245,11 @@ const scenarioBlueprints: ScenarioBlueprint[] = [
     legacyBase: 2,
     difficulty: 'easy',
     durationMinutes: 12,
+    display: {
+      title: 'Hotel Check-In',
+      description: 'Confirm a reservation, request amenities, and handle a small issue during a hotel check-in.',
+      topic: 'Travel & Accommodation',
+    },
     variants: {
       spanish: {
         title: 'Hotel Check-In',
@@ -414,6 +429,11 @@ const scenarioBlueprints: ScenarioBlueprint[] = [
     legacyBase: 3,
     difficulty: 'medium',
     durationMinutes: 15,
+    display: {
+      title: 'Shopping at the Market',
+      description: 'Ask about products, compare prices, and practice polite bargaining at a market.',
+      topic: 'Shopping',
+    },
     variants: {
       spanish: {
         title: 'Shopping at the Market',
@@ -593,6 +613,11 @@ const scenarioBlueprints: ScenarioBlueprint[] = [
     legacyBase: 4,
     difficulty: 'medium',
     durationMinutes: 15,
+    display: {
+      title: "Doctor's Appointment",
+      description: 'Describe symptoms, answer follow-up questions, and receive care instructions during a clinic visit.',
+      topic: 'Health & Wellness',
+    },
     variants: {
       spanish: {
         title: "Doctor's Appointment",
@@ -772,6 +797,11 @@ const scenarioBlueprints: ScenarioBlueprint[] = [
     legacyBase: 5,
     difficulty: 'hard',
     durationMinutes: 20,
+    display: {
+      title: 'Job Interview',
+      description: 'Answer interview questions, describe your experience, and discuss expectations in a professional setting.',
+      topic: 'Career & Business',
+    },
     variants: {
       spanish: {
         title: 'Job Interview',
@@ -951,6 +981,11 @@ const scenarioBlueprints: ScenarioBlueprint[] = [
     legacyBase: 6,
     difficulty: 'hard',
     durationMinutes: 18,
+    display: {
+      title: 'Business Phone Call',
+      description: 'Practice phone etiquette, confirm details clearly, and close a professional call.',
+      topic: 'Communication',
+    },
     variants: {
       spanish: {
         title: 'Making a Phone Call',
@@ -1127,16 +1162,16 @@ const scenarioBlueprints: ScenarioBlueprint[] = [
   },
 ];
 
-export const practiceScenarios: PracticeScenario[] = scenarioBlueprints.flatMap(({ baseId, legacyBase, difficulty, durationMinutes, variants }) =>
+export const practiceScenarios: PracticeScenario[] = scenarioBlueprints.flatMap(({ baseId, legacyBase, difficulty, durationMinutes, display, variants }) =>
   (Object.keys(variants) as LanguageCode[]).map((language) => {
     const variant = variants[language];
     const languageSuffix = language === 'spanish' ? '' : `-${language}`;
     return {
       id: `${baseId}${languageSuffix}`,
       legacyId: legacyBase + LANGUAGE_OFFSETS[language],
-      title: variant.title,
-      description: variant.description,
-      topic: variant.topic,
+      title: display.title,
+      description: display.description,
+      topic: display.topic,
       difficulty,
       durationMinutes,
       language: variant.language,

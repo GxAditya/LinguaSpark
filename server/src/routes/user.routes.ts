@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   getProfile,
+  getDashboardStats,
   updateProfile,
   changePassword,
   updateStats,
@@ -19,6 +20,7 @@ router.use(protect);
 
 // Profile routes
 router.get('/profile', getProfile);
+router.get('/dashboard-stats', getDashboardStats);
 router.put('/profile', updateProfileValidation, updateProfile);
 
 // Password change

@@ -15,3 +15,6 @@ export type { IGameSession, GameType, GameStatus, GameContent } from './GameSess
 
 export { RateLimit } from './RateLimit.model.js';
 export type { IRateLimitEntry } from './RateLimit.model.js';
+
+export { default as UserLoginDay } from './UserLoginDay.model.js';
+export type { IUserLoginDay } from './UserLoginDay.model.js';

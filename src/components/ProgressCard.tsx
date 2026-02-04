@@ -6,9 +6,16 @@ interface ProgressCardProps {
   targetLevel?: number;
   language?: string;
   lessonsCompleted?: number;
+  practiceCompleted?: number;
 }
 
-export default function ProgressCard({ currentLevel = 3, targetLevel = 10, language = 'Spanish', lessonsCompleted = 24 }: ProgressCardProps) {
+export default function ProgressCard({
+  currentLevel = 3,
+  targetLevel = 10,
+  language = 'Spanish',
+  lessonsCompleted = 24,
+  practiceCompleted = 0,
+}: ProgressCardProps) {
   const progress = (currentLevel / targetLevel) * 100;
 
   const levels = ['Beginner', 'Elementary', 'Intermediate', 'Upper-Intermediate', 'Advanced', 'Fluent'];
@@ -43,8 +50,8 @@ export default function ProgressCard({ currentLevel = 3, targetLevel = 10, langu
           <div className="text-sm text-content-secondary">Lessons Completed</div>
         </div>
         <div className="bg-surface-subtle border border-border-subtle rounded-lg p-4">
-          <div className="text-2xl font-bold text-content-primary">85%</div>
-          <div className="text-sm text-content-secondary">Accuracy Rate</div>
+          <div className="text-2xl font-bold text-content-primary">{practiceCompleted}</div>
+          <div className="text-sm text-content-secondary">Practice Scenarios</div>
         </div>
       </div>
     </div>

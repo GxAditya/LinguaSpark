@@ -10,7 +10,7 @@ export { pollinationsService } from './pollinations.service';
 export { loadingService } from './loading.service';
 export { ErrorService } from './error.service';
 export type { User, AuthResponse, RegisterData, LoginData } from './auth.service';
-export type { UpdateProfileData, ChangePasswordData, UpdateStatsData, StatsResponse } from './user.service';
+export type { UpdateProfileData, ChangePasswordData, UpdateStatsData, StatsResponse, DashboardStats } from './user.service';
 export type { 
   LessonSummary, 
   LessonDetail, 

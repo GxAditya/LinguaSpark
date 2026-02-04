@@ -4,6 +4,7 @@ import { User } from '../models/index.js';
 import { generateToken } from '../utils/jwt.utils.js';
 import { sendSuccess, sendError } from '../utils/response.utils.js';
 import config from '../config/index.js';
+import { recordLoginDay } from '../services/login.activity.service.js';
 
 interface GoogleTokenResponse {
   access_token?: string;
@@ -41,6 +42,14 @@ interface GitHubEmail {
   verified: boolean;
 }
 
+async function safeRecordLoginDay(userId: string): Promise<void> {
+  try {
+    await recordLoginDay(userId);
+  } catch (error) {
+    console.error('recordLoginDay error:', error);
+  }
+}
+
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
@@ -71,6 +80,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     // Generate token
     const token = generateToken(user._id.toString());
+    await safeRecordLoginDay(user._id.toString());
 
     sendSuccess(res, 201, 'Registration successful', {
       user: {
@@ -127,6 +137,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     // Generate token
     const token = generateToken(user._id.toString());
+    await safeRecordLoginDay(user._id.toString());
 
     sendSuccess(res, 200, 'Login successful', {
       user: {
@@ -162,6 +173,8 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
       sendError(res, 404, 'User not found');
       return;
     }
+
+    await safeRecordLoginDay(user._id.toString());
 
     sendSuccess(res, 200, undefined, {
       user: {
@@ -264,6 +277,8 @@ export const googleAuth = async (req: Request, res: Response): Promise<void> => 
         providerId: googleUser.id,
       });
     }
+
+    await safeRecordLoginDay(user._id.toString());
 
     // Generate JWT token
     const token = generateToken(user._id.toString());
@@ -380,6 +395,8 @@ export const githubAuth = async (req: Request, res: Response): Promise<void> => 
         providerId: String(githubUser.id),
       });
     }
+
+    await safeRecordLoginDay(user._id.toString());
 
     // Generate JWT token
     const token = generateToken(user._id.toString());

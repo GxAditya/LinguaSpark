@@ -262,6 +262,11 @@ export default function Practice() {
               <p className="text-sm uppercase tracking-wide text-content-tertiary font-semibold">Scenario</p>
               <h1 className="text-2xl md:text-3xl font-bold text-content-primary mt-1">{selectedScenario.title}</h1>
               <p className="text-content-secondary mt-2">{selectedScenario.description}</p>
+              <div className="mt-3">
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tone-iris border border-accent">
+                  Practice in {getLearningLanguageLabel(selectedScenario.language)}
+                </span>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-content-secondary">
@@ -321,7 +326,7 @@ export default function Practice() {
                 <div className="space-y-4">
                   {chatMessages.length === 0 && (
                     <div className="text-center text-muted">
-                      <p>Say hola to kick off the conversation.</p>
+                      <p>Say hello to kick off the conversation.</p>
                     </div>
                   )}
                   {chatMessages.map((message) => (

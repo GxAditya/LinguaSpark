@@ -138,12 +138,63 @@ function buildFallbackResponse(options: {
   isOpening?: boolean;
 }): string {
   const { scenario, userMessage, isOpening } = options;
-  if (isOpening) {
-    return `Hola, bienvenido/a a ${scenario.aiPersona.replace(/\.$/, '')}. ¿En qué puedo ayudarte hoy?\n\nTip: Responde con al menos dos frases para mantener la conversación viva.`;
-  }
+  const fallbackLanguage = scenario.language?.toLowerCase?.() ?? 'spanish';
+  const persona = scenario.aiPersona.replace(/\.$/, '');
 
-  const userSnippet = userMessage ? `Gracias por decir: "${userMessage}".` : '';
-  return `${userSnippet} Aquí tienes una respuesta ejemplo dentro del escenario ${scenario.title}. ¿Qué piensas hacer después?\n\nTip: Usa conectores como "además" o "sin embargo" para sonar más natural.`;
+  const fallbackCopy: Record<string, { opening: (personaText: string) => string; followUp: (message?: string) => string }> = {
+    spanish: {
+      opening: (personaText) => `Hola, bienvenido/a a ${personaText}. ¿En qué puedo ayudarte hoy?`,
+      followUp: (message) =>
+        `${message ? `Gracias por decir: "${message}". ` : ''}Aquí tienes una respuesta de ejemplo. ¿Qué te gustaría hacer después?`,
+    },
+    french: {
+      opening: (personaText) => `Bonjour, bienvenue chez ${personaText}. Comment puis-je vous aider aujourd'hui ?`,
+      followUp: (message) =>
+        `${message ? `Merci pour votre message : "${message}". ` : ''}Voici une réponse d'exemple. Que souhaitez-vous faire ensuite ?`,
+    },
+    hindi: {
+      opening: (personaText) => `नमस्ते, ${personaText} में आपका स्वागत है। आज मैं आपकी कैसे मदद कर सकता हूँ?`,
+      followUp: (message) =>
+        `${message ? `आपके संदेश के लिए धन्यवाद: "${message}"। ` : ''}यह एक उदाहरण उत्तर है। आप आगे क्या करना चाहेंगे?`,
+    },
+    mandarin: {
+      opening: (personaText) => `你好，欢迎来到${personaText}。今天我能帮你什么？`,
+      followUp: (message) =>
+        `${message ? `谢谢你的分享：“${message}”。` : ''}这是一个示例回答。接下来你想做什么？`,
+    },
+    arabic: {
+      opening: (personaText) => `مرحباً، أهلاً بك في ${personaText}. كيف يمكنني مساعدتك اليوم؟`,
+      followUp: (message) =>
+        `${message ? `شكراً لرسالتك: "${message}". ` : ''}إليك ردّاً نموذجياً. ماذا تود أن تفعل بعد ذلك؟`,
+    },
+    bengali: {
+      opening: (personaText) => `নমস্কার, ${personaText}-এ আপনাকে স্বাগতম। আজ আমি আপনাকে কীভাবে সাহায্য করতে পারি?`,
+      followUp: (message) =>
+        `${message ? `আপনার বার্তার জন্য ধন্যবাদ: "${message}"। ` : ''}এটি একটি উদাহরণ উত্তর। আপনি এরপর কী করতে চান?`,
+    },
+    portuguese: {
+      opening: (personaText) => `Olá, bem-vindo(a) ao ${personaText}. Como posso ajudar você hoje?`,
+      followUp: (message) =>
+        `${message ? `Obrigado pela mensagem: "${message}". ` : ''}Aqui vai uma resposta de exemplo. O que você gostaria de fazer em seguida?`,
+    },
+    russian: {
+      opening: (personaText) => `Здравствуйте, добро пожаловать в ${personaText}. Чем могу помочь сегодня?`,
+      followUp: (message) =>
+        `${message ? `Спасибо за сообщение: "${message}". ` : ''}Вот пример ответа. Что бы вы хотели сделать дальше?`,
+    },
+    japanese: {
+      opening: (personaText) => `こんにちは、${personaText}へようこそ。今日はどのようにお手伝いしましょうか？`,
+      followUp: (message) =>
+        `${message ? `メッセージありがとう：「${message}」。` : ''}これは例の返答です。次に何をしたいですか？`,
+    },
+  };
+
+  const fallback = fallbackCopy[fallbackLanguage] ?? fallbackCopy.spanish;
+  const response = isOpening ? fallback.opening(persona) : fallback.followUp(userMessage);
+  const tip = isOpening
+    ? 'Tip: Respond with at least two sentences to keep the conversation going.'
+    : 'Tip: Use connectors like "also" or "however" to sound more natural.';
+  return `${response}\n\n${tip}`;
 }
 
 export async function generateScenarioOpening(options: {
@@ -157,7 +208,7 @@ export async function generateScenarioOpening(options: {
     { role: 'system', content: systemPrompt },
     {
       role: 'user',
-      content: `${scenario.starterPrompt} Evita traducir al inglés en esta primera intervención.`,
+      content: `${scenario.starterPrompt} Do not translate into English in this first reply.`,
     },
   ];
 
@@ -188,7 +239,7 @@ export async function generateScenarioTurn(options: {
     ...history.map((msg) => ({ role: msg.role, content: msg.content })),
     {
       role: 'user',
-      content: `${userMessage}\n\nResponde siguiendo el escenario. Después añade "Tip:" en inglés con una corrección concreta.`,
+      content: `${userMessage}\n\nRespond following the scenario. Then add "Tip:" in English with a concrete correction.`,
     },
   ];
 

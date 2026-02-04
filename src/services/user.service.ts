@@ -26,6 +26,18 @@ export interface StatsResponse {
   level: 'beginner' | 'intermediate' | 'advanced';
 }
 
+export interface DashboardStats {
+  lessonsCompleted: number;
+  practiceScenariosCompleted: number;
+  totalLessons: number;
+  totalPracticeScenarios: number;
+  currentLevel: number;
+  targetLevel: number;
+  currentStreak: number;
+  longestStreak: number;
+  lastActivityDate?: string;
+}
+
 export const userService = {
   // Get user profile
   async getProfile(): Promise<User> {
@@ -60,6 +72,15 @@ export const userService = {
       return response.data;
     }
     throw new Error(response.message || 'Failed to update stats');
+  },
+
+  async getDashboardStats(language?: string): Promise<DashboardStats> {
+    const query = language ? `?language=${encodeURIComponent(language)}` : '';
+    const response = await api.get<DashboardStats>(`/users/dashboard-stats${query}`);
+    if (response.data) {
+      return response.data;
+    }
+    throw new Error(response.message || 'Failed to load dashboard stats');
   },
 
   // Delete account
