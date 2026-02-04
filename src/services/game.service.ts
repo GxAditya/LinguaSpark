@@ -12,7 +12,7 @@ export type GameType =
   | 'conjugation-coach'
   | 'context-connect'
   | 'syntax-scrambler'
-  | 'time-warp-tagger';
+  ;
 
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 

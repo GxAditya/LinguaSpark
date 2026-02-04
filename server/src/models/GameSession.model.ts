@@ -9,8 +9,7 @@ export type GameType =
   | 'word-drop-dash'
   | 'conjugation-coach'
   | 'context-connect'
-  | 'syntax-scrambler'
-  | 'time-warp-tagger';
+  | 'syntax-scrambler';
 
 export type GameStatus = 'active' | 'completed' | 'abandoned';
 
@@ -115,19 +114,6 @@ export interface ISyntaxScramblerContent extends IBaseGameContent {
   }>;
 }
 
-// Time Warp Tagger
-export interface ITimeWarpContent extends IBaseGameContent {
-  type: 'time-warp-tagger';
-  questions: Array<{
-    sentence: string;
-    timeReference: string;
-    verb: string;
-    options: string[];
-    correctIndex: number;
-    explanation: string;
-  }>;
-}
-
 export type GameContent =
   | ITranscriptionContent
   | IAudioJumbleContent
@@ -137,8 +123,7 @@ export type GameContent =
   | IWordDropContent
   | IConjugationContent
   | IContextConnectContent
-  | ISyntaxScramblerContent
-  | ITimeWarpContent;
+  | ISyntaxScramblerContent;
 
 export interface IGameSession extends Document {
   _id: mongoose.Types.ObjectId;
@@ -179,7 +164,6 @@ const gameSessionSchema = new Schema<IGameSession>(
         'conjugation-coach',
         'context-connect',
         'syntax-scrambler',
-        'time-warp-tagger',
       ],
       index: true,
     },

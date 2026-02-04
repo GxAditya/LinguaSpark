@@ -26,7 +26,6 @@ import WordDropDash from './games/WordDropDash';
 import ConjugationCoach from './games/ConjugationCoach';
 import ContextConnect from './games/ContextConnect';
 import SyntaxScrambler from './games/SyntaxScrambler';
-import TimeWarpTagger from './games/TimeWarpTagger';
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -102,7 +101,6 @@ function AppRoutes() {
       <Route path="/games/conjugation-coach" element={<ProtectedRoute><ConjugationCoach /></ProtectedRoute>} />
       <Route path="/games/context-connect" element={<ProtectedRoute><ContextConnect /></ProtectedRoute>} />
       <Route path="/games/syntax-scrambler" element={<ProtectedRoute><SyntaxScrambler /></ProtectedRoute>} />
-      <Route path="/games/time-warp-tagger" element={<ProtectedRoute><TimeWarpTagger /></ProtectedRoute>} />
     </Routes>
   );
 }

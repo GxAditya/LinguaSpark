@@ -5,6 +5,7 @@ import GameLayout from '../components/GameLayout';
 import ExitConfirmModal from '../components/ExitConfirmModal';
 import { GameLoading, GameError } from '../components/GameStates';
 import { useGameSession } from '../hooks/useGameSession';
+import { getLearningLanguageMeta } from '../utils/languages';
 
 interface BlankData {
   position: number;
@@ -33,9 +34,11 @@ export default function ContextConnect() {
     nextRound,
     completeGame,
     startNewGame,
+    targetLanguage,
   } = useGameSession({
     gameType: 'context-connect',
     difficulty: 'beginner',
+    autoSave: false,
   });
 
   const [answers, setAnswers] = useState<(number | null)[]>([]);
@@ -44,6 +47,7 @@ export default function ContextConnect() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const passages: PassageData[] = (content as any)?.passages || [];
   const currentPassage = passages[currentRound];
+  const languageMeta = getLearningLanguageMeta(targetLanguage);
 
   // Reset local state when round changes
   useEffect(() => {
@@ -149,7 +153,13 @@ export default function ContextConnect() {
             </p>
 
             <div className="bg-rose-50 rounded-xl p-6 mb-8 border-2 border-rose-200">
-              <p className="text-lg text-gray-800 mb-6 leading-relaxed">{currentPassage.text}</p>
+              <p
+                className="text-lg text-gray-800 mb-6 leading-relaxed"
+                lang={languageMeta.bcp47}
+                dir={languageMeta.dir}
+              >
+                {currentPassage.text}
+              </p>
 
               {currentPassage.blanks.map((blank, idx) => (
                 <div key={idx} className="mb-6 last:mb-0">
@@ -171,7 +181,9 @@ export default function ContextConnect() {
                               : 'bg-rose-100 text-rose-900 hover:bg-rose-200'
                           } ${feedback !== null ? 'cursor-default' : 'cursor-pointer'}`}
                       >
-                        {option}
+                        <span lang={languageMeta.bcp47} dir={languageMeta.dir}>
+                          {option}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -235,7 +247,7 @@ export default function ContextConnect() {
               onClick={() => setShowExitConfirm(true)}
               className="btn-ghost px-4 py-2 text-sm"
             >
-              Exit Game
+              Finish Game
             </button>
           </div>
         </div>
@@ -245,6 +257,10 @@ export default function ContextConnect() {
         isOpen={showExitConfirm}
         onClose={() => setShowExitConfirm(false)}
         onConfirm={confirmExit}
+        title="Finish Game Early?"
+        message="If you finish now, this game will end and your current progress will be abandoned. Do you want to finish anyway?"
+        cancelText="Keep Playing"
+        confirmText="Finish Game"
       />
     </>
   );

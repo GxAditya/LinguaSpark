@@ -1,6 +1,6 @@
 import { Link, Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
-import { Award, BarChart3, BookOpen, ChevronRight, Clock, FileText, Headphones, Loader2, RotateCcw, Shuffle, Zap } from 'lucide-react';
+import { Award, BarChart3, BookOpen, ChevronRight, FileText, Headphones, Loader2, RotateCcw, Shuffle, Zap } from 'lucide-react';
 import { useAuth } from '../context';
 import { getLearningLanguageLabel, resolveLearningLanguage } from '../utils/languages';
 
@@ -78,15 +78,7 @@ const games = [
     iconClass: 'text-accent-2',
     description: 'Arrange scrambled words into correct order'
   },
-  {
-    id: 'time-warp-tagger',
-    name: 'Time Warp Tagger',
-    category: 'Verb Tenses, Time Adverbs',
-    icon: Clock,
-    toneClass: 'tone-mint',
-    iconClass: 'text-accent-4',
-    description: 'Apply correct verb tense based on time reference'
-  }
+  
 ];
 
 export default function Games() {

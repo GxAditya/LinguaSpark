@@ -32,7 +32,6 @@ const gameTypes = [
   'conjugation-coach',
   'context-connect',
   'syntax-scrambler',
-  'time-warp-tagger',
 ];
 
 // All routes require authentication

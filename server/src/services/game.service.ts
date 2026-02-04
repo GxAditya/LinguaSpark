@@ -13,7 +13,6 @@ import type {
   IConjugationContent,
   IContextConnectContent,
   ISyntaxScramblerContent,
-  ITimeWarpContent,
 } from '../models/GameSession.model.js';
 
 type Difficulty = 'beginner' | 'intermediate' | 'advanced';
@@ -369,6 +368,95 @@ function getWordDropFallbackRounds(targetLanguage: string): Array<{ words: Array
   return rounds.length > 0 ? rounds : [{ words: WORD_DROP_FALLBACK_POOL.spanish.slice(0, 3), timeLimit: 30 }];
 }
 
+const CONTEXT_CONNECT_FALLBACK_PASSAGES: Record<SupportedLearningLanguage, Array<{ text: string; blanks: Array<{ position: number; correctWord: string; options: string[] }> }>> = {
+  spanish: [
+    {
+      text: 'María fue al _____ para comprar frutas. Ella necesitaba manzanas y _____.',
+      blanks: [
+        { position: 0, correctWord: 'mercado', options: ['mercado', 'hospital', 'cine', 'parque'] },
+        { position: 1, correctWord: 'naranjas', options: ['naranjas', 'libros', 'zapatos', 'coches'] },
+      ],
+    },
+  ],
+  french: [
+    {
+      text: 'Luc va au _____ pour acheter des fruits. Il prend des pommes et des _____.',
+      blanks: [
+        { position: 0, correctWord: 'marché', options: ['marché', 'hôpital', 'cinéma', 'parc'] },
+        { position: 1, correctWord: 'oranges', options: ['oranges', 'livres', 'chaussures', 'voitures'] },
+      ],
+    },
+  ],
+  hindi: [
+    {
+      text: 'राहुल _____ जाता है और वह _____ खरीदता है।',
+      blanks: [
+        { position: 0, correctWord: 'बाज़ार', options: ['बाज़ार', 'अस्पताल', 'स्कूल', 'पार्क'] },
+        { position: 1, correctWord: 'फल', options: ['फल', 'किताबें', 'जूते', 'खिलौने'] },
+      ],
+    },
+  ],
+  mandarin: [
+    {
+      text: '小明去_____买_____。',
+      blanks: [
+        { position: 0, correctWord: '市场', options: ['市场', '医院', '学校', '公园'] },
+        { position: 1, correctWord: '水果', options: ['水果', '书', '鞋子', '玩具'] },
+      ],
+    },
+  ],
+  arabic: [
+    {
+      text: 'ذهبت سارة إلى _____ لشراء _____.',
+      blanks: [
+        { position: 0, correctWord: 'السوق', options: ['السوق', 'المستشفى', 'المدرسة', 'الحديقة'] },
+        { position: 1, correctWord: 'الفواكه', options: ['الفواكه', 'الكتب', 'الأحذية', 'الألعاب'] },
+      ],
+    },
+  ],
+  bengali: [
+    {
+      text: 'রিমা _____ যায় এবং সে _____ কেনে।',
+      blanks: [
+        { position: 0, correctWord: 'বাজারে', options: ['বাজারে', 'হাসপাতালে', 'স্কুলে', 'পার্কে'] },
+        { position: 1, correctWord: 'ফল', options: ['ফল', 'বই', 'জুতো', 'খেলনা'] },
+      ],
+    },
+  ],
+  portuguese: [
+    {
+      text: 'João vai ao _____ para comprar _____.',
+      blanks: [
+        { position: 0, correctWord: 'mercado', options: ['mercado', 'hospital', 'cinema', 'parque'] },
+        { position: 1, correctWord: 'frutas', options: ['frutas', 'livros', 'sapatos', 'carros'] },
+      ],
+    },
+  ],
+  russian: [
+    {
+      text: 'Ольга пошла в _____ купить _____.',
+      blanks: [
+        { position: 0, correctWord: 'магазин', options: ['магазин', 'больницу', 'школу', 'парк'] },
+        { position: 1, correctWord: 'фрукты', options: ['фрукты', 'книги', 'обувь', 'игрушки'] },
+      ],
+    },
+  ],
+  japanese: [
+    {
+      text: 'ユウタは_____へ行って_____を買います。',
+      blanks: [
+        { position: 0, correctWord: '市場', options: ['市場', '病院', '学校', '公園'] },
+        { position: 1, correctWord: '果物', options: ['果物', '本', '靴', 'おもちゃ'] },
+      ],
+    },
+  ],
+};
+
+function getContextConnectFallbackPassages(targetLanguage: string): Array<{ text: string; blanks: Array<{ position: number; correctWord: string; options: string[] }> }> {
+  const resolved = resolveSupportedLearningLanguage(targetLanguage);
+  return CONTEXT_CONNECT_FALLBACK_PASSAGES[resolved] ?? CONTEXT_CONNECT_FALLBACK_PASSAGES.spanish;
+}
+
 
 
 // Per-language fallback content (ensures language selection works even if generation fails)
@@ -437,15 +525,7 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<Ga
     difficulty: opts.difficulty,
     language: opts.language,
     targetLanguage: opts.targetLanguage,
-    passages: [
-      {
-        text: 'María fue al _____ para comprar frutas. Ella necesitaba manzanas y _____. El vendedor era muy amable.',
-        blanks: [
-          { position: 0, correctWord: 'mercado', options: ['mercado', 'hospital', 'cine', 'parque'] },
-          { position: 1, correctWord: 'naranjas', options: ['naranjas', 'libros', 'zapatos', 'coches'] },
-        ],
-      },
-    ],
+    passages: getContextConnectFallbackPassages(opts.targetLanguage),
   }),
   'syntax-scrambler': (opts) => ({
     type: 'syntax-scrambler',
@@ -456,17 +536,6 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<Ga
       { scrambled: ['perro', 'El', 'parque', 'el', 'corre', 'en'], correct: 'El perro corre en el parque', translation: 'The dog runs in the park' },
       { scrambled: ['gustan', 'libros', 'Me', 'los'], correct: 'Me gustan los libros', translation: 'I like books' },
       { scrambled: ['estudiante', 'La', 'mucho', 'estudia'], correct: 'La estudiante estudia mucho', translation: 'The student studies a lot' },
-    ],
-  }),
-  'time-warp-tagger': (opts) => ({
-    type: 'time-warp-tagger',
-    difficulty: opts.difficulty,
-    language: opts.language,
-    targetLanguage: opts.targetLanguage,
-    questions: [
-      { sentence: 'El año pasado, mi familia _____ a México.', timeReference: 'El año pasado', verb: 'viajar', options: ['viaja', 'viajó', 'viajará', 'viajaba'], correctIndex: 1, explanation: 'Preterite tense for completed past actions' },
-      { sentence: 'La próxima semana, yo _____ un examen.', timeReference: 'La próxima semana', verb: 'tener', options: ['tengo', 'tuve', 'tendré', 'tenía'], correctIndex: 2, explanation: 'Future tense for upcoming events' },
-      { sentence: 'Ahora mismo, los niños _____ en el jardín.', timeReference: 'Ahora mismo', verb: 'jugar', options: ['juegan', 'jugaron', 'jugarán', 'están jugando'], correctIndex: 3, explanation: 'Present progressive for current actions' },
     ],
   }),
 };
@@ -729,36 +798,6 @@ SYNTAX FOCUS:
 - Adjective placement rules
 - Question formation patterns
 - Prepositional phrase positioning`,
-
-    'time-warp-tagger': `${basePrompt}
-
-TASK: Generate 5 sentences testing verb tense recognition based on temporal context.
-
-CONTENT GUIDELINES:
-- Include clear time markers that indicate the required tense
-- Use common verbs in realistic contexts
-- Test understanding of tense-time relationships
-- Provide options that represent different tenses of the same verb
-- Include explanations that reinforce temporal-grammatical connections
-
-JSON STRUCTURE:
-{
-  "questions": [
-    {
-      "sentence": "${targetLanguage} sentence with _____ and clear time reference",
-      "timeReference": "specific time expression in the sentence",
-      "verb": "infinitive form of the verb",
-      "options": ["correct_tense", "wrong_tense1", "wrong_tense2", "wrong_tense3"],
-      "correctIndex": 0,
-      "explanation": "Rule connecting time reference to tense choice"
-    }
-  ]
-}
-
-TIME MARKERS:
-- Past: ayer, la semana pasada, hace dos años
-- Present: ahora, hoy, en este momento  
-- Future: mañana, la próxima semana, en el futuro`,
   };
 
   return gameSpecificPrompts[gameType];
@@ -1068,40 +1107,6 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           return true;
         });
 
-      case 'time-warp-tagger':
-        if (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {
-          console.warn('Time warp tagger validation failed: Missing or empty questions array');
-          return false;
-        }
-        return parsed.questions.every((q: any, index: number) => {
-          const hasValidStructure = q.sentence && typeof q.sentence === 'string' &&
-            q.timeReference && typeof q.timeReference === 'string' &&
-            Array.isArray(q.options) && q.options.length >= 2 &&
-            typeof q.correctIndex === 'number' &&
-            q.correctIndex >= 0 && q.correctIndex < q.options.length;
-
-          if (!hasValidStructure) {
-            console.warn(`Time warp question ${index} structure validation failed:`, q);
-            return false;
-          }
-
-          // Validate that sentence contains the time reference
-          const containsTimeRef = q.sentence.toLowerCase().includes(q.timeReference.toLowerCase());
-          if (!containsTimeRef) {
-            console.warn(`Time warp question ${index} time reference not found in sentence:`, q);
-            return false;
-          }
-
-          // Validate that sentence contains a blank
-          const hasBlank = q.sentence.includes('_____') || q.sentence.includes('___');
-          if (!hasBlank) {
-            console.warn(`Time warp question ${index} missing blank:`, q);
-            return false;
-          }
-
-          return true;
-        });
-
       default:
         console.warn(`Unknown game type for validation: ${gameType}`);
         return false;
@@ -1231,11 +1236,6 @@ function extractContentItems(content: any, gameType: GameType): string[] {
       case 'syntax-scrambler':
         content.sentences?.forEach((s: any) => {
           if (s.correct) items.push(s.correct);
-        });
-        break;
-      case 'time-warp-tagger':
-        content.questions?.forEach((q: any) => {
-          if (q.sentence) items.push(q.sentence);
         });
         break;
     }
@@ -1603,8 +1603,6 @@ export function calculateMaxScore(content: GameContent): number {
       return content.passages.reduce((sum, p) => sum + p.blanks.length * pointsPerItem, 0);
     case 'syntax-scrambler':
       return content.sentences.length * pointsPerItem;
-    case 'time-warp-tagger':
-      return content.questions.length * pointsPerItem;
     default:
       return 100;
   }
@@ -1629,8 +1627,6 @@ export function calculateTotalRounds(content: GameContent): number {
       return content.passages.length;
     case 'syntax-scrambler':
       return content.sentences.length;
-    case 'time-warp-tagger':
-      return content.questions.length;
     default:
       return 1;
   }

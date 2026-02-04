@@ -35,21 +35,26 @@ function buildBlankedSentence(question: ConjugationQuestion | undefined): string
   const blankedHasBlank = BLANK_PATTERN.test(blankedFromModel);
   const blankedHasAnswer = !!answer && blankedFromModel.includes(answer);
 
-  const insertBlankAtAnswer = (sentence: string) => {
-    if (!answer) return '';
-    const filled = sentence.replace(BLANK_PATTERN, answer);
-    const escaped = escapeRegExp(answer);
-    const replaced = filled.replace(new RegExp(escaped), '_____');
-    return replaced;
+  const replaceLastOccurrence = (sentence: string, needle: string) => {
+    const idx = sentence.lastIndexOf(needle);
+    if (idx < 0) return sentence;
+    return `${sentence.slice(0, idx)}_____${sentence.slice(idx + needle.length)}`.replace(/\s+/g, ' ').trim();
   };
 
   if (blankedHasBlank && !blankedHasAnswer) {
     return blankedFromModel;
   }
 
-  if (rawHasBlank && rawHasAnswer) {
-    const fixed = insertBlankAtAnswer(rawSentence);
-    if (fixed) return fixed;
+  if (rawHasAnswer) {
+    const cleaned = rawSentence.replace(BLANK_PATTERN, '').replace(/\s+/g, ' ').trim();
+    const fixed = replaceLastOccurrence(cleaned, answer);
+    if (fixed && fixed.includes('_____')) return fixed;
+  }
+
+  if (blankedHasBlank && blankedHasAnswer) {
+    const cleaned = blankedFromModel.replace(BLANK_PATTERN, '').replace(/\s+/g, ' ').trim();
+    const fixed = replaceLastOccurrence(cleaned, answer);
+    if (fixed && fixed.includes('_____')) return fixed;
   }
 
   if (rawHasBlank) {
@@ -57,14 +62,12 @@ function buildBlankedSentence(question: ConjugationQuestion | undefined): string
   }
 
   if (blankedHasBlank) {
-    const fixed = insertBlankAtAnswer(blankedFromModel);
-    if (fixed) return fixed;
     return blankedFromModel;
   }
 
   if (answer && rawSentence) {
-    const fixed = insertBlankAtAnswer(rawSentence);
-    if (fixed && fixed !== rawSentence) return fixed;
+    const fixed = replaceLastOccurrence(rawSentence, answer);
+    if (fixed && fixed.includes('_____')) return fixed;
   }
 
   return rawSentence ? `${rawSentence} _____` : '_____';

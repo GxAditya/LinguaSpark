@@ -201,7 +201,6 @@ export const generateGameContent = asyncHandler(async (req: Request, res: Respon
     'translation-match-up', 'conjugation-coach', 'word-drop-dash',
     'audio-jumble', 'context-connect',
     'syntax-scrambler', 'secret-word-solver', 'transcription-station',
-    'time-warp-tagger'
   ];
 
   if (!validGameTypes.includes(gameType)) {

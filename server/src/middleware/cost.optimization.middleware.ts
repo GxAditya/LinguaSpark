@@ -212,8 +212,7 @@ function estimateRequestCost(req: Request): number {
     'syntax-scrambler': 1.0,
     'conjugation-coach': 1.0,
     'transcription-station': 1.3,
-    'secret-word': 1.0,
-    'time-warp': 1.0
+    'secret-word': 1.0
   };
 
   const multiplier = gameTypeMultipliers[gameType] || 1.0;
