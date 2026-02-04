@@ -136,7 +136,7 @@ export default function Games() {
             return (
               <Link
                 key={game.id}
-                to={`/games/${game.id}?language=${selectedLanguage}`}
+                to={`/games/${game.id}`}
                 className="bg-surface-base p-6 rounded-xl border border-border-base shadow-sm hover:shadow-md hover:border-border-strong transition-all duration-200 group"
               >
                 <div className={`w-14 h-14 rounded-lg border flex items-center justify-center mb-4 group-hover:scale-105 transition-transform ${game.toneClass}`}>

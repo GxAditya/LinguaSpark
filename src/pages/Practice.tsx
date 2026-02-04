@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context';
 import { practiceService, PracticeScenarioSummary, PracticeSession } from '../services';
-import { getLearningLanguageLabel, resolveLearningLanguage } from '../utils/languages';
+import { getLearningLanguageLabel, getLearningLanguageMeta, resolveLearningLanguage } from '../utils/languages';
 
 const ICON_MAP: Record<'users' | 'target' | 'message' | 'brain', React.ReactNode> = {
   users: <Users className="w-6 h-6" />,
@@ -238,6 +238,7 @@ export default function Practice() {
     const conversationReady = !isSessionLoading && !!activeSession;
     const sessionActive = activeSession?.status === 'active';
     const placeholder = `Type your response in ${getLearningLanguageLabel(selectedScenario.language)}...`;
+    const languageMeta = getLearningLanguageMeta(selectedScenario.language);
 
     return (
       <div className="min-h-screen bg-surface-base flex flex-col relative overflow-hidden">
@@ -374,6 +375,8 @@ export default function Practice() {
                 onChange={(event) => setInputValue(event.target.value)}
                 disabled={!sessionActive || isSendingMessage}
                 placeholder={placeholder}
+                lang={languageMeta.bcp47}
+                dir={languageMeta.dir}
                 className="flex-1 px-4 py-3 border border-border-base rounded-lg bg-surface-subtle focus:bg-surface-base focus:ring-2 focus:ring-content-primary/10 focus:border-content-primary transition-all outline-none disabled:bg-surface-subtle disabled:text-content-tertiary"
               />
               <button

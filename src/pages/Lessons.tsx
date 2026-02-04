@@ -4,7 +4,7 @@ import DashboardHeader from '../components/DashboardHeader';
 import { AlertCircle, BookOpen, CheckCircle, ChevronLeft, ChevronRight, Clock, Loader2, Pause, PlayCircle, Volume2, Zap } from 'lucide-react';
 import { useAuth } from '../context';
 import { lessonService, ttsService, LessonSummary, LessonDetail, LessonProgress } from '../services';
-import { getLearningLanguageLabel, resolveLearningLanguage } from '../utils/languages';
+import { getLearningLanguageLabel, getLearningLanguageMeta, resolveLearningLanguage } from '../utils/languages';
 
 export default function Lessons() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
@@ -265,6 +265,7 @@ export default function Lessons() {
   if (selectedLesson && lessonProgress) {
     const currentContent = selectedLesson.contents[activeContentIndex];
     const currentExercise = selectedLesson.exercises[activeExerciseIndex];
+    const lessonLanguageMeta = getLearningLanguageMeta(selectedLesson.language);
 
     return (
       <div className="min-h-screen bg-surface-base relative overflow-hidden">
@@ -518,6 +519,8 @@ export default function Lessons() {
                       onChange={(e) => setExerciseAnswer(e.target.value)}
                       disabled={!!exerciseResult}
                       placeholder="Type your answer..."
+                      lang={lessonLanguageMeta.bcp47}
+                      dir={lessonLanguageMeta.dir}
                       className="w-full px-4 py-3 border border-border-base rounded-lg focus:border-content-primary focus:ring-1 focus:ring-content-primary outline-none transition-colors"
                     />
                   )}
