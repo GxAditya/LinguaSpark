@@ -1,9 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export type GameType =
-  | 'transcription-station'
-  | 'audio-jumble'
-
   | 'translation-matchup'
   | 'secret-word-solver'
   | 'word-drop-dash'
@@ -20,28 +17,6 @@ export interface IBaseGameContent {
   language: string;
   targetLanguage: string;
 }
-
-// Transcription Station
-export interface ITranscriptionContent extends IBaseGameContent {
-  type: 'transcription-station';
-  rounds: Array<{
-    audioText: string;
-    correctAnswer: string;
-    hint?: string;
-  }>;
-}
-
-// Audio Jumble
-export interface IAudioJumbleContent extends IBaseGameContent {
-  type: 'audio-jumble';
-  rounds: Array<{
-    sentence: string;
-    words: string[];
-    correctOrder: number[];
-  }>;
-}
-
-
 
 // Translation Match-Up
 export interface ITranslationMatchUpContent extends IBaseGameContent {
@@ -115,9 +90,6 @@ export interface ISyntaxScramblerContent extends IBaseGameContent {
 }
 
 export type GameContent =
-  | ITranscriptionContent
-  | IAudioJumbleContent
-
   | ITranslationMatchUpContent
   | ISecretWordContent
   | IWordDropContent
@@ -155,9 +127,6 @@ const gameSessionSchema = new Schema<IGameSession>(
       type: String,
       required: true,
       enum: [
-        'transcription-station',
-        'audio-jumble',
-
         'translation-matchup',
         'secret-word-solver',
         'word-drop-dash',

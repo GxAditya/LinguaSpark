@@ -4,9 +4,6 @@ import { contentCache } from './content.cache.service.js';
 import type {
   GameType,
   GameContent,
-  ITranscriptionContent,
-  IAudioJumbleContent,
-
   ITranslationMatchUpContent,
   ISecretWordContent,
   IWordDropContent,
@@ -457,36 +454,64 @@ function getContextConnectFallbackPassages(targetLanguage: string): Array<{ text
   return CONTEXT_CONNECT_FALLBACK_PASSAGES[resolved] ?? CONTEXT_CONNECT_FALLBACK_PASSAGES.spanish;
 }
 
+const SYNTAX_SCRAMBLER_FALLBACK_SENTENCES: Record<SupportedLearningLanguage, Array<{ scrambled: string[]; correct: string; translation: string }>> = {
+  spanish: [
+    { scrambled: ['perro', 'El', 'parque', 'el', 'corre', 'en'], correct: 'El perro corre en el parque', translation: 'The dog runs in the park' },
+    { scrambled: ['gustan', 'libros', 'Me', 'los'], correct: 'Me gustan los libros', translation: 'I like books' },
+    { scrambled: ['estudiante', 'La', 'mucho', 'estudia'], correct: 'La estudiante estudia mucho', translation: 'The student studies a lot' },
+  ],
+  french: [
+    { scrambled: ['chat', 'Le', 'dort', 'sur', 'le', 'canapé'], correct: 'Le chat dort sur le canapé', translation: 'The cat sleeps on the couch' },
+    { scrambled: ['aimons', 'le', 'café', 'Nous'], correct: 'Nous aimons le café', translation: 'We like coffee' },
+    { scrambled: ['lit', 'un', 'livre', 'Elle'], correct: 'Elle lit un livre', translation: 'She reads a book' },
+  ],
+  hindi: [
+    { scrambled: ['मैं', 'स्कूल', 'जाता', 'हूँ'], correct: 'मैं स्कूल जाता हूँ', translation: 'I go to school' },
+    { scrambled: ['वह', 'पानी', 'पीता', 'है'], correct: 'वह पानी पीता है', translation: 'He drinks water' },
+    { scrambled: ['हम', 'पार्क', 'में', 'खेलते', 'हैं'], correct: 'हम पार्क में खेलते हैं', translation: 'We play in the park' },
+  ],
+  mandarin: [
+    { scrambled: ['我', '喜欢', '苹果'], correct: '我 喜欢 苹果', translation: 'I like apples' },
+    { scrambled: ['他们', '在', '学校', '学习'], correct: '他们 在 学校 学习', translation: 'They study at school' },
+    { scrambled: ['今天', '天气', '很', '好'], correct: '今天 天气 很 好', translation: 'The weather is very good today' },
+  ],
+  arabic: [
+    { scrambled: ['أنا', 'أحب', 'القهوة'], correct: 'أنا أحب القهوة', translation: 'I love coffee' },
+    { scrambled: ['الطفل', 'يلعب', 'في', 'الحديقة'], correct: 'الطفل يلعب في الحديقة', translation: 'The child plays in the garden' },
+    { scrambled: ['نحن', 'نقرأ', 'كتابا'], correct: 'نحن نقرأ كتابا', translation: 'We read a book' },
+  ],
+  bengali: [
+    { scrambled: ['আমি', 'স্কুলে', 'যাই'], correct: 'আমি স্কুলে যাই', translation: 'I go to school' },
+    { scrambled: ['সে', 'পানি', 'খায়'], correct: 'সে পানি খায়', translation: 'He drinks water' },
+    { scrambled: ['আমরা', 'পার্কে', 'খেলি'], correct: 'আমরা পার্কে খেলি', translation: 'We play in the park' },
+  ],
+  portuguese: [
+    { scrambled: ['Eu', 'gosto', 'de', 'café'], correct: 'Eu gosto de café', translation: 'I like coffee' },
+    { scrambled: ['Ela', 'lê', 'um', 'livro'], correct: 'Ela lê um livro', translation: 'She reads a book' },
+    { scrambled: ['Nós', 'vamos', 'ao', 'parque'], correct: 'Nós vamos ao parque', translation: 'We go to the park' },
+  ],
+  russian: [
+    { scrambled: ['Я', 'люблю', 'музыку'], correct: 'Я люблю музыку', translation: 'I love music' },
+    { scrambled: ['Он', 'читает', 'книгу'], correct: 'Он читает книгу', translation: 'He reads a book' },
+    { scrambled: ['Мы', 'идем', 'в', 'парк'], correct: 'Мы идем в парк', translation: 'We go to the park' },
+  ],
+  japanese: [
+    { scrambled: ['私は', 'コーヒー', 'が', '好き', 'です'], correct: '私は コーヒー が 好き です', translation: 'I like coffee' },
+    { scrambled: ['彼は', '学校', 'に', '行きます'], correct: '彼は 学校 に 行きます', translation: 'He goes to school' },
+    { scrambled: ['猫が', 'ソファで', '眠ります'], correct: '猫が ソファで 眠ります', translation: 'The cat sleeps on the sofa' },
+  ],
+};
+
+function getSyntaxScramblerFallbackSentences(targetLanguage: string): Array<{ scrambled: string[]; correct: string; translation: string }> {
+  const resolved = resolveSupportedLearningLanguage(targetLanguage);
+  return SYNTAX_SCRAMBLER_FALLBACK_SENTENCES[resolved] ?? SYNTAX_SCRAMBLER_FALLBACK_SENTENCES.spanish;
+}
+
 
 
 // Per-language fallback content (ensures language selection works even if generation fails)
 // Fallback game content for each game type
 const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<GameContent> | GameContent> = {
-  'transcription-station': (opts) => ({
-    type: 'transcription-station',
-    difficulty: opts.difficulty,
-    language: opts.language,
-    targetLanguage: opts.targetLanguage,
-    rounds: [
-      { audioText: 'Buenos días', correctAnswer: 'Buenos días', hint: 'Morning greeting' },
-      { audioText: 'Gracias por tu ayuda', correctAnswer: 'Gracias por tu ayuda', hint: 'Thanking someone' },
-      { audioText: 'Me llamo Juan', correctAnswer: 'Me llamo Juan', hint: 'Introducing yourself' },
-      { audioText: '¿Cómo estás hoy?', correctAnswer: '¿Cómo estás hoy?', hint: 'Asking about wellbeing' },
-      { audioText: 'El libro está en la mesa', correctAnswer: 'El libro está en la mesa', hint: 'Location of an object' },
-    ],
-  }),
-  'audio-jumble': (opts) => ({
-    type: 'audio-jumble',
-    difficulty: opts.difficulty,
-    language: opts.language,
-    targetLanguage: opts.targetLanguage,
-    rounds: [
-      { sentence: 'Yo quiero un café', words: ['café', 'un', 'Yo', 'quiero'], correctOrder: [2, 3, 1, 0] },
-      { sentence: 'Ella tiene dos gatos', words: ['gatos', 'tiene', 'dos', 'Ella'], correctOrder: [3, 1, 2, 0] },
-      { sentence: 'Nosotros vamos a la playa', words: ['playa', 'a', 'la', 'vamos', 'Nosotros'], correctOrder: [4, 3, 1, 2, 0] },
-    ],
-  }),
-
   'translation-matchup': (opts) => ({
     type: 'translation-matchup',
     difficulty: opts.difficulty,
@@ -532,11 +557,7 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<Ga
     difficulty: opts.difficulty,
     language: opts.language,
     targetLanguage: opts.targetLanguage,
-    sentences: [
-      { scrambled: ['perro', 'El', 'parque', 'el', 'corre', 'en'], correct: 'El perro corre en el parque', translation: 'The dog runs in the park' },
-      { scrambled: ['gustan', 'libros', 'Me', 'los'], correct: 'Me gustan los libros', translation: 'I like books' },
-      { scrambled: ['estudiante', 'La', 'mucho', 'estudia'], correct: 'La estudiante estudia mucho', translation: 'The student studies a lot' },
-    ],
+    sentences: getSyntaxScramblerFallbackSentences(opts.targetLanguage),
   }),
 };
 
@@ -571,58 +592,6 @@ QUALITY REQUIREMENTS:
 OUTPUT FORMAT: Return ONLY valid JSON without markdown formatting, explanations, or code blocks. Ensure proper JSON syntax with correct quotes and brackets.`;
 
   const gameSpecificPrompts: Record<GameType, string> = {
-    'transcription-station': `${basePrompt}
-
-TASK: Generate 5 transcription exercises where users listen to audio and type what they hear.
-
-CONTENT GUIDELINES:
-- Use natural, conversational phrases that native speakers would actually say
-- Include common greetings, questions, statements, and expressions
-- Vary sentence length and complexity based on difficulty level
-- Ensure phrases are phonetically clear and distinct
-- Include helpful context hints that guide without giving away the answer
-
-JSON STRUCTURE:
-{
-  "rounds": [
-    { 
-      "audioText": "Natural ${targetLanguage} phrase", 
-      "correctAnswer": "Exact same phrase for validation", 
-      "hint": "Contextual hint in English (e.g., 'A common greeting', 'Asking about location')" 
-    }
-  ]
-}
-
-EXAMPLE QUALITY:
-- Good: "¿Dónde está la biblioteca?" (Where is the library?)
-- Avoid: "La biblioteca está ubicada en el centro" (too formal/complex for beginners)`,
-
-    'audio-jumble': `${basePrompt}
-
-TASK: Generate 4 sentences where users arrange scrambled words in correct order.
-
-CONTENT GUIDELINES:
-- Create grammatically correct, natural-sounding sentences
-- Use proper word order rules for ${targetLanguage}
-- Include a mix of sentence types (statements, questions, commands)
-- Ensure scrambled words can only form one logical sentence
-- Test understanding of syntax, not just vocabulary
-
-JSON STRUCTURE:
-{
-  "rounds": [
-    { 
-      "sentence": "Complete grammatically correct sentence in ${targetLanguage}", 
-      "words": ["individual", "words", "from", "sentence"], 
-      "correctOrder": [2, 0, 3, 1] 
-    }
-  ]
-}
-
-VALIDATION: The correctOrder array indices must rearrange the words array to form the exact sentence.`,
-
-
-
     'translation-matchup': `${basePrompt}
 
 TASK: Generate 8 word pairs for a memory matching game.
@@ -882,63 +851,6 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
 
   try {
     switch (gameType) {
-      case 'transcription-station':
-        if (!Array.isArray(parsed.rounds) || parsed.rounds.length === 0) {
-          console.warn('Transcription validation failed: Missing or empty rounds array');
-          return false;
-        }
-        return parsed.rounds.every((r: any, index: number) => {
-          const isValid = r.audioText && typeof r.audioText === 'string' &&
-            r.correctAnswer && typeof r.correctAnswer === 'string' &&
-            r.audioText.trim().length > 0 && r.correctAnswer.trim().length > 0 &&
-            r.audioText === r.correctAnswer; // Must match exactly for transcription
-          if (!isValid) {
-            console.warn(`Transcription round ${index} validation failed:`, r);
-          }
-          return isValid;
-        });
-
-      case 'audio-jumble':
-        if (!Array.isArray(parsed.rounds) || parsed.rounds.length === 0) {
-          console.warn('Audio jumble validation failed: Missing or empty rounds array');
-          return false;
-        }
-        return parsed.rounds.every((r: any, index: number) => {
-          const hasValidStructure = r.sentence && typeof r.sentence === 'string' &&
-            Array.isArray(r.words) && Array.isArray(r.correctOrder) &&
-            r.words.length > 0 && r.correctOrder.length === r.words.length;
-
-          if (!hasValidStructure) {
-            console.warn(`Audio jumble round ${index} structure validation failed:`, r);
-            return false;
-          }
-
-          // Validate that correctOrder indices are valid and unique
-          const validIndices = r.correctOrder.every((idx: number) =>
-            Number.isInteger(idx) && idx >= 0 && idx < r.words.length
-          );
-          const uniqueIndices = new Set(r.correctOrder).size === r.correctOrder.length;
-
-          if (!validIndices || !uniqueIndices) {
-            console.warn(`Audio jumble round ${index} indices validation failed:`, r);
-            return false;
-          }
-
-          // Validate that reordered words form the sentence
-          const reorderedWords = r.correctOrder.map((idx: number) => r.words[idx]);
-          const reconstructed = reorderedWords.join(' ');
-          const isValidReconstruction = reconstructed === r.sentence;
-
-          if (!isValidReconstruction) {
-            console.warn(`Audio jumble round ${index} reconstruction failed. Expected: "${r.sentence}", Got: "${reconstructed}"`);
-            return false;
-          }
-
-          return true;
-        });
-
-
-
       case 'translation-matchup':
         if (!Array.isArray(parsed.pairs) || parsed.pairs.length === 0) {
           console.warn('Translation matchup validation failed: Missing or empty pairs array');
@@ -1194,17 +1106,6 @@ function extractContentItems(content: any, gameType: GameType): string[] {
 
   try {
     switch (gameType) {
-      case 'transcription-station':
-        content.rounds?.forEach((r: any) => {
-          if (r.audioText) items.push(r.audioText);
-        });
-        break;
-      case 'audio-jumble':
-        content.rounds?.forEach((r: any) => {
-          if (r.sentence) items.push(r.sentence);
-        });
-        break;
-
       case 'translation-matchup':
         content.pairs?.forEach((p: any) => {
           if (p.original) items.push(p.original);
@@ -1586,11 +1487,6 @@ export function calculateMaxScore(content: GameContent): number {
   const pointsPerItem = 10;
 
   switch (content.type) {
-    case 'transcription-station':
-      return content.rounds.length * pointsPerItem;
-    case 'audio-jumble':
-      return content.rounds.length * pointsPerItem;
-
     case 'translation-matchup':
       return content.pairs.length * pointsPerItem;
     case 'secret-word-solver':
@@ -1610,11 +1506,6 @@ export function calculateMaxScore(content: GameContent): number {
 
 export function calculateTotalRounds(content: GameContent): number {
   switch (content.type) {
-    case 'transcription-station':
-      return content.rounds.length;
-    case 'audio-jumble':
-      return content.rounds.length;
-
     case 'translation-matchup':
       return 1; // It's a single matching round
     case 'secret-word-solver':

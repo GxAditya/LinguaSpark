@@ -106,34 +106,6 @@ const FALLBACK_CONTENT_TEMPLATES = {
       }
     }
   },
-
-  'audio-jumble': {
-    beginner: {
-      'en-es': {
-        rounds: [
-          {
-            word: 'hola',
-            scrambled: ['a', 'l', 'o', 'h'],
-            translation: 'hello',
-            audioText: 'hola'
-          },
-          {
-            word: 'gracias',
-            scrambled: ['s', 'a', 'i', 'c', 'a', 'r', 'g'],
-            translation: 'thank you',
-            audioText: 'gracias'
-          },
-          {
-            word: 'amigo',
-            scrambled: ['o', 'g', 'i', 'm', 'a'],
-            translation: 'friend',
-            audioText: 'amigo'
-          }
-        ],
-        instructions: 'Listen to the word and unscramble the letters to spell it correctly.'
-      }
-    }
-  }
 };
 
 /**

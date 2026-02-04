@@ -1,29 +1,10 @@
 import { Link, Navigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
-import { Award, BarChart3, BookOpen, ChevronRight, FileText, Headphones, Loader2, RotateCcw, Shuffle, Zap } from 'lucide-react';
+import { Award, BarChart3, BookOpen, ChevronRight, FileText, Loader2, RotateCcw, Zap } from 'lucide-react';
 import { useAuth } from '../context';
 import { getLearningLanguageLabel, resolveLearningLanguage } from '../utils/languages';
 
 const games = [
-  {
-    id: 'transcription-station',
-    name: 'Transcription Station',
-    category: 'Listening Comprehension, Spelling',
-    icon: Headphones,
-    toneClass: 'tone-brand',
-    iconClass: 'text-accent',
-    description: 'Listen to audio and type exactly what you heard'
-  },
-  {
-    id: 'audio-jumble',
-    name: 'Audio Jumble',
-    category: 'Listening, Grammar, Word Order',
-    icon: Shuffle,
-    toneClass: 'tone-iris',
-    iconClass: 'text-accent-3',
-    description: 'Drag and drop words in the correct order'
-  },
-
   {
     id: 'translation-matchup',
     name: 'Translation Match-Up',

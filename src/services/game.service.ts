@@ -3,9 +3,6 @@ import { loadingService, LOADING_STAGES } from './loading.service';
 import { ErrorService } from './error.service';
 
 export type GameType =
-  | 'transcription-station'
-  | 'audio-jumble'
-
   | 'translation-matchup'
   | 'secret-word-solver'
   | 'word-drop-dash'

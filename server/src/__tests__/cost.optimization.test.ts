@@ -18,7 +18,7 @@ vi.mock('../models/index.js', () => ({
 
 describe('Cost Optimization Services', () => {
   const mockUserId = new mongoose.Types.ObjectId().toString();
-  const mockGameType = 'transcription-station';
+  const mockGameType = 'word-drop-dash';
 
   beforeEach(() => {
     // Reset services before each test

@@ -17,9 +17,6 @@ import OAuthCallback from './pages/OAuthCallback';
 import Pricing from './pages/Pricing';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
-import TranscriptionStation from './games/TranscriptionStation';
-import AudioJumble from './games/AudioJumble';
-
 import TranslationMatchUp from './games/TranslationMatchUp';
 import SecretWordSolver from './games/SecretWordSolver';
 import WordDropDash from './games/WordDropDash';
@@ -92,9 +89,6 @@ function AppRoutes() {
       <Route path="/lessons" element={<ProtectedRoute><Lessons /></ProtectedRoute>} />
       <Route path="/practice" element={<ProtectedRoute><Practice /></ProtectedRoute>} />
       <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
-      <Route path="/games/transcription-station" element={<ProtectedRoute><TranscriptionStation /></ProtectedRoute>} />
-      <Route path="/games/audio-jumble" element={<ProtectedRoute><AudioJumble /></ProtectedRoute>} />
-
       <Route path="/games/translation-matchup" element={<ProtectedRoute><TranslationMatchUp /></ProtectedRoute>} />
       <Route path="/games/secret-word-solver" element={<ProtectedRoute><SecretWordSolver /></ProtectedRoute>} />
       <Route path="/games/word-drop-dash" element={<ProtectedRoute><WordDropDash /></ProtectedRoute>} />

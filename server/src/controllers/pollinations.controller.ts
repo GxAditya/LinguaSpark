@@ -199,8 +199,7 @@ export const generateGameContent = asyncHandler(async (req: Request, res: Respon
   // Validate game type
   const validGameTypes = [
     'translation-match-up', 'conjugation-coach', 'word-drop-dash',
-    'audio-jumble', 'context-connect',
-    'syntax-scrambler', 'secret-word-solver', 'transcription-station',
+    'context-connect', 'syntax-scrambler', 'secret-word-solver',
   ];
 
   if (!validGameTypes.includes(gameType)) {

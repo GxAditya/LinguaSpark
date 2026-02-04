@@ -5,6 +5,7 @@ import GameLayout from '../components/GameLayout';
 import ExitConfirmModal from '../components/ExitConfirmModal';
 import { GameLoading, GameError } from '../components/GameStates';
 import { useGameSession } from '../hooks/useGameSession';
+import { getLearningLanguageMeta } from '../utils/languages';
 
 interface SentenceData {
   scrambled: string[];
@@ -28,9 +29,11 @@ export default function SyntaxScrambler() {
     nextRound,
     completeGame,
     startNewGame,
+    targetLanguage,
   } = useGameSession({
     gameType: 'syntax-scrambler',
     difficulty: 'beginner',
+    autoSave: false,
   });
 
   const [selectedOrder, setSelectedOrder] = useState<number[]>([]);
@@ -39,6 +42,7 @@ export default function SyntaxScrambler() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sentences: SentenceData[] = (content as any)?.sentences || [];
   const currentSentence = sentences[currentRound];
+  const languageMeta = getLearningLanguageMeta(targetLanguage);
 
   // Shuffle indices for display
   const shuffledIndices = useMemo(() => {
@@ -52,14 +56,6 @@ export default function SyntaxScrambler() {
     setSelectedOrder([]);
     setFeedback(null);
   }, [currentRound]);
-
-  if (loading) {
-    return <GameLoading message="Generating scrambled sentences..." />;
-  }
-
-  if (error) {
-    return <GameError error={error} onRetry={startNewGame} />;
-  }
 
   const handleToggleWord = (index: number) => {
     if (feedback) return;
@@ -98,6 +94,14 @@ export default function SyntaxScrambler() {
   const handlePlayAgain = () => {
     startNewGame();
   };
+
+  if (loading) {
+    return <GameLoading message="Generating scrambled sentences..." />;
+  }
+
+  if (error) {
+    return <GameError error={error} onRetry={startNewGame} />;
+  }
 
   if (isComplete) {
     return (
@@ -177,7 +181,9 @@ export default function SyntaxScrambler() {
                       : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
                       } ${feedback !== null ? 'cursor-default' : 'cursor-pointer'}`}
                   >
-                    {currentSentence.scrambled[wordIndex]}
+                    <span lang={languageMeta.bcp47} dir={languageMeta.dir}>
+                      {currentSentence.scrambled[wordIndex]}
+                    </span>
                     {selectedOrder.includes(wordIndex) && (
                       <span className="ml-2 text-xs opacity-75">
                         {selectedOrder.indexOf(wordIndex) + 1}
@@ -191,7 +197,7 @@ export default function SyntaxScrambler() {
             {selectedOrder.length > 0 && (
               <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <p className="text-sm text-gray-600 mb-2 font-medium">Your sentence:</p>
-                <p className="text-lg text-gray-900">
+                <p className="text-lg text-gray-900" lang={languageMeta.bcp47} dir={languageMeta.dir}>
                   {selectedOrder.map((i) => currentSentence.scrambled[i]).join(' ')}
                 </p>
               </div>
@@ -217,7 +223,7 @@ export default function SyntaxScrambler() {
                     <X className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-semibold text-red-900">Not quite right</p>
-                      <p className="text-sm text-red-800">
+                      <p className="text-sm text-red-800" lang={languageMeta.bcp47} dir={languageMeta.dir}>
                         Correct answer: {currentSentence.correct}
                       </p>
                     </div>
@@ -252,7 +258,7 @@ export default function SyntaxScrambler() {
               onClick={() => setShowExitConfirm(true)}
               className="btn-ghost px-4 py-2 text-sm"
             >
-              Exit Game
+              Finish Game
             </button>
           </div>
         </div>
@@ -262,6 +268,10 @@ export default function SyntaxScrambler() {
         isOpen={showExitConfirm}
         onClose={() => setShowExitConfirm(false)}
         onConfirm={confirmExit}
+        title="Finish Game Early?"
+        message="If you finish now, this game will end and your current progress will be abandoned. Do you want to finish anyway?"
+        cancelText="Keep Playing"
+        confirmText="Finish Game"
       />
     </>
   );

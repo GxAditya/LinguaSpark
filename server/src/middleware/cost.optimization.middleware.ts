@@ -205,13 +205,11 @@ function estimateRequestCost(req: Request): number {
   const gameType = req.body.gameType;
   const gameTypeMultipliers: Record<string, number> = {
 
-    'audio-jumble': 1.2,   // Higher cost due to TTS
     'translation-match': 1.0,
     'word-drop': 1.0,
     'context-connect': 1.1,
     'syntax-scrambler': 1.0,
     'conjugation-coach': 1.0,
-    'transcription-station': 1.3,
     'secret-word': 1.0
   };
 

@@ -151,7 +151,7 @@ describe('ErrorService', () => {
         status: 500,
         message: 'Server error'
       }, {
-        gameType: 'transcription-station',
+        gameType: 'word-drop-dash',
         operation: 'audio_generation'
       });
 
@@ -159,7 +159,7 @@ describe('ErrorService', () => {
       const logData = JSON.parse(logString);
 
       expect(logData.type).toBe('SERVER_ERROR');
-      expect(logData.gameType).toBe('transcription-station');
+      expect(logData.gameType).toBe('word-drop-dash');
       expect(logData.operation).toBe('audio_generation');
       expect(logData.timestamp).toBeDefined();
     });

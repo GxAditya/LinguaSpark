@@ -23,9 +23,6 @@ import {
 const router = Router();
 
 const gameTypes = [
-  'transcription-station',
-  'audio-jumble',
-
   'translation-matchup',
   'secret-word-solver',
   'word-drop-dash',

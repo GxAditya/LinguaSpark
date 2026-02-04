@@ -10,37 +10,12 @@ describe('Game Session Management Integration', () => {
   const gamesDir = path.join(__dirname, '..');
   const gameFiles = fs.readdirSync(gamesDir).filter(file => file.endsWith('.tsx'));
 
-  it('should have updated AudioJumble to use standardized session management', () => {
-    const audioJumbleContent = fs.readFileSync(path.join(gamesDir, 'AudioJumble.tsx'), 'utf8');
-    
-    // Verify it uses hook's state instead of local state
-    expect(audioJumbleContent).toContain('gameState: { feedback, setFeedback, selectedAnswer, setSelectedAnswer, resetRoundState }');
-    expect(audioJumbleContent).toContain('updateScore(score + points)');
-    expect(audioJumbleContent).toContain('nextRound()');
-    
-    // Verify it doesn't manage its own currentRound, score, feedback
-    expect(audioJumbleContent).not.toContain('useState(0); // for currentRound');
-    expect(audioJumbleContent).not.toContain('setCurrentRound(currentRound + 1)');
-    expect(audioJumbleContent).not.toContain('setScore(score + points)');
-    
-    // Verify it uses the new audio functionality
-    expect(audioJumbleContent).toContain('useAudio');
-    expect(audioJumbleContent).toContain('playText');
-    expect(audioJumbleContent).toContain('audioLoading');
-    expect(audioJumbleContent).toContain('preloadTexts');
-    
-    // Verify it doesn't use old browser TTS directly
-    expect(audioJumbleContent).not.toContain('new SpeechSynthesisUtterance');
-    expect(audioJumbleContent).not.toContain('window.speechSynthesis.speak');
-  });
+  it('should have SyntaxScrambler using standardized session management', () => {
+    const syntaxScramblerContent = fs.readFileSync(path.join(gamesDir, 'SyntaxScrambler.tsx'), 'utf8');
 
-  it('should have updated ImageInstinct to use standardized session management', () => {
-    const imageInstinctContent = fs.readFileSync(path.join(gamesDir, 'ImageInstinct.tsx'), 'utf8');
-    
-    // Verify it uses hook's state
-    expect(imageInstinctContent).toContain('gameState: { feedback, setFeedback, selectedAnswer, setSelectedAnswer, resetRoundState }');
-    expect(imageInstinctContent).toContain('updateScore(score + points)');
-    expect(imageInstinctContent).toContain('nextRound()');
+    expect(syntaxScramblerContent).toContain("gameType: 'syntax-scrambler'");
+    expect(syntaxScramblerContent).toContain('updateScore(score + 10)');
+    expect(syntaxScramblerContent).toContain('nextRound()');
   });
 
   it('should have updated WordDropDash to use standardized session management', () => {

@@ -102,7 +102,6 @@ describe('FallbackContentService', () => {
 
       expect(gameTypes).toContain('translation-match-up');
       expect(gameTypes).toContain('conjugation-coach');
-      expect(gameTypes).toContain('audio-jumble');
     });
 
     it('should return available language pairs for a game type', () => {
