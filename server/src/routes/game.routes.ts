@@ -45,6 +45,7 @@ router.use(protect);
  */
 router.post(
   '/start',
+  rateLimitMiddleware(RATE_LIMITS.GAME_SESSION_START), // Burst protection
   costAwareGameGenerationLimit(), // Cost-aware rate limiting
   modelOptimizationMiddleware(), // Model optimization
   recordGameGenerationUsage(), // Usage recording
@@ -72,6 +73,10 @@ router.post(
       .trim()
       .isLength({ max: 100 })
       .withMessage('Topic must be less than 100 characters'),
+    body('forceNew')
+      .optional()
+      .isBoolean()
+      .withMessage('forceNew must be a boolean'),
     body('optimization')
       .optional()
       .isIn(['speed', 'quality', 'cost'])

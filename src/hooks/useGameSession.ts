@@ -1,14 +1,37 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context';
 import { gameService, GameType, Difficulty, GameSession } from '../services/game.service';
 import { resolveLearningLanguage } from '../utils/languages';
+
+const DEV_INIT_DEDUPE_WINDOW_MS = 1200;
+const devInitRequests = new Map<string, { startedAt: number; promise: Promise<GameSession> }>();
+
+function formatGameSessionError(err: unknown): string {
+  // ApiError shape (see src/services/error.service.ts)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const error = err as any;
+  const statusCode = error?.statusCode ?? error?.status;
+  const retryAfter = error?.retryAfter;
+  const userMessage = typeof error?.userMessage === 'string' ? error.userMessage : null;
+  const message = typeof error?.message === 'string' ? error.message : 'Failed to start game. Please try again.';
+
+  if (statusCode === 429) {
+    const retrySeconds = typeof retryAfter === 'number' && Number.isFinite(retryAfter) ? retryAfter : null;
+    return retrySeconds
+      ? `Rate limit exceeded. Please try again in ${retrySeconds} seconds.`
+      : 'Rate limit exceeded. Please try again in a moment.';
+  }
+
+  return userMessage ?? message;
+}
 
 interface UseGameSessionOptions {
   gameType: GameType;
   difficulty?: Difficulty;
   targetLanguage?: string;
   topic?: string;
+  autoSave?: boolean;
 }
 
 interface UseGameSessionReturn {
@@ -64,7 +87,6 @@ interface UseGameSessionReturn {
 
 export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameType): UseGameSessionReturn {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const { user } = useAuth();
 
   // Support both string (gameType) and object (options) parameters
@@ -72,10 +94,9 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
     ? { gameType: optionsOrGameType }
     : optionsOrGameType;
 
-  // Get language from Dashboard selection first, then URL query param, then options/default
-  const urlLanguage = searchParams.get('language');
-  const { gameType, difficulty = 'beginner', targetLanguage: optionsLanguage, topic } = options;
-  const targetLanguage = resolveLearningLanguage(user?.currentLanguage ?? urlLanguage ?? optionsLanguage);
+  const { gameType, difficulty = 'beginner', targetLanguage: optionsLanguage, topic, autoSave = true } = options;
+  // Single source of truth: dashboard-selected language (user profile), falling back to explicit options/default
+  const targetLanguage = resolveLearningLanguage(user?.currentLanguage ?? optionsLanguage);
 
   const [session, setSession] = useState<GameSession | null>(null);
   const [loading, setLoading] = useState(true);
@@ -84,6 +105,7 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
   const [score, setScore] = useState(0);
   const [timeSpent, setTimeSpent] = useState(0);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [isFinalized, setIsFinalized] = useState(false);
 
   // Game state management
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
@@ -98,6 +120,16 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
     setFeedback(null);
     setSelectedAnswer(null);
   }, []);
+
+  const applyNewSession = useCallback((newSession: GameSession) => {
+    setSession(newSession);
+    sessionIdRef.current = newSession.sessionId;
+    setCurrentRound(0);
+    setScore(0);
+    setTimeSpent(0);
+    setIsFinalized(false);
+    resetRoundState();
+  }, [resetRoundState]);
 
   // Enhanced error handling
   const clearError = useCallback(() => {
@@ -134,7 +166,7 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
 
   // Auto-save progress periodically
   useEffect(() => {
-    if (session && sessionIdRef.current) {
+    if (autoSave && session && sessionIdRef.current && !isFinalized) {
       const saveInterval = setInterval(async () => {
         try {
           await gameService.updateProgress(sessionIdRef.current!, {
@@ -149,7 +181,7 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
 
       return () => clearInterval(saveInterval);
     }
-  }, [session, currentRound, score, timeSpent]);
+  }, [autoSave, session, currentRound, score, timeSpent, isFinalized]);
 
   // Initialize game session
   const startNewGame = useCallback(async () => {
@@ -163,24 +195,13 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
           difficulty,
           targetLanguage,
           topic,
+          forceNew: true,
         });
 
-        setSession(newSession);
-        sessionIdRef.current = newSession.sessionId;
-        setCurrentRound(0);
-        setScore(0);
-        setTimeSpent(0);
-        resetRoundState();
+        applyNewSession(newSession);
       } catch (err: unknown) {
         console.error('Failed to start game:', err);
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const error = err as any; // Temporary cast for accessing properties
-        if (error.status === 429) {
-          setError(`Rate limit exceeded. Please try again in ${error.retryAfterSeconds || 60} seconds.`);
-        } else {
-          setError(error.message || 'Failed to start game. Please try again.');
-        }
+        setError(formatGameSessionError(err));
       } finally {
         setLoading(false);
       }
@@ -188,42 +209,55 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
 
     lastActionRef.current = action;
     await action();
-  }, [gameType, difficulty, targetLanguage, topic, resetRoundState]);
+  }, [applyNewSession, gameType, difficulty, targetLanguage, topic]);
 
-  // Check for existing active session on mount
-  useEffect(() => {
-    const checkExistingSession = async () => {
+  const initializeGame = useCallback(async () => {
+    const action = async () => {
+      setLoading(true);
+      setError(null);
+
+      const initKey = `${gameType}|${difficulty}|${targetLanguage}|${topic || 'general'}`;
+
       try {
-        const existingSession = await gameService.getActiveSession(gameType);
-        if (existingSession) {
-          const existingTargetLanguage = (existingSession.content as { targetLanguage?: string } | null)?.targetLanguage;
-          const resolvedExistingTargetLanguage = resolveLearningLanguage(existingTargetLanguage);
-
-          // If the user changed their learning language on the dashboard, restart with the new language
-          if (resolvedExistingTargetLanguage !== targetLanguage) {
-            await startNewGame();
+        if (import.meta.env.DEV) {
+          const existing = devInitRequests.get(initKey);
+          if (existing && Date.now() - existing.startedAt < DEV_INIT_DEDUPE_WINDOW_MS) {
+            const newSession = await existing.promise;
+            applyNewSession(newSession);
             return;
           }
-
-          setSession(existingSession);
-          sessionIdRef.current = existingSession.sessionId;
-          setCurrentRound(existingSession.currentRound);
-          setScore(existingSession.score);
-          setTimeSpent(existingSession.timeSpentSeconds);
-          setLoading(false);
-        } else {
-          // No existing session, start a new one
-          await startNewGame();
         }
-      } catch (err) {
-        console.error('Failed to check existing session:', err);
-        // Start a new game anyway
-        await startNewGame();
+
+        const promise = gameService.startGame({
+          gameType,
+          difficulty,
+          targetLanguage,
+          topic,
+          forceNew: true,
+        });
+
+        if (import.meta.env.DEV) {
+          devInitRequests.set(initKey, { startedAt: Date.now(), promise });
+        }
+
+        const newSession = await promise;
+        applyNewSession(newSession);
+      } catch (err: unknown) {
+        console.error('Failed to start game:', err);
+        setError(formatGameSessionError(err));
+      } finally {
+        setLoading(false);
       }
     };
 
-    checkExistingSession();
-  }, [gameType, startNewGame, targetLanguage]);
+    lastActionRef.current = action;
+    await action();
+  }, [applyNewSession, gameType, difficulty, targetLanguage, topic]);
+
+  // Always start a fresh game when entering (no session resume)
+  useEffect(() => {
+    void initializeGame();
+  }, [initializeGame]);
 
   const completeGame = useCallback(async () => {
     if (!sessionIdRef.current) return;
@@ -239,10 +273,15 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
         score,
         timeSpentSeconds: timeSpent,
       });
+
+      if (session?.totalRounds) {
+        setCurrentRound(session.totalRounds);
+      }
+      setIsFinalized(true);
     } catch (err) {
       console.error('Failed to complete game:', err);
     }
-  }, [score, timeSpent]);
+  }, [score, session?.totalRounds, timeSpent]);
 
   const abandonGame = useCallback(async () => {
     if (!sessionIdRef.current) {
@@ -271,7 +310,7 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
   const submitAnswer = useCallback(async () => {
     // This method is a convenience for updating progress after an answer
     // The actual score/round update should be handled by the game component
-    if (!sessionIdRef.current) return;
+    if (!autoSave || !sessionIdRef.current) return;
 
     try {
       await gameService.updateProgress(sessionIdRef.current, {
@@ -282,7 +321,7 @@ export function useGameSession(optionsOrGameType: UseGameSessionOptions | GameTy
     } catch (err) {
       console.error('Failed to submit answer:', err);
     }
-  }, [currentRound, score, timeSpent]);
+  }, [autoSave, currentRound, score, timeSpent]);
 
   const updateScore = useCallback((newScore: number) => {
     setScore(newScore);

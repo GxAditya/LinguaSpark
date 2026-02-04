@@ -8,6 +8,8 @@ export interface TextGenerationOptions {
   temperature?: number;
   max_tokens?: number;
   seed?: number;
+  system?: string;
+  json?: boolean;
 }
 
 export interface ImageGenerationOptions {
@@ -154,12 +156,50 @@ export class PollinationsApiService {
             model = config.pollinations.textModel,
             temperature = 0.7,
             max_tokens = 2000,
-            seed
+            seed,
+            system,
+            json
           } = optimizedOptions;
 
-          const messages = [
-            { role: 'user', content: optimizedPrompt }
-          ];
+          const keyType = this.auth.getKeyType();
+          const useTextEndpoint = keyType !== 'secret';
+
+          const requestTextEndpoint = async (): Promise<TextResponse> => {
+            const params = new URLSearchParams();
+            params.set('model', model);
+            if (seed !== undefined) {
+              params.set('seed', seed.toString());
+            }
+            if (system) {
+              params.set('system', system);
+            }
+            if (json !== undefined) {
+              params.set('json', json.toString());
+            }
+            if (temperature !== undefined) {
+              params.set('temperature', temperature.toString());
+            }
+
+            const endpoint = `/text/${encodeURIComponent(optimizedPrompt)}?${params.toString()}`;
+            const text = await this.authenticatedRequest<string>(endpoint, {
+              method: 'GET'
+            });
+
+            return {
+              content: text,
+              model
+            };
+          };
+
+          if (useTextEndpoint) {
+            return await requestTextEndpoint();
+          }
+
+          const messages: Array<{ role: 'system' | 'user'; content: string }> = [];
+          if (system) {
+            messages.push({ role: 'system', content: system });
+          }
+          messages.push({ role: 'user', content: optimizedPrompt });
 
           const requestBody: any = {
             model,
@@ -172,16 +212,21 @@ export class PollinationsApiService {
             requestBody.seed = seed;
           }
 
-          const response = await this.authenticatedRequest<any>('/v1/chat/completions', {
-            method: 'POST',
-            body: JSON.stringify(requestBody)
-          });
+          try {
+            const response = await this.authenticatedRequest<any>('/v1/chat/completions', {
+              method: 'POST',
+              body: JSON.stringify(requestBody)
+            });
 
-          return {
-            content: response.choices[0].message.content,
-            model: response.model,
-            usage: response.usage
-          };
+            return {
+              content: response.choices[0].message.content,
+              model: response.model,
+              usage: response.usage
+            };
+          } catch (error) {
+            console.warn('Pollinations chat completion failed, retrying with /text endpoint:', error);
+            return await requestTextEndpoint();
+          }
         },
         1800000 // 30 minutes TTL for text generation
       ).then(result => result.data)

@@ -40,6 +40,19 @@ export class PollinationsAuth implements AuthenticationManager {
   }
 
   /**
+   * Determine API key type based on prefix.
+   */
+  getKeyType(): 'publishable' | 'secret' | 'unknown' {
+    if (this.apiKey.startsWith('pk_')) {
+      return 'publishable';
+    }
+    if (this.apiKey.startsWith('sk_')) {
+      return 'secret';
+    }
+    return 'unknown';
+  }
+
+  /**
    * Get authentication headers for API requests
    * @returns Headers object with Bearer token
    */
@@ -58,9 +71,11 @@ export class PollinationsAuth implements AuthenticationManager {
    */
   async validateApiKey(): Promise<boolean> {
     try {
-      // Basic format validation - Pollinations keys start with 'pk_'
-      if (!this.apiKey || !this.apiKey.startsWith('pk_')) {
-        console.warn('Pollinations API key format invalid - should start with "pk_"');
+      const keyType = this.getKeyType();
+
+      // Basic format validation - Pollinations keys start with 'pk_' or 'sk_'
+      if (!this.apiKey || keyType === 'unknown') {
+        console.warn('Pollinations API key format invalid - should start with "pk_" or "sk_"');
         return false;
       }
 
@@ -72,7 +87,7 @@ export class PollinationsAuth implements AuthenticationManager {
 
       // For development, we'll assume the key is valid if format is correct
       // In production, you might want to make a minimal API call here
-      console.log('Pollinations API key format validation passed');
+      console.log(`Pollinations API key format validation passed (${keyType})`);
       return true;
     } catch (error) {
       console.error('API key validation failed:', error);

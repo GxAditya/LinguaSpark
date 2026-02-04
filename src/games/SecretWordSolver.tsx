@@ -1,15 +1,63 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ChevronRight, Check, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import GameLayout from '../components/GameLayout';
 import ExitConfirmModal from '../components/ExitConfirmModal';
 import { GameLoading, GameError } from '../components/GameStates';
 import { useGameSession } from '../hooks/useGameSession';
+import { getLearningLanguageMeta, type LearningLanguage } from '../utils/languages';
 
 interface SecretWord {
   word: string;
   hint: string;
   category: string;
+}
+
+function splitGraphemes(text: string): string[] {
+  if (typeof Intl !== 'undefined' && 'Segmenter' in Intl) {
+    // @ts-expect-error TS lib may not include Intl.Segmenter depending on config
+    const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+    // @ts-expect-error TS lib may not include Intl.Segmenter depending on config
+    return Array.from(segmenter.segment(text), (s: any) => s.segment);
+  }
+  return Array.from(text);
+}
+
+function normalizeSegment(value: string): string {
+  return value.normalize('NFC').toLocaleUpperCase();
+}
+
+function getKeyboardPool(language: LearningLanguage): string[] {
+  switch (language) {
+    case 'russian':
+      return 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'.split('');
+    case 'arabic':
+      return 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
+    case 'hindi':
+      return 'अआइईउऊएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह'.split('');
+    case 'bengali':
+      return 'অআইঈউঊএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহড়ঢ়য়'.split('');
+    case 'japanese':
+      return 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'.split('');
+    case 'mandarin':
+      return '我你他她是的不了在有这那吗呢和说去来吃喝学会想看听喜欢今天明天昨天'.split('');
+    case 'spanish':
+      return 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('');
+    case 'french':
+    case 'portuguese':
+      return 'ABCDEFGHIJKLMNOPQRSTUVWXYZÇ'.split('');
+    default:
+      return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  }
+}
+
+function shuffle<T>(items: T[]): T[] {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
 }
 
 export default function SecretWordSolver() {
@@ -28,59 +76,90 @@ export default function SecretWordSolver() {
     nextRound,
     completeGame,
     startNewGame,
+    targetLanguage,
   } = useGameSession({
     gameType: 'secret-word-solver',
     difficulty: 'beginner',
   });
 
-  const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
+  const [guessedChars, setGuessedChars] = useState<string[]>([]);
   const [wrongGuesses, setWrongGuesses] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
   const maxWrongs = 6;
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const languageMeta = getLearningLanguageMeta(targetLanguage);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const words: SecretWord[] = useMemo(() => (content as any)?.words || [], [content]);
+  const currentWordData = words[currentRound];
+  const rawWord = currentWordData?.word?.trim() || '';
+  const normalizedWord = rawWord.normalize('NFC');
 
   // Reset local state when round changes
   useEffect(() => {
-    setGuessedLetters([]);
+    setGuessedChars([]);
     setWrongGuesses(0);
-    setFeedback(null);
-  }, [currentRound]);
+  }, [currentRound, normalizedWord]);
 
-  if (loading) {
-    return <GameLoading message="Generating secret words..." />;
-  }
+  const wordSegments = useMemo(() => splitGraphemes(normalizedWord), [normalizedWord]);
+  const normalizedSegments = useMemo(() => wordSegments.map(normalizeSegment), [wordSegments]);
+  const guessableMask = useMemo(() => wordSegments.map((seg) => /[\p{L}\p{N}]/u.test(seg)), [wordSegments]);
 
-  if (error) {
-    return <GameError error={error} onRetry={startNewGame} />;
-  }
+  const wordGuessSet = useMemo(() => {
+    const set = new Set<string>();
+    normalizedSegments.forEach((seg, idx) => {
+      if (guessableMask[idx]) set.add(seg);
+    });
+    return set;
+  }, [guessableMask, normalizedSegments]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const words: SecretWord[] = (content as any)?.words || [];
-  const currentWordData = words[currentRound];
-  const currentWord = currentWordData?.word?.toUpperCase() || '';
+  const requiredCharsForWord = useMemo(() => {
+    const seen = new Set<string>();
+    const required: string[] = [];
+    normalizedSegments.forEach((seg, idx) => {
+      if (!guessableMask[idx]) return;
+      if (seen.has(seg)) return;
+      seen.add(seg);
+      required.push(wordSegments[idx]);
+    });
+    return required;
+  }, [guessableMask, normalizedSegments, wordSegments]);
 
-  const guessedWord = currentWord
-    .split('')
-    .map((letter) => (guessedLetters.includes(letter) ? letter : '_'))
-    .join(' ');
+  const keyboardChars = useMemo(() => {
+    const basePool = getKeyboardPool(languageMeta.language);
+    const requiredSet = new Set(requiredCharsForWord.map(normalizeSegment));
+    const poolCandidates = basePool.filter((ch) => !requiredSet.has(normalizeSegment(ch)));
 
-  const isWordComplete = currentWord.split('').every((letter) => guessedLetters.includes(letter));
+    // Balance: always include all required chars, then add distractors.
+    const desiredSize = Math.min(Math.max(requiredCharsForWord.length + 10, 18), 30);
+    const distractors = shuffle(poolCandidates).slice(0, Math.max(0, desiredSize - requiredCharsForWord.length));
+    return shuffle([...requiredCharsForWord, ...distractors]);
+  }, [languageMeta.language, requiredCharsForWord]);
+
+  const guessedWord = useMemo(() => {
+    return wordSegments
+      .map((seg, idx) => {
+        if (!guessableMask[idx]) return seg;
+        const normalized = normalizedSegments[idx];
+        return guessedChars.includes(normalized) ? seg : '_';
+      })
+      .join(' ');
+  }, [guessableMask, guessedChars, normalizedSegments, wordSegments]);
+
+  const isWordComplete = useMemo(() => {
+    return wordSegments.every((_, idx) => !guessableMask[idx] || guessedChars.includes(normalizedSegments[idx]));
+  }, [guessableMask, guessedChars, normalizedSegments, wordSegments]);
+
   const isGameOver = wrongGuesses >= maxWrongs;
 
   const handleGuess = (letter: string) => {
-    if (!guessedLetters.includes(letter) && !isGameOver && !isWordComplete) {
-      setGuessedLetters([...guessedLetters, letter]);
+    if (isGameOver || isWordComplete) return;
 
-      if (!currentWord.includes(letter)) {
-        setWrongGuesses(wrongGuesses + 1);
-        setFeedback('incorrect');
-      } else {
-        setFeedback('correct');
-      }
+    const normalized = normalizeSegment(letter);
+    if (guessedChars.includes(normalized)) return;
 
-      setTimeout(() => setFeedback(null), 500);
+    setGuessedChars((prev) => [...prev, normalized]);
+    if (!wordGuessSet.has(normalized)) {
+      setWrongGuesses((prev) => prev + 1);
     }
   };
 
@@ -101,6 +180,14 @@ export default function SecretWordSolver() {
     startNewGame();
   };
 
+  if (loading) {
+    return <GameLoading message="Generating secret words..." />;
+  }
+
+  if (error) {
+    return <GameError error={error} onRetry={startNewGame} />;
+  }
+
   if (isComplete) {
     return (
       <GameLayout title="Secret Word Solver">
@@ -116,10 +203,10 @@ export default function SecretWordSolver() {
             </span>
           </p>
           <div className="flex gap-4 mt-4">
-            <Link to="/games" className="btn-secondary">
+            <Link to="/games" className="btn-secondary px-6 py-3">
               Back to Games
             </Link>
-            <button onClick={handlePlayAgain} className="btn-primary flex items-center gap-2">
+            <button onClick={handlePlayAgain} className="btn-primary px-6 py-3 flex items-center gap-2">
               <RefreshCw className="w-5 h-5" />
               Play Again
             </button>
@@ -144,7 +231,11 @@ export default function SecretWordSolver() {
           <div className="card p-8 mb-8">
             <div className="mb-8">
               <div className="text-center mb-6">
-                <div className="text-4xl md:text-5xl font-bold tracking-widest text-gray-900 mb-4 font-mono">
+                <div
+                  className="text-4xl md:text-5xl font-bold tracking-widest text-gray-900 mb-4 font-mono"
+                  lang={languageMeta.bcp47}
+                  dir={languageMeta.dir}
+                >
                   {guessedWord}
                 </div>
                 <p className="text-sm text-gray-600">Guess the hidden word!</p>
@@ -181,7 +272,9 @@ export default function SecretWordSolver() {
               {isGameOver && !isWordComplete && (
                 <div className="bg-red-50 p-4 rounded-lg border border-red-200 mb-6">
                   <p className="font-semibold text-red-900">Game Over!</p>
-                  <p className="text-sm text-red-800">The word was: {currentWord}</p>
+                  <p className="text-sm text-red-800" lang={languageMeta.bcp47} dir={languageMeta.dir}>
+                    The word was: {normalizedWord}
+                  </p>
                 </div>
               )}
             </div>
@@ -189,10 +282,10 @@ export default function SecretWordSolver() {
             <div className="mb-8">
               <p className="text-sm text-gray-600 mb-3 font-medium">Guessed Letters:</p>
               <div className="flex flex-wrap gap-2 min-h-[32px]">
-                {guessedLetters.map((letter) => (
+                {guessedChars.map((letter) => (
                   <span
                     key={letter}
-                    className={`px-3 py-1 rounded-lg font-medium text-sm ${currentWord.includes(letter)
+                    className={`px-3 py-1 rounded-lg font-medium text-sm ${wordGuessSet.has(letter)
                       ? 'bg-green-100 text-green-700'
                       : 'bg-red-100 text-red-700'
                       }`}
@@ -207,12 +300,12 @@ export default function SecretWordSolver() {
               <div className="mb-8">
                 <p className="text-sm text-gray-600 mb-3 font-medium">Available Letters:</p>
                 <div className="flex flex-wrap gap-2">
-                  {alphabet.map((letter) => (
+                  {keyboardChars.map((letter) => (
                     <button
                       key={letter}
                       onClick={() => handleGuess(letter)}
-                      disabled={guessedLetters.includes(letter)}
-                      className={`w-10 h-10 rounded-lg font-semibold transition-all ${guessedLetters.includes(letter)
+                      disabled={guessedChars.includes(normalizeSegment(letter))}
+                      className={`w-10 h-10 rounded-lg font-semibold transition-all ${guessedChars.includes(normalizeSegment(letter))
                         ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                         : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200 cursor-pointer'
                         }`}
@@ -227,7 +320,7 @@ export default function SecretWordSolver() {
             {(isWordComplete || isGameOver) && (
               <button
                 onClick={handleNext}
-                className="btn-primary w-full flex items-center justify-center gap-2"
+                className="btn-primary px-6 py-3 w-full flex items-center justify-center gap-2"
               >
                 {currentRound + 1 >= totalRounds ? 'Finish' : 'Next'}{' '}
                 <ChevronRight className="w-5 h-5" />
@@ -238,9 +331,9 @@ export default function SecretWordSolver() {
           <div className="text-center">
             <button
               onClick={() => setShowExitConfirm(true)}
-              className="text-gray-500 hover:text-gray-700 text-sm underline"
+              className="btn-ghost px-4 py-2 text-sm"
             >
-              Exit Game
+              Finish Game
             </button>
           </div>
         </div>
@@ -250,6 +343,10 @@ export default function SecretWordSolver() {
         isOpen={showExitConfirm}
         onClose={() => setShowExitConfirm(false)}
         onConfirm={confirmExit}
+        title="Finish Game Early?"
+        message="If you finish now, this game will end and your current progress will be abandoned. Do you want to finish anyway?"
+        cancelText="Keep Playing"
+        confirmText="Finish Game"
       />
     </>
   );

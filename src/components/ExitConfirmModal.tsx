@@ -60,13 +60,13 @@ export default function ExitConfirmModal({
         <div className="flex gap-3 p-6 pt-0">
           <button
             onClick={handleClose}
-            className="flex-1 px-4 py-3 btn-secondary rounded-xl"
+            className="flex-1 btn-secondary px-6 py-3"
           >
             {cancelText}
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-3 bg-warning text-white rounded-xl font-semibold hover:opacity-90 transition-all"
+            className="flex-1 btn-primary px-6 py-3"
           >
             {confirmText}
           </button>

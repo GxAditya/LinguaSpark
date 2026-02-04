@@ -6,15 +6,14 @@ import { useAudio } from '../hooks/useAudio';
 import { GameLoading, GameError } from '../components/GameStates';
 import ExitConfirmModal from '../components/ExitConfirmModal';
 
-interface Sentence {
-  id: number;
-  text: string;
+interface AudioJumbleRound {
+  sentence: string;
   words: string[];
   correctOrder: number[];
 }
 
 interface AudioJumbleContent {
-  sentences: Sentence[];
+  rounds: AudioJumbleRound[];
 }
 
 export default function AudioJumble() {
@@ -52,8 +51,8 @@ export default function AudioJumble() {
 
   // Cast content to the expected type
   const audioContent = content as AudioJumbleContent | undefined;
-  const sentences = audioContent?.sentences || [];
-  const currentSentence = sentences[currentRound];
+  const rounds = audioContent?.rounds || [];
+  const currentSentence = rounds[currentRound];
 
   const shuffledIndices = useMemo(() => {
     if (!currentSentence) return [];
@@ -88,6 +87,7 @@ export default function AudioJumble() {
   if (!session || !content) return <GameLoading gameName="Audio Jumble" />;
 
   const handlePlayWord = async (index: number) => {
+    if (!currentSentence) return;
     const word = currentSentence.words[index];
     try {
       clearAudioError();
@@ -109,6 +109,7 @@ export default function AudioJumble() {
   };
 
   const handleSubmit = async () => {
+    if (!currentSentence) return;
     const isCorrect = JSON.stringify(selectedOrder) === JSON.stringify(currentSentence.correctOrder);
     setFeedback(isCorrect ? 'correct' : 'incorrect');
 
@@ -118,7 +119,7 @@ export default function AudioJumble() {
     }
 
     await submitAnswer({
-      sentenceId: currentSentence.id,
+      roundIndex: currentRound,
       selectedOrder,
       correct: isCorrect,
       points
@@ -126,7 +127,7 @@ export default function AudioJumble() {
   };
 
   const handleNext = async () => {
-    if (currentRound + 1 >= sentences.length) {
+    if (currentRound + 1 >= totalRounds) {
       await completeGame();
     } else {
       nextRound();
@@ -144,7 +145,7 @@ export default function AudioJumble() {
           <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score} / {totalRounds * 10}</span></p>
           <button
             onClick={startNewGame}
-            className="btn-primary"
+            className="btn-primary px-6 py-3"
           >
             Play Again
           </button>
@@ -164,10 +165,10 @@ export default function AudioJumble() {
         <div className="card p-8 mb-8">
           <p className="text-sm text-gray-600 mb-6">Arrange the words in the correct order. Click each word to hear it.</p>
 
-          <div className="mb-8 p-4 bg-purple-50 rounded-lg border-2 border-purple-200">
-            <p className="text-sm text-gray-600 mb-3 font-medium">Correct sentence:</p>
-            <p className="text-lg font-semibold text-gray-900">{currentSentence.text}</p>
-          </div>
+            <div className="mb-8 p-4 bg-purple-50 rounded-lg border-2 border-purple-200">
+              <p className="text-sm text-gray-600 mb-3 font-medium">Correct sentence:</p>
+              <p className="text-lg font-semibold text-gray-900">{currentSentence.sentence}</p>
+            </div>
 
           <div className="mb-8">
             <label className="block text-sm font-medium text-gray-700 mb-3">Click words to arrange them:</label>
@@ -270,14 +271,14 @@ export default function AudioJumble() {
               <button
                 onClick={handleSubmit}
                 disabled={selectedOrder.length !== currentSentence.words.length}
-                className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary px-6 py-3 flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Submit
               </button>
             ) : (
               <button
                 onClick={handleNext}
-                className="btn-primary flex-1 flex items-center justify-center gap-2"
+                className="btn-primary px-6 py-3 flex-1 flex items-center justify-center gap-2"
               >
                 Next <ChevronRight className="w-5 h-5" />
               </button>

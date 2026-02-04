@@ -170,10 +170,10 @@ export default function TranslationMatchUp() {
             </span>
           </p>
           <div className="flex gap-4 mt-4">
-            <Link to="/games" className="btn-secondary">
+            <Link to="/games" className="btn-secondary px-6 py-3">
               Back to Games
             </Link>
-            <button onClick={handlePlayAgain} className="btn-primary flex items-center gap-2">
+            <button onClick={handlePlayAgain} className="btn-primary px-6 py-3 flex items-center gap-2">
               <RefreshCw className="w-5 h-5" />
               Play Again
             </button>
@@ -205,10 +205,10 @@ export default function TranslationMatchUp() {
                   lang={card.isOriginal ? learningLanguageMeta.bcp47 : 'en'}
                   dir={card.isOriginal ? learningLanguageMeta.dir : 'ltr'}
                   className={`aspect-square rounded-xl font-semibold text-sm transition-all flex items-center justify-center p-2 ${matchedCards.includes(card.id)
-                    ? 'bg-green-100 text-green-600 cursor-default'
+                    ? 'bg-success-soft text-success border border-success cursor-default'
                     : flippedCards.includes(card.id)
-                      ? 'bg-orange-500 text-white scale-105'
-                      : 'bg-gradient-to-br from-orange-100 to-pink-100 text-gray-700 hover:scale-105 cursor-pointer'
+                      ? 'bg-action-primary text-action-primary-fg border border-action-primary-hover shadow-soft scale-105'
+                      : 'bg-surface-subtle text-content-primary border border-border-base hover:border-border-strong hover:shadow-soft hover:scale-105 cursor-pointer'
                     }`}
                 >
                   {flippedCards.includes(card.id) || matchedCards.includes(card.id)
@@ -221,14 +221,14 @@ export default function TranslationMatchUp() {
             {feedback && (
               <div
                 className={`p-4 rounded-xl mb-6 flex items-center justify-center ${feedback === 'correct'
-                  ? 'bg-green-50 border border-green-200'
-                  : 'bg-red-50 border border-red-200'
+                  ? 'bg-success-soft border border-success'
+                  : 'bg-warning-soft border border-warning'
                   }`}
               >
                 {feedback === 'correct' ? (
-                  <p className="font-semibold text-green-900">Match found! +10 points</p>
+                  <p className="font-semibold text-success">Match found! +10 points</p>
                 ) : (
-                  <p className="font-semibold text-red-900">No match, try again!</p>
+                  <p className="font-semibold text-warning">No match, try again!</p>
                 )}
               </div>
             )}
@@ -237,7 +237,7 @@ export default function TranslationMatchUp() {
               <p className="text-sm text-gray-600">
                 Matched: {matchedCards.length / 2} / {pairs.length}
               </p>
-              <button onClick={() => setShowExitConfirm(true)} className="btn-secondary flex items-center gap-2">
+              <button onClick={() => setShowExitConfirm(true)} className="btn-secondary px-6 py-3 flex items-center gap-2">
                 Finish <ChevronRight className="w-4 h-4" />
               </button>
             </div>

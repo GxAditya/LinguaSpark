@@ -100,10 +100,10 @@ export default function ConjugationCoach() {
             Accuracy: {totalRounds > 0 ? Math.round((score / (totalRounds * 10)) * 100) : 0}%
           </p>
           <div className="flex gap-4">
-            <Link to="/games" className="btn-secondary">
+            <Link to="/games" className="btn-secondary px-6 py-3">
               Back to Games
             </Link>
-            <button onClick={handlePlayAgain} className="btn-primary flex items-center gap-2">
+            <button onClick={handlePlayAgain} className="btn-primary px-6 py-3 flex items-center gap-2">
               <RefreshCw className="w-5 h-5" />
               Play Again
             </button>
@@ -188,7 +188,7 @@ export default function ConjugationCoach() {
             {feedback && (
               <button
                 onClick={handleNext}
-                className="btn-primary w-full flex items-center justify-center gap-2"
+                className="btn-primary px-6 py-3 w-full flex items-center justify-center gap-2"
               >
                 {currentRound + 1 >= totalRounds ? 'Finish' : 'Next'}{' '}
                 <ChevronRight className="w-5 h-5" />
@@ -199,7 +199,7 @@ export default function ConjugationCoach() {
           <div className="text-center">
             <button
               onClick={() => setShowExitConfirm(true)}
-              className="text-gray-500 hover:text-gray-700 text-sm underline"
+              className="btn-ghost px-4 py-2 text-sm"
             >
               Exit Game
             </button>

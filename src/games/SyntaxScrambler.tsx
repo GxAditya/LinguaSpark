@@ -114,10 +114,10 @@ export default function SyntaxScrambler() {
             </span>
           </p>
           <div className="flex gap-4 mt-4">
-            <Link to="/games" className="btn-secondary">
+            <Link to="/games" className="btn-secondary px-6 py-3">
               Back to Games
             </Link>
-            <button onClick={handlePlayAgain} className="btn-primary flex items-center gap-2">
+            <button onClick={handlePlayAgain} className="btn-primary px-6 py-3 flex items-center gap-2">
               <RefreshCw className="w-5 h-5" />
               Play Again
             </button>
@@ -231,14 +231,14 @@ export default function SyntaxScrambler() {
                 <button
                   onClick={handleSubmit}
                   disabled={selectedOrder.length !== currentSentence.scrambled.length}
-                  className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary px-6 py-3 flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Submit
                 </button>
               ) : (
                 <button
                   onClick={handleNext}
-                  className="btn-primary flex-1 flex items-center justify-center gap-2"
+                  className="btn-primary px-6 py-3 flex-1 flex items-center justify-center gap-2"
                 >
                   {currentRound + 1 >= totalRounds ? 'Finish' : 'Next'}{' '}
                   <ChevronRight className="w-5 h-5" />
@@ -250,7 +250,7 @@ export default function SyntaxScrambler() {
           <div className="text-center">
             <button
               onClick={() => setShowExitConfirm(true)}
-              className="text-gray-500 hover:text-gray-700 text-sm underline"
+              className="btn-ghost px-4 py-2 text-sm"
             >
               Exit Game
             </button>

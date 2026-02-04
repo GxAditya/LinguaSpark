@@ -148,6 +148,7 @@ export function rateLimitMiddleware(config: RateLimitConfig) {
         success: false,
         message: 'Rate limit exceeded. Please try again later.',
         retryAfterSeconds: result.retryAfterSeconds,
+        retryAfter: result.retryAfterSeconds,
         resetTime: result.resetTime.toISOString(),
       });
       return;

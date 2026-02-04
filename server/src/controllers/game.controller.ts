@@ -12,6 +12,7 @@ interface StartGameBody {
   language?: string;
   targetLanguage?: string;
   topic?: string;
+  forceNew?: boolean;
 }
 
 interface UpdateProgressBody {
@@ -38,6 +39,7 @@ export const startGame = async (req: Request, res: Response): Promise<void> => {
       language = 'english',
       targetLanguage = 'spanish',
       topic,
+      forceNew = false,
     } = req.body as StartGameBody;
 
     if (!gameType) {
@@ -66,6 +68,7 @@ export const startGame = async (req: Request, res: Response): Promise<void> => {
       language,
       targetLanguage,
       topic,
+      forceNew,
     });
 
     // Calculate game metrics

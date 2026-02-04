@@ -69,7 +69,7 @@ class ApiService {
           message: data.error?.message || data.message || 'An error occurred',
           type: data.error?.type || 'API_ERROR',
           retryable: data.error?.retryable || false,
-          retryAfter: data.error?.retryAfter,
+          retryAfter: data.error?.retryAfter ?? data.error?.retryAfterSeconds,
           suggestions: data.error?.suggestions || [],
           errors: data.errors,
           requestId,

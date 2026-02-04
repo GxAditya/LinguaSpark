@@ -840,6 +840,25 @@
   }
 }
 
+@keyframes word-drop-fall {
+  from {
+    top: -10%;
+  }
+
+  to {
+    top: calc(100% - 2.5rem);
+  }
+}
+
+.word-drop-fall {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-name: word-drop-fall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
 /* Breadcrumb step animation */
 @keyframes breadcrumb-activate {
   0% {

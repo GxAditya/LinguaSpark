@@ -77,6 +77,7 @@ export interface StartGameOptions {
   language?: string;
   targetLanguage?: string;
   topic?: string;
+  forceNew?: boolean;
 }
 
 class GameService {

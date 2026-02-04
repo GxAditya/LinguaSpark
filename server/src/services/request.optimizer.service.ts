@@ -180,9 +180,9 @@ export class RequestOptimizerService {
         }
       });
 
-      // Limit length for text generation (optimal range: 50-500 characters)
-      if (optimized.length > 500) {
-        optimized = optimized.substring(0, 497) + '...';
+      // Limit length for text generation (allow longer structured prompts)
+      if (optimized.length > 2000) {
+        optimized = optimized.substring(0, 1997) + '...';
         wasOptimized = true;
       }
       

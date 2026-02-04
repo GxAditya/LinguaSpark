@@ -24,6 +24,7 @@ interface GenerateGameOptions {
   language: string;
   targetLanguage: string;
   topic?: string;
+  forceNew?: boolean;
 }
 
 interface ChatMessage {
@@ -34,7 +35,38 @@ interface ChatMessage {
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama-3.1-8b-instant';
 
-const TRANSLATION_MATCHUP_FALLBACK_PAIRS: Record<string, Array<{ original: string; translation: string }>> = {
+type SupportedLearningLanguage =
+  | 'spanish'
+  | 'french'
+  | 'hindi'
+  | 'mandarin'
+  | 'arabic'
+  | 'bengali'
+  | 'portuguese'
+  | 'russian'
+  | 'japanese';
+
+const SUPPORTED_LEARNING_LANGUAGE_SET = new Set<SupportedLearningLanguage>([
+  'spanish',
+  'french',
+  'hindi',
+  'mandarin',
+  'arabic',
+  'bengali',
+  'portuguese',
+  'russian',
+  'japanese',
+]);
+
+function resolveSupportedLearningLanguage(value: string): SupportedLearningLanguage {
+  const normalized = value.trim().toLowerCase();
+  if (SUPPORTED_LEARNING_LANGUAGE_SET.has(normalized as SupportedLearningLanguage)) {
+    return normalized as SupportedLearningLanguage;
+  }
+  return 'spanish';
+}
+
+const TRANSLATION_MATCHUP_FALLBACK_PAIRS: Record<SupportedLearningLanguage, Array<{ original: string; translation: string }>> = {
   spanish: [
     { original: 'Hola', translation: 'Hello' },
     { original: 'Agua', translation: 'Water' },
@@ -110,12 +142,236 @@ const TRANSLATION_MATCHUP_FALLBACK_PAIRS: Record<string, Array<{ original: strin
 };
 
 function getTranslationMatchupFallbackPairs(targetLanguage: string): Array<{ original: string; translation: string }> {
-  const normalized = targetLanguage.trim().toLowerCase();
-  return TRANSLATION_MATCHUP_FALLBACK_PAIRS[normalized] ?? TRANSLATION_MATCHUP_FALLBACK_PAIRS.spanish;
+  const resolved = resolveSupportedLearningLanguage(targetLanguage);
+  return TRANSLATION_MATCHUP_FALLBACK_PAIRS[resolved] ?? TRANSLATION_MATCHUP_FALLBACK_PAIRS.spanish;
+}
+
+const SECRET_WORD_FALLBACK_POOL: Record<SupportedLearningLanguage, Array<{ word: string; hint: string; category: string }>> = {
+  spanish: [
+    { word: 'MARIPOSA', hint: 'A colorful flying insect', category: 'Animals' },
+    { word: 'BIBLIOTECA', hint: 'A place with many books', category: 'Places' },
+    { word: 'COMPUTADORA', hint: 'Electronic device for work', category: 'Technology' },
+    { word: 'CHOCOLATE', hint: 'Sweet brown treat', category: 'Food' },
+    { word: 'AVENTURA', hint: 'An exciting journey', category: 'Activities' },
+    { word: 'AMISTAD', hint: 'A bond between friends', category: 'Feelings' },
+    { word: 'MONTAÑA', hint: 'A tall natural landform', category: 'Nature' },
+    { word: 'JARDIN', hint: 'A place with plants and flowers', category: 'Places' },
+  ],
+  french: [
+    { word: 'PAPILLON', hint: 'A colorful flying insect', category: 'Animals' },
+    { word: 'BIBLIOTHEQUE', hint: 'A place with many books', category: 'Places' },
+    { word: 'ORDINATEUR', hint: 'Electronic device for work', category: 'Technology' },
+    { word: 'CHOCOLAT', hint: 'Sweet brown treat', category: 'Food' },
+    { word: 'AVENTURE', hint: 'An exciting journey', category: 'Activities' },
+    { word: 'FAMILLE', hint: 'Your closest relatives', category: 'People' },
+    { word: 'MONTAGNE', hint: 'A tall natural landform', category: 'Nature' },
+    { word: 'JARDIN', hint: 'A place with plants and flowers', category: 'Places' },
+  ],
+  hindi: [
+    { word: 'घर', hint: 'A place where you live', category: 'Places' },
+    { word: 'मन', hint: 'Mind or heart', category: 'Feelings' },
+    { word: 'वन', hint: 'A forest', category: 'Nature' },
+    { word: 'नगर', hint: 'A city or town', category: 'Places' },
+    { word: 'कमल', hint: 'A lotus flower', category: 'Nature' },
+    { word: 'पथ', hint: 'A path or way', category: 'Places' },
+    { word: 'फल', hint: 'A fruit', category: 'Food' },
+    { word: 'दल', hint: 'A group or team', category: 'People' },
+  ],
+  mandarin: [
+    { word: '喜欢', hint: 'To like something', category: 'Feelings' },
+    { word: '今天', hint: 'The current day', category: 'Time' },
+    { word: '明天', hint: 'The day after today', category: 'Time' },
+    { word: '昨天', hint: 'The day before today', category: 'Time' },
+    { word: '听说', hint: 'To hear and say', category: 'Communication' },
+    { word: '去看', hint: 'To go and see', category: 'Actions' },
+    { word: '吃喝', hint: 'Food and drink', category: 'Food' },
+    { word: '他说', hint: 'He said', category: 'Communication' },
+  ],
+  arabic: [
+    { word: 'كتاب', hint: 'Something you read', category: 'Objects' },
+    { word: 'قلم', hint: 'Used for writing', category: 'Objects' },
+    { word: 'شمس', hint: 'The bright star in the sky', category: 'Nature' },
+    { word: 'قمر', hint: 'Seen at night in the sky', category: 'Nature' },
+    { word: 'بحر', hint: 'A large body of water', category: 'Nature' },
+    { word: 'طريق', hint: 'A road or path', category: 'Places' },
+    { word: 'مطر', hint: 'Water falling from the sky', category: 'Weather' },
+    { word: 'نهر', hint: 'A flowing body of water', category: 'Nature' },
+  ],
+  bengali: [
+    { word: 'মন', hint: 'Mind or heart', category: 'Feelings' },
+    { word: 'বন', hint: 'A forest', category: 'Nature' },
+    { word: 'পথ', hint: 'A path or way', category: 'Places' },
+    { word: 'ঘর', hint: 'A place where you live', category: 'Places' },
+    { word: 'কল', hint: 'A plantain or banana', category: 'Food' },
+    { word: 'দল', hint: 'A group or team', category: 'People' },
+    { word: 'বল', hint: 'A ball or strength', category: 'Objects' },
+    { word: 'চল', hint: 'To move or go', category: 'Actions' },
+  ],
+  portuguese: [
+    { word: 'BORBOLETA', hint: 'A colorful flying insect', category: 'Animals' },
+    { word: 'BIBLIOTECA', hint: 'A place with many books', category: 'Places' },
+    { word: 'COMPUTADOR', hint: 'Electronic device for work', category: 'Technology' },
+    { word: 'CHOCOLATE', hint: 'Sweet brown treat', category: 'Food' },
+    { word: 'AVENTURA', hint: 'An exciting journey', category: 'Activities' },
+    { word: 'FAMILIA', hint: 'Your closest relatives', category: 'People' },
+    { word: 'MONTANHA', hint: 'A tall natural landform', category: 'Nature' },
+    { word: 'JARDIM', hint: 'A place with plants and flowers', category: 'Places' },
+  ],
+  russian: [
+    { word: 'БАБОЧКА', hint: 'A colorful flying insect', category: 'Animals' },
+    { word: 'БИБЛИОТЕКА', hint: 'A place with many books', category: 'Places' },
+    { word: 'КОМПЬЮТЕР', hint: 'Electronic device for work', category: 'Technology' },
+    { word: 'ШОКОЛАД', hint: 'Sweet brown treat', category: 'Food' },
+    { word: 'ПУТЕШЕСТВИЕ', hint: 'An exciting journey', category: 'Activities' },
+    { word: 'СЕМЬЯ', hint: 'Your closest relatives', category: 'People' },
+    { word: 'ПРИРОДА', hint: 'The natural world', category: 'Nature' },
+    { word: 'МУЗЫКА', hint: 'Organized sound art', category: 'Arts' },
+  ],
+  japanese: [
+    { word: 'さくら', hint: 'A famous spring flower', category: 'Nature' },
+    { word: 'ひこうき', hint: 'It flies in the sky', category: 'Travel' },
+    { word: 'ほし', hint: 'A bright light in the night sky', category: 'Nature' },
+    { word: 'やま', hint: 'A tall natural landform', category: 'Nature' },
+    { word: 'うみ', hint: 'A large body of water', category: 'Nature' },
+    { word: 'くるま', hint: 'A common vehicle', category: 'Travel' },
+    { word: 'さかな', hint: 'It swims in water', category: 'Animals' },
+    { word: 'ねこ', hint: 'A common pet', category: 'Animals' },
+  ],
+};
+
+function shuffleArray<T>(items: T[]): T[] {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function getSecretWordFallbackWords(targetLanguage: string, count: number = 5): Array<{ word: string; hint: string; category: string }> {
+  const resolved = resolveSupportedLearningLanguage(targetLanguage);
+  const pool = SECRET_WORD_FALLBACK_POOL[resolved] ?? SECRET_WORD_FALLBACK_POOL.spanish;
+  const selection = shuffleArray(pool).slice(0, Math.min(count, pool.length));
+  return selection.length > 0 ? selection : SECRET_WORD_FALLBACK_POOL.spanish.slice(0, count);
+}
+
+const WORD_DROP_FALLBACK_POOL: Record<SupportedLearningLanguage, Array<{ word: string; translation: string; emoji: string }>> = {
+  spanish: [
+    { word: 'Gato', translation: 'Cat', emoji: '🐱' },
+    { word: 'Perro', translation: 'Dog', emoji: '🐕' },
+    { word: 'Pájaro', translation: 'Bird', emoji: '🐦' },
+    { word: 'Rojo', translation: 'Red', emoji: '🔴' },
+    { word: 'Azul', translation: 'Blue', emoji: '🔵' },
+    { word: 'Verde', translation: 'Green', emoji: '🟢' },
+    { word: 'Casa', translation: 'House', emoji: '🏠' },
+    { word: 'Libro', translation: 'Book', emoji: '📘' },
+    { word: 'Agua', translation: 'Water', emoji: '💧' },
+  ],
+  french: [
+    { word: 'Chat', translation: 'Cat', emoji: '🐱' },
+    { word: 'Chien', translation: 'Dog', emoji: '🐕' },
+    { word: 'Oiseau', translation: 'Bird', emoji: '🐦' },
+    { word: 'Rouge', translation: 'Red', emoji: '🔴' },
+    { word: 'Bleu', translation: 'Blue', emoji: '🔵' },
+    { word: 'Vert', translation: 'Green', emoji: '🟢' },
+    { word: 'Maison', translation: 'House', emoji: '🏠' },
+    { word: 'Livre', translation: 'Book', emoji: '📘' },
+    { word: 'Eau', translation: 'Water', emoji: '💧' },
+  ],
+  hindi: [
+    { word: 'बिल्ली', translation: 'Cat', emoji: '🐱' },
+    { word: 'कुत्ता', translation: 'Dog', emoji: '🐕' },
+    { word: 'पक्षी', translation: 'Bird', emoji: '🐦' },
+    { word: 'लाल', translation: 'Red', emoji: '🔴' },
+    { word: 'नीला', translation: 'Blue', emoji: '🔵' },
+    { word: 'हरा', translation: 'Green', emoji: '🟢' },
+    { word: 'घर', translation: 'House', emoji: '🏠' },
+    { word: 'किताब', translation: 'Book', emoji: '📘' },
+    { word: 'पानी', translation: 'Water', emoji: '💧' },
+  ],
+  mandarin: [
+    { word: '猫', translation: 'Cat', emoji: '🐱' },
+    { word: '狗', translation: 'Dog', emoji: '🐕' },
+    { word: '鸟', translation: 'Bird', emoji: '🐦' },
+    { word: '红色', translation: 'Red', emoji: '🔴' },
+    { word: '蓝色', translation: 'Blue', emoji: '🔵' },
+    { word: '绿色', translation: 'Green', emoji: '🟢' },
+    { word: '家', translation: 'House', emoji: '🏠' },
+    { word: '书', translation: 'Book', emoji: '📘' },
+    { word: '水', translation: 'Water', emoji: '💧' },
+  ],
+  arabic: [
+    { word: 'قط', translation: 'Cat', emoji: '🐱' },
+    { word: 'كلب', translation: 'Dog', emoji: '🐕' },
+    { word: 'طائر', translation: 'Bird', emoji: '🐦' },
+    { word: 'أحمر', translation: 'Red', emoji: '🔴' },
+    { word: 'أزرق', translation: 'Blue', emoji: '🔵' },
+    { word: 'أخضر', translation: 'Green', emoji: '🟢' },
+    { word: 'بيت', translation: 'House', emoji: '🏠' },
+    { word: 'كتاب', translation: 'Book', emoji: '📘' },
+    { word: 'ماء', translation: 'Water', emoji: '💧' },
+  ],
+  bengali: [
+    { word: 'বিড়াল', translation: 'Cat', emoji: '🐱' },
+    { word: 'কুকুর', translation: 'Dog', emoji: '🐕' },
+    { word: 'পাখি', translation: 'Bird', emoji: '🐦' },
+    { word: 'লাল', translation: 'Red', emoji: '🔴' },
+    { word: 'নীল', translation: 'Blue', emoji: '🔵' },
+    { word: 'সবুজ', translation: 'Green', emoji: '🟢' },
+    { word: 'বাড়ি', translation: 'House', emoji: '🏠' },
+    { word: 'বই', translation: 'Book', emoji: '📘' },
+    { word: 'পানি', translation: 'Water', emoji: '💧' },
+  ],
+  portuguese: [
+    { word: 'Gato', translation: 'Cat', emoji: '🐱' },
+    { word: 'Cachorro', translation: 'Dog', emoji: '🐕' },
+    { word: 'Pássaro', translation: 'Bird', emoji: '🐦' },
+    { word: 'Vermelho', translation: 'Red', emoji: '🔴' },
+    { word: 'Azul', translation: 'Blue', emoji: '🔵' },
+    { word: 'Verde', translation: 'Green', emoji: '🟢' },
+    { word: 'Casa', translation: 'House', emoji: '🏠' },
+    { word: 'Livro', translation: 'Book', emoji: '📘' },
+    { word: 'Água', translation: 'Water', emoji: '💧' },
+  ],
+  russian: [
+    { word: 'КОТ', translation: 'Cat', emoji: '🐱' },
+    { word: 'СОБАКА', translation: 'Dog', emoji: '🐕' },
+    { word: 'ПТИЦА', translation: 'Bird', emoji: '🐦' },
+    { word: 'КРАСНЫЙ', translation: 'Red', emoji: '🔴' },
+    { word: 'СИНИЙ', translation: 'Blue', emoji: '🔵' },
+    { word: 'ЗЕЛЕНЫЙ', translation: 'Green', emoji: '🟢' },
+    { word: 'ДОМ', translation: 'House', emoji: '🏠' },
+    { word: 'КНИГА', translation: 'Book', emoji: '📘' },
+    { word: 'ВОДА', translation: 'Water', emoji: '💧' },
+  ],
+  japanese: [
+    { word: 'ねこ', translation: 'Cat', emoji: '🐱' },
+    { word: 'いぬ', translation: 'Dog', emoji: '🐕' },
+    { word: 'とり', translation: 'Bird', emoji: '🐦' },
+    { word: 'あか', translation: 'Red', emoji: '🔴' },
+    { word: 'あお', translation: 'Blue', emoji: '🔵' },
+    { word: 'みどり', translation: 'Green', emoji: '🟢' },
+    { word: 'いえ', translation: 'House', emoji: '🏠' },
+    { word: 'ほん', translation: 'Book', emoji: '📘' },
+    { word: 'みず', translation: 'Water', emoji: '💧' },
+  ],
+};
+
+function getWordDropFallbackRounds(targetLanguage: string): Array<{ words: Array<{ word: string; translation: string; emoji: string }>; timeLimit: number }> {
+  const resolved = resolveSupportedLearningLanguage(targetLanguage);
+  const pool = shuffleArray(WORD_DROP_FALLBACK_POOL[resolved] ?? WORD_DROP_FALLBACK_POOL.spanish);
+  const rounds = [];
+  for (let i = 0; i < pool.length; i += 3) {
+    const group = pool.slice(i, i + 3);
+    if (group.length === 0) continue;
+    rounds.push({ words: group, timeLimit: 30 - Math.min(10, rounds.length * 5) });
+  }
+  return rounds.length > 0 ? rounds : [{ words: WORD_DROP_FALLBACK_POOL.spanish.slice(0, 3), timeLimit: 30 }];
 }
 
 
 
+// Per-language fallback content (ensures language selection works even if generation fails)
 // Fallback game content for each game type
 const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<GameContent> | GameContent> = {
   'transcription-station': (opts) => ({
@@ -155,22 +411,14 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<Ga
     difficulty: opts.difficulty,
     language: opts.language,
     targetLanguage: opts.targetLanguage,
-    words: [
-      { word: 'MARIPOSA', hint: 'A colorful flying insect', category: 'Animals' },
-      { word: 'BIBLIOTECA', hint: 'A place with many books', category: 'Places' },
-      { word: 'COMPUTADORA', hint: 'Electronic device for work', category: 'Technology' },
-      { word: 'CHOCOLATE', hint: 'Sweet brown treat', category: 'Food' },
-    ],
+    words: getSecretWordFallbackWords(opts.targetLanguage, 5),
   }),
   'word-drop-dash': (opts) => ({
     type: 'word-drop-dash',
     difficulty: opts.difficulty,
     language: opts.language,
     targetLanguage: opts.targetLanguage,
-    rounds: [
-      { words: [{ word: 'Gato', translation: 'Cat', emoji: '🐱' }, { word: 'Perro', translation: 'Dog', emoji: '🐕' }, { word: 'Pájaro', translation: 'Bird', emoji: '🐦' }], timeLimit: 30 },
-      { words: [{ word: 'Rojo', translation: 'Red', emoji: '🔴' }, { word: 'Azul', translation: 'Blue', emoji: '🔵' }, { word: 'Verde', translation: 'Green', emoji: '🟢' }], timeLimit: 25 },
-    ],
+    rounds: getWordDropFallbackRounds(opts.targetLanguage),
   }),
   'conjugation-coach': (opts) => ({
     type: 'conjugation-coach',
@@ -541,11 +789,16 @@ async function callGroq(messages: ChatMessage[]): Promise<string> {
   return content.trim();
 }
 
-async function callPollinations(messages: ChatMessage[]): Promise<string> {
+async function callPollinations(messages: ChatMessage[], seed?: number): Promise<string> {
   try {
-    const response = await pollinationsApi.generateText(messages[1].content, {
+    const systemMessage = messages.find((message) => message.role === 'system')?.content;
+    const userMessage = messages.find((message) => message.role === 'user')?.content ?? '';
+
+    const response = await pollinationsApi.generateText(userMessage, {
       temperature: 0.7,
-      max_tokens: 2000
+      max_tokens: 2000,
+      seed,
+      system: systemMessage
     });
 
     return response.content;
@@ -662,7 +915,7 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
         return parsed.words.every((w: any, index: number) => {
           const isValid = w.word && typeof w.word === 'string' &&
             w.hint && typeof w.hint === 'string' &&
-            w.word.trim().length >= 4 && w.word.trim().length <= 15 && // Reasonable word length
+            w.word.trim().length >= 2 && w.word.trim().length <= 20 && // Allow shorter words for non-Latin scripts
             w.hint.trim().length > 0;
           if (!isValid) {
             console.warn(`Secret word ${index} validation failed:`, w);
@@ -1150,66 +1403,88 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
   fromCache?: boolean;
   generationTime?: number;
 }> {
-  const { gameType, difficulty, language, targetLanguage, topic } = options;
+  const { gameType, difficulty, language, targetLanguage, topic, forceNew = false } = options;
 
   try {
+    const generateFresh = async () => {
+      // Content generation logic
+      const prompt = getGamePrompt(gameType, difficulty, language, targetLanguage, topic);
+      const messages: ChatMessage[] = [
+        { role: 'system', content: 'You are a helpful assistant that generates language learning game content. Always respond with valid JSON only.' },
+        { role: 'user', content: prompt },
+      ];
+
+      const seed = forceNew ? Math.floor(Math.random() * 1_000_000_000) : undefined;
+
+      const generateWithProvider = async (provider: 'groq' | 'pollinations') => {
+        const response = provider === 'groq'
+          ? await callGroq(messages)
+          : await callPollinations(messages, seed);
+
+        const parsed = parseGameContent(response, gameType);
+        if (!validateGameContent(parsed, gameType)) {
+          throw new Error(`${provider} generated content failed validation`);
+        }
+
+        return parsed;
+      };
+
+      let parsed: any;
+
+      // Use Groq as primary, Pollinations as fallback (including validation failures)
+      try {
+        parsed = await generateWithProvider('groq');
+      } catch (groqError) {
+        console.error('Groq generation failed, trying Pollinations:', groqError);
+        parsed = await generateWithProvider('pollinations');
+      }
+
+      // Perform quality assessment
+      const qualityAssessment = assessContentQuality(parsed, gameType, difficulty);
+      console.log(`Content quality score: ${qualityAssessment.score}/100 for ${gameType}`);
+
+      if (qualityAssessment.issues.length > 0) {
+        console.warn('Content quality issues:', qualityAssessment.issues);
+      }
+
+      // If quality is very poor (below 40), consider using fallback
+      if (qualityAssessment.score < 40) {
+        console.warn(`Quality score too low (${qualityAssessment.score}), using fallback content`);
+        throw new Error('Content quality below acceptable threshold');
+      }
+
+      // Construct the full GameContent object
+      const baseContent = {
+        type: gameType,
+        difficulty,
+        language,
+        targetLanguage,
+      };
+
+      return {
+        content: { ...baseContent, ...parsed } as GameContent,
+        qualityScore: qualityAssessment.score,
+        qualityIssues: qualityAssessment.issues,
+      };
+    };
+
+    if (forceNew) {
+      const startTime = Date.now();
+      const fresh = await generateFresh();
+      return {
+        content: fresh.content,
+        usedFallback: false,
+        qualityScore: fresh.qualityScore,
+        qualityIssues: fresh.qualityIssues,
+        fromCache: false,
+        generationTime: Date.now() - startTime,
+      };
+    }
+
     // Try to get content from cache first
     const cacheResult = await contentCache.getOrGenerate(
       { gameType, difficulty, language, targetLanguage, topic },
-      async () => {
-        // Content generation logic
-        const prompt = getGamePrompt(gameType, difficulty, language, targetLanguage, topic);
-        const messages: ChatMessage[] = [
-          { role: 'system', content: 'You are a helpful assistant that generates language learning game content. Always respond with valid JSON only.' },
-          { role: 'user', content: prompt },
-        ];
-
-        let response: string;
-
-        // Use Groq as primary, Pollinations as fallback for all games
-        try {
-          response = await callGroq(messages);
-        } catch (groqError) {
-          console.error('Groq API failed, trying Pollinations:', groqError);
-          response = await callPollinations(messages);
-        }
-
-        let parsed = parseGameContent(response, gameType);
-
-        if (!validateGameContent(parsed, gameType)) {
-          throw new Error('Generated content failed validation');
-        }
-
-        // Perform quality assessment
-        const qualityAssessment = assessContentQuality(parsed, gameType, difficulty);
-        console.log(`Content quality score: ${qualityAssessment.score}/100 for ${gameType}`);
-
-        if (qualityAssessment.issues.length > 0) {
-          console.warn('Content quality issues:', qualityAssessment.issues);
-        }
-
-        // If quality is very poor (below 40), consider using fallback
-        if (qualityAssessment.score < 40) {
-          console.warn(`Quality score too low (${qualityAssessment.score}), using fallback content`);
-          throw new Error('Content quality below acceptable threshold');
-        }
-
-
-
-        // Construct the full GameContent object
-        const baseContent = {
-          type: gameType,
-          difficulty,
-          language,
-          targetLanguage,
-        };
-
-        return {
-          content: { ...baseContent, ...parsed } as GameContent,
-          qualityScore: qualityAssessment.score,
-          qualityIssues: qualityAssessment.issues
-        };
-      },
+      generateFresh,
       // Cache for 2 hours for generated content
       7200000
     );
@@ -1238,7 +1513,7 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
   } catch (error) {
     console.error('Game generation failed, using fallback:', error);
 
-    // Try to get fallback content from cache first
+    // Try to get fallback content from cache first (skip when forceNew is requested)
     const fallbackCacheKey = {
       gameType: `${gameType}_fallback` as GameType,
       difficulty,
@@ -1247,31 +1522,35 @@ export async function generateGameContent(options: GenerateGameOptions): Promise
       topic: 'fallback'
     };
 
-    try {
-      const cachedFallback = await contentCache.get(fallbackCacheKey);
-      if (cachedFallback) {
-        console.log('Using cached fallback content');
-        return {
-          content: cachedFallback as GameContent,
-          usedFallback: true,
-          qualityScore: 75,
-          qualityIssues: ['Used cached fallback content'],
-          fromCache: true
-        };
+    if (!forceNew) {
+      try {
+        const cachedFallback = await contentCache.get(fallbackCacheKey);
+        if (cachedFallback) {
+          console.log('Using cached fallback content');
+          return {
+            content: cachedFallback as GameContent,
+            usedFallback: true,
+            qualityScore: 75,
+            qualityIssues: ['Used cached fallback content'],
+            fromCache: true
+          };
+        }
+      } catch (cacheError) {
+        console.warn('Failed to retrieve cached fallback:', cacheError);
       }
-    } catch (cacheError) {
-      console.warn('Failed to retrieve cached fallback:', cacheError);
     }
 
     // Generate fresh fallback content
     const fallbackGenerator = FALLBACK_GAMES[gameType];
     const fallbackContent = await fallbackGenerator(options);
 
-    // Cache the fallback content for future use
-    try {
-      await contentCache.set(fallbackCacheKey, fallbackContent, 86400000); // Cache for 24 hours
-    } catch (cacheError) {
-      console.warn('Failed to cache fallback content:', cacheError);
+    // Cache the fallback content for future use (skip when forceNew is requested)
+    if (!forceNew) {
+      try {
+        await contentCache.set(fallbackCacheKey, fallbackContent, 86400000); // Cache for 24 hours
+      } catch (cacheError) {
+        console.warn('Failed to cache fallback content:', cacheError);
+      }
     }
 
     return {
