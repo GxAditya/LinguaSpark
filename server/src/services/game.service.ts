@@ -426,10 +426,10 @@ const FALLBACK_GAMES: Record<GameType, (opts: GenerateGameOptions) => Promise<Ga
     language: opts.language,
     targetLanguage: opts.targetLanguage,
     questions: [
-      { sentence: 'Ayer, yo _____ un libro.', verb: 'leer', tense: 'past', subject: 'yo', options: ['leí', 'leo', 'leeré', 'leía'], correctIndex: 0, explanation: 'Past tense (pretérito) with "ayer"' },
-      { sentence: 'Mañana, ella _____ a la tienda.', verb: 'ir', tense: 'future', subject: 'ella', options: ['fue', 'va', 'irá', 'iba'], correctIndex: 2, explanation: 'Future tense with "mañana"' },
-      { sentence: 'Todos los días, nosotros _____ español.', verb: 'hablar', tense: 'present', subject: 'nosotros', options: ['hablamos', 'hablábamos', 'hablaremos', 'hablamos'], correctIndex: 0, explanation: 'Present tense with "todos los días"' },
-      { sentence: 'En este momento, tú _____ la cena.', verb: 'preparar', tense: 'present progressive', subject: 'tú', options: ['preparas', 'estás preparando', 'preparaste', 'prepararás'], correctIndex: 1, explanation: 'Present progressive with "en este momento"' },
+      { sentence: 'Ayer, yo leí un libro.', blankedSentence: 'Ayer, yo _____ un libro.', answer: 'leí', verb: 'leer', tense: 'past', subject: 'yo', options: ['leí', 'leo', 'leeré', 'leía'], correctIndex: 0, explanation: 'Past tense (pretérito) with "ayer"' },
+      { sentence: 'Mañana, ella irá a la tienda.', blankedSentence: 'Mañana, ella _____ a la tienda.', answer: 'irá', verb: 'ir', tense: 'future', subject: 'ella', options: ['fue', 'va', 'irá', 'iba'], correctIndex: 2, explanation: 'Future tense with "mañana"' },
+      { sentence: 'Todos los días, nosotros hablamos español.', blankedSentence: 'Todos los días, nosotros _____ español.', answer: 'hablamos', verb: 'hablar', tense: 'present', subject: 'nosotros', options: ['hablamos', 'hablábamos', 'hablaremos', 'hablamos'], correctIndex: 0, explanation: 'Present tense with "todos los días"' },
+      { sentence: 'En este momento, tú estás preparando la cena.', blankedSentence: 'En este momento, tú _____ la cena.', answer: 'estás preparando', verb: 'preparar', tense: 'present progressive', subject: 'tú', options: ['preparas', 'estás preparando', 'preparaste', 'prepararás'], correctIndex: 1, explanation: 'Present progressive with "en este momento"' },
     ],
   }),
   'context-connect': (opts) => ({
@@ -647,7 +647,9 @@ JSON STRUCTURE:
 {
   "questions": [
     { 
-      "sentence": "${targetLanguage} sentence with _____ blank and temporal context", 
+      "sentence": "${targetLanguage} full sentence with the conjugated verb included (no blanks)", 
+      "blankedSentence": "${targetLanguage} sentence with _____ blank in correct word order",
+      "answer": "correct conjugated verb for the blank",
       "verb": "infinitive form", 
       "tense": "specific tense name",
       "subject": "subject pronoun",
@@ -657,6 +659,12 @@ JSON STRUCTURE:
     }
   ]
 }
+
+BLANKING RULES:
+- "sentence" must be a complete sentence with the conjugated verb in place.
+- The sentence must include exactly one blank token (_____ or ___) for the conjugated verb.
+- Place the blank exactly where the conjugated verb appears in natural ${targetLanguage} word order.
+- Provide the conjugated verb in "answer" and ensure it matches options[correctIndex].
 
 CONTEXT CLUES:
 - Use time expressions that clearly indicate the required tense
@@ -966,10 +974,13 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
             return false;
           }
 
-          // Validate that sentence contains a blank
           const hasBlank = q.sentence.includes('_____') || q.sentence.includes('___');
-          if (!hasBlank) {
-            console.warn(`Conjugation question ${index} missing blank:`, q);
+          const hasBlankedSentence = typeof q.blankedSentence === 'string' &&
+            (q.blankedSentence.includes('_____') || q.blankedSentence.includes('___'));
+          const hasAnswer = typeof q.answer === 'string' && q.answer.trim().length > 0;
+
+          if (!hasBlank && !hasBlankedSentence && !hasAnswer) {
+            console.warn(`Conjugation question ${index} missing blank and answer:`, q);
             return false;
           }
 
@@ -978,6 +989,14 @@ function validateGameContent(parsed: any, gameType: GameType): boolean {
           if (!optionsValid) {
             console.warn(`Conjugation question ${index} invalid options:`, q);
             return false;
+          }
+
+          if (hasAnswer) {
+            const expected = q.options[q.correctIndex];
+            if (typeof expected === 'string' && q.answer.trim() !== expected.trim()) {
+              console.warn(`Conjugation question ${index} answer mismatch:`, q);
+              return false;
+            }
           }
 
           return true;

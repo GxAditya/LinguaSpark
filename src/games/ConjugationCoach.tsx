@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { ChevronRight, Check, X, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import GameLayout from '../components/GameLayout';
@@ -8,12 +8,66 @@ import { useGameSession } from '../hooks/useGameSession';
 
 interface ConjugationQuestion {
   sentence: string;
+  blankedSentence?: string;
+  answer?: string;
   verb: string;
   tense: string;
   subject: string;
   options: string[];
   correctIndex: number;
   explanation: string;
+}
+
+const BLANK_PATTERN = /_{3,}/;
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildBlankedSentence(question: ConjugationQuestion | undefined): string {
+  if (!question) return '';
+  const rawSentence = question.sentence?.trim() ?? '';
+  const answer = (question.answer || question.options?.[question.correctIndex] || '').trim();
+
+  const blankedFromModel = question.blankedSentence?.trim() ?? '';
+  const rawHasBlank = BLANK_PATTERN.test(rawSentence);
+  const rawHasAnswer = !!answer && rawSentence.includes(answer);
+  const blankedHasBlank = BLANK_PATTERN.test(blankedFromModel);
+  const blankedHasAnswer = !!answer && blankedFromModel.includes(answer);
+
+  const insertBlankAtAnswer = (sentence: string) => {
+    if (!answer) return '';
+    const filled = sentence.replace(BLANK_PATTERN, answer);
+    const escaped = escapeRegExp(answer);
+    const replaced = filled.replace(new RegExp(escaped), '_____');
+    return replaced;
+  };
+
+  if (blankedHasBlank && !blankedHasAnswer) {
+    return blankedFromModel;
+  }
+
+  if (rawHasBlank && rawHasAnswer) {
+    const fixed = insertBlankAtAnswer(rawSentence);
+    if (fixed) return fixed;
+  }
+
+  if (rawHasBlank) {
+    return rawSentence;
+  }
+
+  if (blankedHasBlank) {
+    const fixed = insertBlankAtAnswer(blankedFromModel);
+    if (fixed) return fixed;
+    return blankedFromModel;
+  }
+
+  if (answer && rawSentence) {
+    const fixed = insertBlankAtAnswer(rawSentence);
+    if (fixed && fixed !== rawSentence) return fixed;
+  }
+
+  return rawSentence ? `${rawSentence} _____` : '_____';
 }
 
 export default function ConjugationCoach() {
@@ -35,6 +89,7 @@ export default function ConjugationCoach() {
   } = useGameSession({
     gameType: 'conjugation-coach',
     difficulty: 'beginner',
+    autoSave: false,
   });
 
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -46,6 +101,11 @@ export default function ConjugationCoach() {
     setFeedback(null);
   }, [currentRound]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const questions: ConjugationQuestion[] = (content as any)?.questions || [];
+  const currentQuestion = questions[currentRound];
+  const displaySentence = useMemo(() => buildBlankedSentence(currentQuestion), [currentQuestion]);
+
   if (loading) {
     return <GameLoading message="Generating conjugation exercises..." />;
   }
@@ -53,10 +113,6 @@ export default function ConjugationCoach() {
   if (error) {
     return <GameError error={error} onRetry={startNewGame} />;
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const questions: ConjugationQuestion[] = (content as any)?.questions || [];
-  const currentQuestion = questions[currentRound];
 
   const handleSelectAnswer = (index: number) => {
     if (feedback === null && currentQuestion) {
@@ -129,11 +185,12 @@ export default function ConjugationCoach() {
             <p className="text-sm text-gray-600 mb-8">Select the correct verb conjugation:</p>
 
             <div className="bg-teal-50 rounded-xl p-6 mb-8 border-2 border-teal-200">
-              <p className="text-lg text-gray-900 font-medium">{currentQuestion.sentence}</p>
-              {currentQuestion.verb && (
+              <p className="text-lg text-gray-900 font-medium">{displaySentence}</p>
+              {(currentQuestion.tense || currentQuestion.subject) && (
                 <p className="text-sm text-teal-600 mt-2">
-                  Verb: <span className="font-semibold">{currentQuestion.verb}</span>
-                  {currentQuestion.tense && ` • ${currentQuestion.tense}`}
+                  {currentQuestion.tense && <span className="font-semibold">{currentQuestion.tense}</span>}
+                  {currentQuestion.tense && currentQuestion.subject && ' • '}
+                  {currentQuestion.subject && <span className="font-semibold">{currentQuestion.subject}</span>}
                 </p>
               )}
             </div>
@@ -201,7 +258,7 @@ export default function ConjugationCoach() {
               onClick={() => setShowExitConfirm(true)}
               className="btn-ghost px-4 py-2 text-sm"
             >
-              Exit Game
+              Finish Game
             </button>
           </div>
         </div>
@@ -211,6 +268,10 @@ export default function ConjugationCoach() {
         isOpen={showExitConfirm}
         onClose={() => setShowExitConfirm(false)}
         onConfirm={confirmExit}
+        title="Finish Game Early?"
+        message="If you finish now, this game will end and your current progress will be abandoned. Do you want to finish anyway?"
+        cancelText="Keep Playing"
+        confirmText="Finish Game"
       />
     </>
   );

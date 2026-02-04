@@ -81,6 +81,8 @@ export interface IConjugationContent extends IBaseGameContent {
   type: 'conjugation-coach';
   questions: Array<{
     sentence: string;
+    blankedSentence?: string;
+    answer?: string;
     verb: string;
     tense: string;
     subject: string;
