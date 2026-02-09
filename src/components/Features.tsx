@@ -53,7 +53,7 @@ function FeatureCard({
       <p className="text-muted mb-6 leading-relaxed">{description}</p>
 
       {/* Narrative Demo */}
-      <div className={`narrative-demo bg-surface-2 rounded-xl p-6 border border-default flex flex-col ${demoClassName ?? 'sm:h-64'}`}>
+      <div className={`narrative-demo bg-surface-2 rounded-xl p-6 border border-default flex flex-col ${demoClassName ?? 'min-h-[16rem] sm:h-64'}`}>
         {demo}
       </div>
     </div>
@@ -130,8 +130,8 @@ export default function Features() {
             </span>
           </h2>
           <p className="text-xl text-muted max-w-3xl mx-auto leading-relaxed">
-            Every feature is designed to demonstrate how it works through meaningful animations.
-            <span className="text-primary font-medium block mt-2">Watch them come to life.</span>
+            Bite-sized demos show exactly how each learning moment unfolds in real time.
+            <span className="text-primary font-medium block mt-2">See the experience, then dive in.</span>
           </p>
         </div>
 
@@ -202,7 +202,7 @@ export default function Features() {
             icon={Mic}
             title="Pronunciation Coach"
             description="Real-time waveform analysis with instant feedback on your pronunciation accuracy."
-            demoClassName="sm:h-72"
+            demoClassName="min-h-[18rem] sm:h-72"
             delay={100}
             demo={
               <>
@@ -400,10 +400,10 @@ export default function Features() {
             delay={500}
             demo={
               <>
-                <div className="relative flex-1 min-h-0 mb-2">
+                <div className="relative flex-1 min-h-[12rem] mb-2 perspective-1000">
                   {/* Card flip animation */}
                   <div
-                    className={`absolute inset-0 transition-all duration-700 ${vocabStep % 2 === 0 ? 'opacity-100 rotate-0' : 'opacity-0 rotate-y-180'
+                    className={`absolute inset-0 transition-all duration-700 backface-hidden ${vocabStep % 2 === 0 ? 'opacity-100 rotate-y-0' : 'opacity-0 rotate-y-180'
                       }`}
                     style={{ transformStyle: 'preserve-3d' }}
                   >
@@ -414,7 +414,7 @@ export default function Features() {
                   </div>
 
                   <div
-                    className={`absolute inset-0 transition-all duration-700 ${vocabStep % 2 === 1 ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-y-180'
+                    className={`absolute inset-0 transition-all duration-700 backface-hidden ${vocabStep % 2 === 1 ? 'opacity-100 rotate-y-0' : 'opacity-0 -rotate-y-180'
                       }`}
                     style={{ transformStyle: 'preserve-3d' }}
                   >
