@@ -53,7 +53,7 @@ function FeatureCard({
       <p className="text-muted mb-6 leading-relaxed">{description}</p>
 
       {/* Narrative Demo */}
-      <div className={`narrative-demo bg-surface-2 rounded-xl p-6 border border-default flex flex-col ${demoClassName ?? 'h-64'}`}>
+      <div className={`narrative-demo bg-surface-2 rounded-xl p-6 border border-default flex flex-col ${demoClassName ?? 'sm:h-64'}`}>
         {demo}
       </div>
     </div>
@@ -202,7 +202,7 @@ export default function Features() {
             icon={Mic}
             title="Pronunciation Coach"
             description="Real-time waveform analysis with instant feedback on your pronunciation accuracy."
-            demoClassName="h-72"
+            demoClassName="sm:h-72"
             delay={100}
             demo={
               <>
