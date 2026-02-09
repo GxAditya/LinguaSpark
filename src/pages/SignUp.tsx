@@ -94,7 +94,7 @@ export default function SignUp() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label htmlFor="name" className="block text-xs font-medium text-muted mb-1">
                 Full Name
@@ -248,7 +248,7 @@ export default function SignUp() {
             </div>
           </div>
 
-          <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
             <button
               type="button"
               onClick={handleGoogleLogin}

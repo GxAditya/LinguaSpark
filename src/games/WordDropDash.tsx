@@ -267,13 +267,13 @@ export default function WordDropDash() {
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Game Complete!</h2>
           <p className="text-xl text-gray-600 mb-2">Final Score: <span className="font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">{score}</span></p>
-          <div className="flex gap-4 mt-4">
-            <Link to="/games" className="btn-secondary px-6 py-3">
+          <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
+            <Link to="/games" className="btn-secondary px-6 py-3 w-full sm:w-auto">
               Back to Games
             </Link>
             <button
               onClick={startNewGame}
-              className="btn-primary px-6 py-3 flex items-center gap-2"
+              className="btn-primary px-6 py-3 flex items-center justify-center gap-2 w-full sm:w-auto"
             >
               <RefreshCw className="w-5 h-5" />
               Play Again

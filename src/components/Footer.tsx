@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Brand Name with entrance animation */}
         <div className="text-center mb-12">
-          <div className="text-6xl md:text-8xl font-bold tracking-wider mb-4" style={{ color: 'var(--color-text)' }}>
+          <div className="text-4xl sm:text-6xl md:text-8xl font-bold tracking-wider mb-4" style={{ color: 'var(--color-text)' }}>
             {brandName.split('').map((letter, index) => (
               <span
                 key={index}

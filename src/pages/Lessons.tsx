@@ -286,7 +286,7 @@ export default function Lessons() {
 
           {/* Lesson Header */}
           <div className="bg-surface-base p-8 rounded-xl border border-border-base shadow-sm mb-8">
-            <div className="flex items-start justify-between mb-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6">
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-content-primary mb-3">{selectedLesson.title}</h1>
                 <div className="flex items-center gap-4 flex-wrap">
@@ -359,7 +359,7 @@ export default function Lessons() {
 
               {/* Current Content */}
               <div className="mb-8">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
                   <h2 className="text-2xl font-bold text-content-primary">{currentContent.title}</h2>
                   {currentContent.audioText && (
                     <button
@@ -437,11 +437,11 @@ export default function Lessons() {
               </div>
 
               {/* Navigation Buttons */}
-              <div className="flex items-center justify-between pt-6 border-t border-border-base">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-border-base">
                 <button
                   onClick={() => setActiveContentIndex(Math.max(0, activeContentIndex - 1))}
                   disabled={activeContentIndex === 0}
-                  className="flex items-center gap-2 px-6 py-3 border border-border-base rounded-lg font-medium text-content-secondary hover:bg-surface-subtle disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center justify-center gap-2 px-6 py-3 border border-border-base rounded-lg font-medium text-content-secondary hover:bg-surface-subtle disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-full sm:w-auto"
                 >
                   <ChevronLeft className="w-5 h-5" /> Previous
                 </button>
@@ -452,14 +452,14 @@ export default function Lessons() {
                       handleContentComplete(activeContentIndex);
                       setShowExercises(true);
                     }}
-                    className="flex items-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover transition-colors w-full sm:w-auto"
                   >
                     Start Exercises <Zap className="w-5 h-5" />
                   </button>
                 ) : (
                   <button
                     onClick={() => handleContentComplete(activeContentIndex)}
-                    className="flex items-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover transition-colors w-full sm:w-auto"
                   >
                     Next <ChevronRight className="w-5 h-5" />
                   </button>
@@ -552,10 +552,10 @@ export default function Lessons() {
               </div>
 
               {/* Exercise Navigation */}
-              <div className="flex items-center justify-between pt-6 border-t border-border-base">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-border-base">
                 <button
                   onClick={() => setShowExercises(false)}
-                  className="flex items-center gap-2 px-6 py-3 border border-border-base rounded-lg font-medium text-content-secondary hover:bg-surface-subtle transition-colors"
+                  className="flex items-center justify-center gap-2 px-6 py-3 border border-border-base rounded-lg font-medium text-content-secondary hover:bg-surface-subtle transition-colors w-full sm:w-auto"
                 >
                   <BookOpen className="w-5 h-5" /> Back to Content
                 </button>
@@ -564,21 +564,21 @@ export default function Lessons() {
                   <button
                     onClick={handleSubmitExercise}
                     disabled={!exerciseAnswer.trim()}
-                    className="flex items-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-full sm:w-auto"
                   >
                     Submit Answer <ChevronRight className="w-5 h-5" />
                   </button>
                 ) : activeExerciseIndex === selectedLesson.exercises.length - 1 ? (
                   <button
                     onClick={handleCompleteLesson}
-                    className="flex items-center gap-2 px-6 py-3 bg-success text-white rounded-lg font-medium hover:opacity-90 transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-success text-white rounded-lg font-medium hover:opacity-90 transition-colors w-full sm:w-auto"
                   >
                     Complete Lesson <CheckCircle className="w-5 h-5" />
                   </button>
                 ) : (
                   <button
                     onClick={handleNextExercise}
-                    className="flex items-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-action-primary text-action-primary-fg rounded-lg font-medium hover:bg-action-primary-hover transition-colors w-full sm:w-auto"
                   >
                     Next Exercise <ChevronRight className="w-5 h-5" />
                   </button>

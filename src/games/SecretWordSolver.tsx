@@ -202,11 +202,11 @@ export default function SecretWordSolver() {
               {score} / {totalRounds * 10}
             </span>
           </p>
-          <div className="flex gap-4 mt-4">
-            <Link to="/games" className="btn-secondary px-6 py-3">
+          <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
+            <Link to="/games" className="btn-secondary px-6 py-3 w-full sm:w-auto">
               Back to Games
             </Link>
-            <button onClick={handlePlayAgain} className="btn-primary px-6 py-3 flex items-center gap-2">
+            <button onClick={handlePlayAgain} className="btn-primary px-6 py-3 flex items-center justify-center gap-2 w-full sm:w-auto">
               <RefreshCw className="w-5 h-5" />
               Play Again
             </button>

@@ -117,7 +117,7 @@ export default function SignIn() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -161,7 +161,7 @@ export default function SignIn() {
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               type="button"
               onClick={handleGoogleLogin}

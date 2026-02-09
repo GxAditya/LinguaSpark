@@ -123,7 +123,7 @@ export default function Features() {
         {/* Section Header */}
         <div className="text-center mb-20">
           <div className="section-kicker mx-auto mb-6">Crafted for momentum</div>
-          <h2 className="text-5xl md:text-6xl font-bold mb-6 text-primary tracking-tight">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-primary tracking-tight">
             Features That Actually
             <span className="block text-gradient">
               Make Learning Fun

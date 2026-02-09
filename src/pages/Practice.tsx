@@ -269,7 +269,7 @@ export default function Practice() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-content-secondary">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm text-content-secondary">
               <div>
                 <p className="font-semibold text-content-primary">Difficulty</p>
                 <p>{formatDifficultyLabel(selectedScenario.difficulty)}</p>

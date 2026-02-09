@@ -45,7 +45,7 @@ export default function Hero() {
         </div>
 
         {/* Animated Headline with word reveals */}
-        <h1 className="text-6xl md:text-8xl font-bold mb-6 text-primary leading-tight tracking-tight">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 text-primary leading-tight tracking-tight">
           <div className="mb-2">
             {words.map((word, index) => (
               <span
@@ -83,7 +83,7 @@ export default function Hero() {
           className={`text-xl md:text-2xl text-muted mb-10 max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
         >
-          <span className="whitespace-nowrap">AI-powered conversations, personalized lessons, and real-world practice.</span>
+          <span className="sm:whitespace-nowrap">AI-powered conversations, personalized lessons, and real-world practice.</span>
           <span className="text-primary font-medium block mt-2">
             Go from zero to fluent in record time.
           </span>

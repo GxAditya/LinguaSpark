@@ -200,7 +200,7 @@ export default function Languages() {
           </div>
 
           <h2
-            className={`text-5xl md:text-6xl font-bold mb-6 text-primary tracking-tight transition-all duration-700 delay-100 ${
+            className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-primary tracking-tight transition-all duration-700 delay-100 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
@@ -265,7 +265,7 @@ export default function Languages() {
 
           <div className="bg-surface border border-default rounded-3xl p-6 shadow-soft flex flex-col">
             <p className="text-xs uppercase tracking-[0.2em] text-soft">Choose a language</p>
-            <div className="grid grid-cols-2 gap-3 mt-4 flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 flex-1">
               {languages.map((lang, index) => (
                 <button
                   key={lang.code}
