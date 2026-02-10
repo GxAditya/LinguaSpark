@@ -130,8 +130,8 @@ export default function Features() {
             </span>
           </h2>
           <p className="text-xl text-muted max-w-3xl mx-auto leading-relaxed">
-            Bite-sized demos show exactly how each learning moment unfolds in real time.
-            <span className="text-primary font-medium block mt-2">See the experience, then dive in.</span>
+            Explore the tools that turn daily practice into confident progress.
+            <span className="text-primary font-medium block mt-2">Built to keep you consistent and motivated.</span>
           </p>
         </div>
 
