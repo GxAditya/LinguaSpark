@@ -47,7 +47,7 @@ export default function GameLayout({ title, children, score = 0, progress = '' }
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
               <Link 
                 to="/games" 
@@ -62,7 +62,7 @@ export default function GameLayout({ title, children, score = 0, progress = '' }
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3 sm:gap-6 w-full sm:w-auto justify-between sm:justify-start">
               {score !== undefined && (
                 <div className="flex items-center gap-2 tone-brand border px-4 py-2 rounded-xl">
                   <Trophy className="w-5 h-5 text-accent" />

@@ -75,7 +75,7 @@ export default function Pricing() {
             <span>Simple, Transparent Pricing</span>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-gray-900 leading-tight tracking-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900 leading-tight tracking-tight">
             Choose Your
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-pink-600">Learning Journey</span>
           </h1>
@@ -96,11 +96,11 @@ export default function Pricing() {
               return (
                 <div
                   key={plan.name}
-                  className={`relative bg-white border-2 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl ${
-                    plan.popular
-                      ? 'border-orange-500 shadow-lg scale-105'
+                    className={`relative bg-white border-2 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl ${
+                      plan.popular
+                      ? 'border-orange-500 shadow-lg md:scale-105'
                       : 'border-gray-200 hover:border-gray-300'
-                  }`}
+                    }`}
                 >
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-orange-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
@@ -206,7 +206,7 @@ export default function Pricing() {
       {/* CTA Section */}
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-gray-900">
             Ready to Start Learning?
           </h2>
           <p className="text-xl text-gray-600 mb-8">
