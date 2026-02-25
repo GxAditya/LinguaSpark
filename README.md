@@ -5,8 +5,12 @@
 <h1 align="center">LinguaSpark</h1>
 
 <p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
-  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributing-guidelines-green.svg" alt="Contributing"></a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/GxAditya/LinguaSpark?style=flat-square" alt="License">
+  </a>
+  <a href="CONTRIBUTING.md">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs Welcome">
+  </a>
 </p>
 
 A modern language learning platform with interactive games and AI-powered content generation.
@@ -24,7 +28,7 @@ A modern language learning platform with interactive games and AI-powered conten
 
 - Node.js (v18 or higher)
 - MongoDB (local or cloud instance)
-- API keys for external services (see [Contributing.md](CONTRIBUTING.md))
+- API keys for external services (see [CONTRIBUTING.md](CONTRIBUTING.md))
 
 ## Environment Setup
 
