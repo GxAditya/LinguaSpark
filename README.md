@@ -145,6 +145,10 @@ A modern language learning platform with interactive games and AI-powered conten
    - Backend API: http://localhost:5000/api
    - Health check: http://localhost:5000/api/health
 
+## Documentation
+
+For detailed information on API configuration, troubleshooting, and how to contribute, please refer to [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
