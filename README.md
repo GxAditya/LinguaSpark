@@ -1,4 +1,13 @@
-# LinguaSpark
+<p align="center">
+  <img src="public/Linguaspark-logo.png" alt="LinguaSpark Logo" width="128">
+</p>
+
+<h1 align="center">LinguaSpark</h1>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributing-guidelines-green.svg" alt="Contributing"></a>
+</p>
 
 A modern language learning platform with interactive games and AI-powered content generation.
 
@@ -15,7 +24,7 @@ A modern language learning platform with interactive games and AI-powered conten
 
 - Node.js (v18 or higher)
 - MongoDB (local or cloud instance)
-- API keys for external services (see Environment Setup)
+- API keys for external services (see [Contributing.md](CONTRIBUTING.md))
 
 ## Environment Setup
 
@@ -87,8 +96,8 @@ A modern language learning platform with interactive games and AI-powered conten
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd linguaspark
+   git clone https://github.com/GxAditya/LinguaSpark.git
+   cd LinguaSpark
    ```
 
 2. **Install frontend dependencies**
@@ -132,60 +141,10 @@ A modern language learning platform with interactive games and AI-powered conten
    - Backend API: http://localhost:5000/api
    - Health check: http://localhost:5000/api/health
 
-## API Configuration
+## Documentation
 
-### Pollinations API
-
-The application uses the new authenticated Pollinations API at `gen.pollinations.ai`:
-
-- **Text Generation**: Uses `nova-fast` model via `/v1/chat/completions`
-- **Image Generation**: Uses `zimage` model via `/image/{prompt}`
-- **Authentication**: Bearer token authentication required
-
-### Groq API
-
-Used for text-to-speech functionality:
-
-- **Model**: `playai-tts`
-- **Supported Voices**: Multiple voice options available
-- **Fallback**: Browser TTS when API is unavailable
-
-## Troubleshooting
-
-### Common Issues
-
-1. **"POLLINATIONS_API_KEY is required" error**
-   - Ensure you have set the API key in both `.env` and `server/.env`
-   - Verify the API key is valid at [gen.pollinations.ai](https://gen.pollinations.ai)
-
-2. **MongoDB connection errors**
-   - Check if MongoDB is running locally
-   - Verify the `MONGODB_URI` in `server/.env`
-
-3. **OAuth login not working**
-   - Verify OAuth credentials are correctly set
-   - Check redirect URIs match your configuration
-
-4. **TTS not working**
-   - Check if `GROQ_API_KEY` is set in `server/.env`
-   - Verify API key is valid at [console.groq.com](https://console.groq.com)
-
-### Configuration Validation
-
-The server performs automatic configuration validation on startup:
-
-- ✅ Required environment variables are checked
-- ⚠️ Warnings for optional but recommended settings
-- ❌ Server won't start if critical configuration is missing
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+For detailed information on API configuration, troubleshooting, and how to contribute, please refer to [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-[Add your license information here]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
